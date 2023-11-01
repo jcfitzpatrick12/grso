@@ -1,0 +1,271 @@
+options:
+  parameters:
+    author: ''
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: observeCollect
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: Not titled yet
+    window_size: (1000,1000)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 8]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: center_freq
+  id: variable
+  parameters:
+    comment: ''
+    value: 95.8e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [304, 12.0]
+    rotation: 0
+    state: true
+- name: pseudo_start_time
+  id: variable
+  parameters:
+    comment: ''
+    value: timeStamper.timeStamper().returnDatetimeNowString()
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [424, 12.0]
+    rotation: 0
+    state: enabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: 128e3
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [176, 12.0]
+    rotation: 0
+    state: enabled
+- name: blocks_file_meta_sink_0_0
+  id: blocks_file_meta_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    detached: 'True'
+    extra_dict: pmtDictMaker.BuildDict().GetDict(samp_rate,center_freq,pseudo_start_time)
+    file: timeStamper.timeStamper().returnFilePath(pseudo_start_time)
+    max_seg_size: '1000000'
+    rel_rate: '1'
+    samp_rate: samp_rate
+    type: complex
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [592, 308.0]
+    rotation: 0
+    state: enabled
+- name: blocks_throttle_0
+  id: blocks_throttle
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    ignoretag: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samples_per_second: samp_rate
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [312, 268.0]
+    rotation: 0
+    state: true
+- name: import_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import pmt
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1000, 28.0]
+    rotation: 0
+    state: true
+- name: pmtDictMaker
+  id: epy_module
+  parameters:
+    alias: ''
+    comment: ''
+    source_code: "# this module will be imported in the into your flowgraph\nimport\
+      \ pmt\n\nclass BuildDict:\n\tdef __init__(self):\n\t\tself.pmt_dict = pmt.make_dict()\n\
+      \n\t# Define a function to convert Python types to PMT types\n\tdef to_pmt(self,value):\n\
+      \t\tif isinstance(value, int):\n\t\t\treturn pmt.from_long(value)\n\t\telif\
+      \ isinstance(value, float):\n\t\t\treturn pmt.from_double(value)\n\t\telif isinstance(value,\
+      \ str):\n\t\t\treturn pmt.intern(value)\n\t\telif isinstance(value, bool):\n\
+      \t\t\treturn pmt.from_bool(value)\n\t\t# Add more type conversions here if needed\n\
+      \t\telse:\n\t\t\traise ValueError(f\"Unsupported type: {type(value)}\")\n\n\n\
+      \n\tdef GetDict(self,samp_rate,center_freq,pseudo_start_time):\n\t\t# Define\
+      \ a list of key-value pairs with different types\n\t\tkey_value_pairs = [\n\t\
+      \t('samp_rate', int(samp_rate)),\n\t\t('center_freq', float(center_freq)),\n\
+      \t\t('pseudo_start_time', pseudo_start_time),\n\t\t# Add more key-value pairs\
+      \ here\n\t\t]\n\t\t# Add key-value pairs to the PMT dictionary\n\t\tfor key,\
+      \ value in key_value_pairs:\n\t\t\tpmt_key = pmt.intern(key)\n\t\t\tpmt_value\
+      \ = self.to_pmt(value)\n\t\t\tself.pmt_dict = pmt.dict_add(self.pmt_dict, pmt_key,\
+      \ pmt_value)\n\t\t\n\t\treturn self.pmt_dict\n"
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [992, 76.0]
+    rotation: 0
+    state: true
+- name: qtgui_waterfall_sink_x_0
+  id: qtgui_waterfall_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    axislabels: 'True'
+    bw: samp_rate
+    color1: '0'
+    color10: '0'
+    color2: '0'
+    color3: '0'
+    color4: '0'
+    color5: '0'
+    color6: '0'
+    color7: '0'
+    color8: '0'
+    color9: '0'
+    comment: ''
+    fc: center_freq
+    fftsize: '1024'
+    freqhalf: 'True'
+    grid: 'False'
+    gui_hint: ''
+    int_max: '10'
+    int_min: '-140'
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: '""'
+    nconnections: '1'
+    showports: 'False'
+    type: complex
+    update_time: '0.01'
+    wintype: window.WIN_BLACKMAN_hARRIS
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [592, 212.0]
+    rotation: 0
+    state: true
+- name: sdrplay3_rsp1a_0
+  id: sdrplay3_rsp1a
+  parameters:
+    AGC: 'False'
+    affinity: ''
+    agc_set_point: '-30'
+    alias: ''
+    bandwidth: 5000e3
+    biasT: 'False'
+    center_freq: center_freq
+    comment: ''
+    dab_notch_filter: 'False'
+    dc_offset_mode: 'False'
+    debug_mode: 'False'
+    freq_corr: '0'
+    if_gRdB: '40'
+    iq_balance_mode: 'False'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    output_type: fc32
+    rf_gR: '0'
+    rf_notch_filter: 'False'
+    rsp_selector: ''
+    sample_rate: samp_rate
+    sample_sequence_gaps_check: 'False'
+    show_gain_changes: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [72, 236.0]
+    rotation: 0
+    state: true
+- name: timeStamper
+  id: epy_module
+  parameters:
+    alias: ''
+    comment: ''
+    source_code: "from datetime import datetime\nimport os\n\nclass timeStamper:\n\
+      \n\tdef returnDatetimeNowString(self):\n\t\treturn datetime.now().strftime(\"\
+      %Y-%m-%dT%H:%M:%S\")\n\t\t\n\tdef returnFilePath(self,appendDate):\n\t\tdataPath\
+      \ = os.path.join(os.getcwd(),\"scripts\",\"Pdata\",appendDate)\n\t\treturn dataPath\n"
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [992, 140.0]
+    rotation: 0
+    state: true
+
+connections:
+- [blocks_throttle_0, '0', blocks_file_meta_sink_0_0, '0']
+- [blocks_throttle_0, '0', qtgui_waterfall_sink_x_0, '0']
+- [sdrplay3_rsp1a_0, '0', blocks_throttle_0, '0']
+
+metadata:
+  file_format: 1
