@@ -3,6 +3,7 @@ from gnuradio.blocks import parse_file_metadata
 import numpy as np
 import os
 from datetime import datetime
+from sys_vars import sys_vars
 
 '''
 class which handles operations on the files labelled by timeStampStr
@@ -10,11 +11,14 @@ class which handles operations on the files labelled by timeStampStr
 
 class SingleFile:
     #constructor for SingleFileHandler
-    def __init__(self,timeStampStr):
+    def __init__(self,pseudo_start_time):
+        self.sys_vars = sys_vars()
         #instantiate the timeStampStr field
-        self.timeStampstr = timeStampStr
+        self.pseudo_start_time = pseudo_start_time
+        self.pseudo_start_datetime = datetime.strptime(self.pseudo_start_time,"%Y-%m-%dT%H:%M:%S")
+
         #the path to the file
-        self.filePath = os.path.join(os.getcwd(),"Pdata",timeStampStr)
+        self.filePath = os.path.join(os.getcwd(),"Pdata",self.pseudo_start_time)
 
         #convert the bin to a numpy array
         self.ConvertBinToNpy()
@@ -24,9 +28,9 @@ class SingleFile:
         #instantiate some of the header fields
         self.center_freq = pmt.to_float(self.headerDict['center_freq'])
         self.samp_rate = pmt.to_long(self.headerDict['samp_rate'])
-        self.pseudo_start_time = pmt.write_string(self.headerDict['pseudo_start_time'])
-        self.pseudo_start_datetime = datetime.strptime(self.pseudo_start_time,"%Y-%m-%dT%H:%M:%S")
 
+    def customFilePath(self,customString):
+        return os.path.join(os.getcwd(),"Pdata",customString+self.pseudo_start_time)
     
     def ConvertBinToNpy(self):
         #open the header file

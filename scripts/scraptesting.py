@@ -2,14 +2,25 @@ from pdataFuncs import pdataFuncs
 #instantiate the pdata class
 pdata = pdataFuncs()
 
+
+'''
 #for each dataFile in the timeStampDict
-for timeStampStr,dataFile in pdata.dataDict.items():
-    print(timeStampStr)
-    dataFile.plotSpectrogram()
-
-#print((dataFile.freqsMHz[-1]-dataFile.freqsMHz[0])*10**3)
-
-
-
+for pseudo_start_time,dataFile in pdata.dataDict.items():
+    print(pseudo_start_time)
+    dataFile.plotSpectrogram(wantAverage=True)
+    break
+    #dataFile.plotSpectrogram(wantAverage=True)
+'''
 
 
+
+
+for pseudo_start_time,dataFileCompressed in pdata.dataCompressedDict.items():
+    print(pseudo_start_time)
+    dataFileCompressed.plotSpectrogram()
+    dataFileCompressed.plotPower()
+
+
+
+
+    

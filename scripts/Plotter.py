@@ -11,6 +11,22 @@ class Plotter:
         self.fsize_head=20
         self.fsize=15
 
+    def plotPower(self,datetimeArray,power):
+        
+        plt.plot(datetimeArray,power)
+        #format the datetime axis 
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
+        plt.gca().xaxis.set_major_locator(mdates.SecondLocator(interval=1))  # adjust the interval for your needs
+        plt.gcf().autofmt_xdate()
+        #assign the x and y labels
+        plt.ylabel('Power [?]',size=self.fsize_head)
+        plt.xlabel('Time',size=self.fsize_head)
+        #format the x and y tick labels
+        plt.xticks(size=self.fsize)
+        plt.yticks(size=self.fsize)
+        plt.show()
+
+
     def plotSpectrogram(self,frequenciesMHZ, datetimeArray, Sxx):
 
         # Plot the spectrogram
@@ -21,7 +37,7 @@ class Plotter:
         plt.gcf().autofmt_xdate()
         #assign the x and y labels
         plt.ylabel('Frequency [MHz]',size=self.fsize_head)
-        plt.xlabel('Time [sec]',size=self.fsize_head)
+        plt.xlabel('Time',size=self.fsize_head)
         #create the colorbar
         cbar = plt.colorbar()
         cbar.set_label('Intensity [dB]', size=self.fsize_head)
