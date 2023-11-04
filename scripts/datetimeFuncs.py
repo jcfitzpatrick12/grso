@@ -15,3 +15,7 @@ class datetimeFuncs:
             datetimeArray.append(newDatetime)
         #return the list
         return datetimeArray
+    
+    def parseDatetime(self,datetimeString):
+        #extract the corresponding datetime
+        return datetime.strptime(datetimeString,"%Y-%m-%dT%H:%M:%S")

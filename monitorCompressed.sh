@@ -28,6 +28,6 @@ do
   sleep 1s
   
   # compute the average spectrogram, save it, then delete all the bulky files
-  (cd scripts && python3 compressedMonitoring.py)
+  (cd scripts && python3 CompressedMonitoring.py)
   
 done

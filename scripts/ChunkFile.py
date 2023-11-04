@@ -1,3 +1,7 @@
+'''
+chunkFile class deals with all files of the form [C]%Y-%m-%dT%H:%M:%S[.EXT]
+'''
+
 import pmt
 from gnuradio.blocks import parse_file_metadata
 import numpy as np
@@ -9,25 +13,19 @@ from sys_vars import sys_vars
 class which handles operations on the files labelled by timeStampStr
 '''
 
-class SingleFile:
+class ChunkFile:
     #constructor for SingleFileHandler
     def __init__(self,pseudo_start_time):
         self.sys_vars = sys_vars()
         #instantiate the timeStampStr field
         self.pseudo_start_time = pseudo_start_time
         self.pseudo_start_datetime = datetime.strptime(self.pseudo_start_time,"%Y-%m-%dT%H:%M:%S")
-
         #the path to the file
-        self.filePath = os.path.join(os.getcwd(),"Pdata",self.pseudo_start_time)
-
+        self.filePath = os.path.join(self.sys_vars.pathtoPdata,self.pseudo_start_time)
         #convert the bin to a numpy array
         self.ConvertBinToNpy()
         #parse the Header [instantiates self.headerDict]
         self.parseHeader()
-    
-        #instantiate some of the header fields
-        self.center_freq = pmt.to_float(self.headerDict['center_freq'])
-        self.samp_rate = pmt.to_long(self.headerDict['samp_rate'])
 
     def customFilePath(self,customString):
         return os.path.join(os.getcwd(),"Pdata",customString+self.pseudo_start_time)
@@ -37,6 +35,7 @@ class SingleFile:
         fh = open(self.filePath, "rb")
         #extract the data
         data = np.fromfile(fh, dtype=np.complex64)
+        #save to a file
         np.save(os.path.join(self.filePath),data)
         pass
 
