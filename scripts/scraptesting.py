@@ -1,24 +1,44 @@
-from pdataFuncs import pdataFuncs
+
+
+from PdataFuncs import PdataFuncs
 #instantiate the pdata class
-pdata = pdataFuncs()
 
+#instantiate Pdata
+Pdata = PdataFuncs()
 
 '''
-#for each dataFile in the timeStampDict
-for pseudo_start_time,dataFile in pdata.dataDict.items():
-    print(pseudo_start_time)
-    dataFile.plotSpectrogram(wantAverage=True)
-    break
-    #dataFile.plotSpectrogram(wantAverage=True)
+#Pdata.chunkDict contains the key_value pairs pseudo_start_time and the DataChunkFile
+#DataChunkFile is so named
+for pseudo_start_time,DataChunkFile in Pdata.chunkDict.items():
+    rawSpectrogram=DataChunkFile.RadioSpectrogram
+    #rawSpectrogram.plotSpectrogram()
+    #rawSpectrogram.saveToFile()
+    compressedSpectrogram = rawSpectrogram.computeAverageSpectrogram()
+    #print(compressedSpectrogram.isCompressed)
+    compressedSpectrogram.plotSpectrogram()
+    compressedSpectrogram.saveToFile()
+
+Pdata.updateDicts()
 '''
 
+#print(Pdata.cspectrogramDict.values())
+for compressedSpectrogram in Pdata.cspectrogramDict.values():
+    compressedSpectrogram = compressedSpectrogram.computeAverageSpectrogram()
+    compressedSpectrogram.plotSpectrogram()
+    #compressedSpectrogram.plotPower()
 
 
 
-for pseudo_start_time,dataFileCompressed in pdata.dataCompressedDict.items():
-    print(pseudo_start_time)
-    dataFileCompressed.plotSpectrogram()
-    dataFileCompressed.plotPower()
+
+
+    
+
+
+
+
+
+
+
 
 
 

@@ -18,7 +18,7 @@ do
   # Capture the Process ID (PID) of the background process
   pid=$!
 
-  # Sleep for 5 seconds before killing the script
+  # Sleep for sleepy_time seconds before killing the script
   sleep ${sleepy_time}s
 
   #kill the script
@@ -28,6 +28,6 @@ do
   sleep 1s
   
   # compute the average spectrogram, save it, then delete all the bulky files
-  (cd scripts && python3 compressedMonitoring.py)
+  (cd scripts && python3 CompressedMonitoring.py)
   
 done
