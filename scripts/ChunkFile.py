@@ -19,10 +19,11 @@ class ChunkFile:
         self.sys_vars = sys_vars()
         #instantiate the timeStampStr field
         self.pseudo_start_time = pseudo_start_time
+        #extract the datetime from pseudo_start_time
         self.pseudo_start_datetime = datetime.strptime(self.pseudo_start_time,"%Y-%m-%dT%H:%M:%S")
-        #the path to the file
+        #the find the path to the file [based on the pseudo_start_time]
         self.filePath = os.path.join(self.sys_vars.pathtoPdata,self.pseudo_start_time)
-        #convert the bin to a numpy array
+        #convert the bin file to a numpy array of complex IQ signals [saves it to file]
         self.ConvertBinToNpy()
         #parse the Header [instantiates self.headerDict]
         self.parseHeader()
@@ -51,7 +52,7 @@ class ChunkFile:
         #extract the header info!
         header_info = parse_file_metadata.parse_header(header,False)
 
-        #make a deep copy of the dictionary
+        #make a deep copy of the dictionary [Why?]
         headerDict = header_info.copy()
 
         #extra length in the header, these lines are necessary to move the reading pointer to the start of the next segment
@@ -67,4 +68,5 @@ class ChunkFile:
                 for key,value in extra_info.items():
                     headerDict[key]=value
 
+        #instantiate the headerDict field
         self.headerDict=headerDict

@@ -61,12 +61,12 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 128e3
+    value: 200e3
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [176, 12.0]
+    coordinate: [184, 12.0]
     rotation: 0
     state: enabled
 - name: blocks_file_meta_sink_0_0
@@ -88,7 +88,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [592, 308.0]
+    coordinate: [592, 316.0]
     rotation: 0
     state: enabled
 - name: blocks_throttle_0
@@ -120,7 +120,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1000, 28.0]
+    coordinate: [992, 28.0]
     rotation: 0
     state: true
 - name: pmtDictMaker
@@ -209,7 +209,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [592, 212.0]
+    coordinate: [592, 172.0]
     rotation: 0
     state: true
 - name: sdrplay3_rsp1a_0
@@ -258,7 +258,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [992, 140.0]
+    coordinate: [992, 124.0]
     rotation: 0
     state: true
 

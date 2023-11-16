@@ -13,6 +13,8 @@ from FileString import FileString
 from DataChunkFile import DataChunkFile
 from sys_vars import sys_vars
 from LoadSpectrogram import LoadSpectrogram
+from RadioSpectrogram import RadioSpectrogram
+import numpy as np
 
 #this is a child class of FileHandler!
 class PdataFuncs:
@@ -24,6 +26,19 @@ class PdataFuncs:
         self.buildDicts()
         #sorts the dictionary temporally
         self.sortDicts()
+
+    '''
+    ## takes all the files in self.cspectrogramDict and builds one big RadioSpectrogram class [shows the dead time inbetween collection]
+    def buildBigSpectrogram(self,):
+        #extract the number of spectrograms
+        numSpectrograms = len(self.cspectrogramDict.items())
+        print(numSpectrograms)
+        for pseudo_start_time, compressedSpectrogram in self.cspectrogramDict.items():
+            print(pseudo_start_time)
+            print(np.shape(compressedSpectrogram.Sxx))
+            #compressedSpectrogram.plotSpectrogram()
+        pass  
+    '''
 
     #removes all non compressed files
     def removeBigFiles(self,):
@@ -45,12 +60,14 @@ class PdataFuncs:
     #dataFile classes are used 
     #dataFileCompressed classes
     def buildDicts(self):
-        #instantiate the timeStampDict which will hold the timeStamp, and it's ascociated dataFile class
+        #create a dictionary which whill hold the key,value pairs [key, pseudo_start_time, dataChunk object]
         self.chunkDict = {}
+        #create a dictionary which will
         self.cspectrogramDict = {}
-        #try:
+        #for each file in Pdata folder
         files = os.listdir(self.sys_vars.pathtoPdata)
         for file in files:
+            #create the FileString class which deals with all files saved to Pdata [hdr, bin, npy files]
             fs = FileString(file)
             #if this file is already in the dictionary, pass
             if fs.pseudo_start_time in self.chunkDict.keys():
@@ -59,16 +76,16 @@ class PdataFuncs:
             else:
                 #if the filename's extension notifies its a compressed spectrogram [cnpy]
                 if fs.type=="compressed-spectrogram":
+                    #if thefiletype is a compressedspcetrogram, load the [compressed] spectrogram class]
                     compressedSpectrogram = LoadSpectrogram().load(fs.pseudo_start_time,True)
                     self.cspectrogramDict[fs.pseudo_start_time]=compressedSpectrogram
                     pass
                 else:
+                    #otherwise, create the DataChunkFile class! This will do all the manipulations with the hdr and bin files
+                    #where the bin files hold the raw IQ signal
+                    #hdr file contains all the metadata
                     self.chunkDict[fs.pseudo_start_time] = DataChunkFile(fs.pseudo_start_time)
        
-        '''
-        except FileNotFoundError:
-            print(f"The directory '{self.sys_vars.pathtoPdata}' was not found.")       
-        '''
 
             
     #sort the dictionary by its keys

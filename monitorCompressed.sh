@@ -18,7 +18,7 @@ do
   # Capture the Process ID (PID) of the background process
   pid=$!
 
-  # Sleep for 5 seconds before killing the script
+  # Sleep for sleepy_time seconds before killing the script
   sleep ${sleepy_time}s
 
   #kill the script

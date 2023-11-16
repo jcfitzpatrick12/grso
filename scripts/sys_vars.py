@@ -8,7 +8,7 @@ class sys_vars:
         self.window_type = "blackmanharris"
 
         self.isAveraging = True
-        self.averageOverInt = 10
+        self.averageOverInt = 2
 
         #the path to the file
         self.pathtoPdata = os.path.join(os.getcwd(),"Pdata")
