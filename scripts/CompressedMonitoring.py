@@ -3,15 +3,14 @@ script which will run to process data captured by gnuradio to obtain a compresse
 and then save the averaged spectrograms.
 '''
 
-from PdataFuncs import PdataFuncs
+from Chunks import Chunks
 #instantiate the pdata class, compute the average spectrogram and save it.
-Pdata = PdataFuncs()
+Chunks=Chunks()
 
-#for each DataChunkFile, copute the average spectrogram and save it
-for DataChunkFile in Pdata.chunkDict.values():
-    #extract the averaged spectrogram
-    compressedSpectrogram = DataChunkFile.RadioSpectrogram.computeAverageSpectrogram()
-    #save this to file in Pdata
-    compressedSpectrogram.saveToFile()
+#Pdata.chunkDict contains the key_value pairs pseudo_start_time and the DataChunkFile
+#DataChunkFile is so named
+for pseudo_start_time,Chunk in Chunks.dict.items():
+    compressedSpectrogram = Chunk.computeAverageSpectrogram()
+    compressedSpectrogram.savetoFits()
 #remove all the non-averaged files.
-Pdata.removeBigFiles()
+Chunks.removeBigFiles()

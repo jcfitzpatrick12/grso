@@ -11,5 +11,6 @@ class sys_vars:
         self.averageOverInt = 2
 
         #the path to the file
-        self.pathtoPdata = os.path.join(os.getcwd(),"Pdata")
+        self.path_to_data = os.path.join(os.getcwd(),"data")
+
     

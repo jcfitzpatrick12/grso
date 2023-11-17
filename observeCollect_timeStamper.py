@@ -7,5 +7,5 @@ class timeStamper:
 		return datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 		
 	def returnFilePath(self,appendDate):
-		dataPath = os.path.join(os.getcwd(),"scripts","Pdata",appendDate)
+		dataPath = os.path.join(os.getcwd(),"scripts","data",appendDate)
 		return dataPath

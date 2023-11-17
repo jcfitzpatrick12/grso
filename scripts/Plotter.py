@@ -1,8 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.signal import spectrogram
-import scipy.signal as signal
-from datetimeFuncs import datetimeFuncs
 import matplotlib.dates as mdates
 
 
