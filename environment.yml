@@ -1,0 +1,9 @@
+name: gbo-env
+channels:
+  - defaults
+dependencies:
+  - numpy
+  - scipy
+  - astropy
+  - matplotlib
+  - python=3.8
