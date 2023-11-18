@@ -36,35 +36,34 @@ class Chunk:
         self.npy = ChunkNpy(pseudo_start_time)
         #insantiate the ChunkFits class
         self.fits = ChunkFits(pseudo_start_time)
-        #instantiate the RadioSpectrogram class
-        self.RadioSpectrogram = self.getRadioSpectrogram()
 
 
     '''
-    other methods which I can call in Chunks class for clear 
+    build the original RadioSpectrogram object from the bin and header files [no compression]
     '''
 
-    '''
-    method which computes the RadioSpectrogram, combining data from the binary file and the header file
-    '''
-    def getRadioSpectrogram(self):
-        IQdata = self.bin.getIQData()
-        headerDict = self.hdr.parseHeader()
-        #extract some important variables from headerDict
-        center_freq = pmt.to_float(headerDict['center_freq'])
-        samp_rate = pmt.to_long(headerDict['samp_rate'])
-        # Compute the spectrogram with both positive and negative frequencies
-        freqs, timeArray, Sxx = spectrogram(IQdata, fs=samp_rate, window=signal.get_window(self.sys_vars.window_type,self.sys_vars.window_size),return_onesided=False)
-        # Shift the zero-frequency component to the center
-        Sxx = np.fft.fftshift(Sxx, axes=0)
-        freqs = np.fft.fftshift(freqs)
-        # Adjust the frequency axis for the center frequency translation
-        freqs += center_freq
-        #convert the frequencies to MHz
-        freqsMHz = freqs*10**-6
-        #build the RadioSpectrogram class
-        return RadioSpectrogram(Sxx,timeArray,freqsMHz, center_freq,self.pseudo_start_time,False)
+    def buildRadioSpectrogram(self):
+        #check that the binary and header files both exist for the chunk.
+        if self.bin.exists() and self.hdr.exists():
+            #otherwise, create from the original data and save it to memory.
+            IQdata = self.bin.getIQData()
+            headerDict = self.hdr.parseHeader()
+            #extract some important variables from headerDict
+            center_freq = pmt.to_float(headerDict['center_freq'])
+            samp_rate = pmt.to_long(headerDict['samp_rate'])
+            # Compute the spectrogram with both positive and negative frequencies
+            freqs, timeArray, Sxx = spectrogram(IQdata, fs=samp_rate, window=signal.get_window(self.sys_vars.window_type,self.sys_vars.window_size),return_onesided=False)
+            # Shift the zero-frequency component to the center
+            Sxx = np.fft.fftshift(Sxx, axes=0)
+            freqs = np.fft.fftshift(freqs)
+            # Adjust the frequency axis for the center frequency translation
+            freqs += center_freq
+            #convert the frequencies to MHz
+            freqsMHz = freqs*10**-6
+            #build the RadioSpectrogram class
+            return RadioSpectrogram(Sxx,timeArray,freqsMHz, center_freq,self.pseudo_start_time,False)
+        
+        else:
+            raise SystemError("Files missing! We have that .bin exists {} and .hdr exists {}".format(self.bin.exists(),self.hdr.exists()))
 
-    def loadRadioSpectrogram(self):
-        return self.npy.load()
 

@@ -61,7 +61,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 300e3
+    value: 7e6
   states:
     bus_sink: false
     bus_source: false
@@ -144,7 +144,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [544, 236.0]
+    coordinate: [536, 236.0]
     rotation: 0
     state: enabled
 - name: pmtDictMaker

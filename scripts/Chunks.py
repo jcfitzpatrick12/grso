@@ -22,7 +22,7 @@ class Chunks:
     #removes all non compressed files
     def removeBigFiles(self,):
         # Loop through files in the directory
-        for file in os.listdir(self.sys_vars.path_to_data):
+        for file in os.listdir(self.sys_vars.pathto_data):
             fs = FileString(file)
             # If the file is not a compressed-spectrogram, delete
             if fs.type!="fits":

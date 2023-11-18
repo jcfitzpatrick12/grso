@@ -18,6 +18,7 @@ class ChunkFits:
     def exists(self):
         return os.path.exists(self.path)
     
+    #load the RadioSpectrogram from the fits file.
     def loadRadioSpectrogram(self):
         if self.exists():
                 # Open the FITS file
@@ -40,4 +41,4 @@ class ChunkFits:
             return RadioSpectrogram(Sxx, timeArray, freqsMHz, center_freq, pseudo_start_time, isCompressed)
 
         else:
-            raise SystemError('No file found!')
+            raise SystemError('No file found!!')

@@ -100,10 +100,10 @@ class RadioSpectrogram:
         pass
 
     '''
-    function which RETURNS the average spectrogram, and decimated timeArray
+    function which RETURNS the average spectrogram, and (necessarily) decimated timeArray
     '''
 
-    def computeAverageSpectrogram(self):
+    def timeAverage(self,AverageOverInt):
         '''
         average in time over averageOver samples in the full spectrogram, create fields and save to a numpy array
         ''' 
@@ -113,7 +113,7 @@ class RadioSpectrogram:
         num_temporal_samples = np.shape(self.Sxx)[1]
         #print(num_temporal_samples)
         #eshorten the call of how many samples to average over
-        N=self.sys_vars.averageOverInt
+        N=AverageOverInt
         #find the remainder [we will average over the remaining samples if N does note exactly divide num_temporal_samples]
         remainder = num_temporal_samples % N
         
