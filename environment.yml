@@ -1,9 +1,12 @@
 name: gbo-env
 channels:
   - defaults
+  - conda-forge
+  
 dependencies:
   - numpy
   - scipy
   - astropy
   - matplotlib
   - python=3.8
+  - gnuradio
