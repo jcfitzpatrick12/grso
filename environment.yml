@@ -10,3 +10,4 @@ dependencies:
   - matplotlib
   - python=3.8
   - gnuradio
+  - gnuradio-build-deps
