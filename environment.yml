@@ -9,5 +9,5 @@ dependencies:
   - astropy
   - matplotlib
   - python=3.8
-  - gnuradio
+  - gnuradio=3.9
   - gnuradio-build-deps
