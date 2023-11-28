@@ -10,6 +10,6 @@ dependencies:
   - astropy
   - matplotlib
   - python=3.8
-  - gnuradio
+  - gnuradio=3.8
   - gnuradio-build-deps
   - sdrplay_api
