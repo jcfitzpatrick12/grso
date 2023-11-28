@@ -5,11 +5,11 @@ channels:
   - ryanvolz
   
 dependencies:
-  - numpy
+  - numpy=1.13.3
   - scipy
   - astropy
   - matplotlib
-  - python=3.8
-  - gnuradio=12.3.0
+  - python=3.6.5
+  - gnuradio=3.9
   - gnuradio-build-deps
   - sdrplay_api
