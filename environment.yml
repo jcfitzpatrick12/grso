@@ -2,7 +2,7 @@ name: gbo-env
 channels:
   - defaults
   - conda-forge
-  - ryanvoltz
+  - ryanvolz
   
 dependencies:
   - numpy
