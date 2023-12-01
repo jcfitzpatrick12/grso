@@ -61,7 +61,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 7e6
+    value: 96e3
   states:
     bus_sink: false
     bus_source: false
@@ -88,16 +88,18 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [800, 236.0]
+    coordinate: [784, 244.0]
     rotation: 0
     state: enabled
-- name: blocks_throttle_0
-  id: blocks_throttle
+- name: blocks_throttle2_0
+  id: blocks_throttle2
   parameters:
     affinity: ''
     alias: ''
     comment: ''
     ignoretag: 'True'
+    limit: auto
+    maximum: '0.1'
     maxoutbuf: '0'
     minoutbuf: '0'
     samples_per_second: samp_rate
@@ -107,7 +109,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [304, 284.0]
+    coordinate: [336, 284.0]
     rotation: 0
     state: true
 - name: import_0
@@ -144,7 +146,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [536, 236.0]
+    coordinate: [552, 244.0]
     rotation: 0
     state: enabled
 - name: pmtDictMaker
@@ -175,37 +177,31 @@ blocks:
     coordinate: [992, 76.0]
     rotation: 0
     state: true
-- name: sdrplay3_rsp1a_0
-  id: sdrplay3_rsp1a
+- name: soapy_sdrplay_source_0
+  id: soapy_sdrplay_source
   parameters:
-    AGC: 'False'
     affinity: ''
-    agc_set_point: '-30'
+    agc: 'False'
+    agc_setpoint: '0'
     alias: ''
-    bandwidth: 5000e3
-    biasT: 'False'
+    antenna: RX
+    bandwidth: samp_rate
+    bias: ''
     center_freq: center_freq
     comment: ''
-    dab_notch_filter: 'False'
-    dc_offset_mode: 'False'
-    debug_mode: 'False'
-    freq_corr: '0'
-    if_gRdB: '40'
-    iq_balance_mode: 'False'
+    dev_args: ''
+    freq_correction: '0'
+    gain: '30'
+    lna_state: '1'
     maxoutbuf: '0'
     minoutbuf: '0'
-    output_type: fc32
-    rf_gR: '0'
-    rf_notch_filter: 'False'
-    rsp_selector: ''
-    sample_rate: samp_rate
-    sample_sequence_gaps_check: 'False'
-    show_gain_changes: 'False'
+    samp_rate: samp_rate
+    type: fc32
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [64, 260.0]
+    coordinate: [88, 284.0]
     rotation: 0
     state: true
 - name: timeStamper
@@ -216,7 +212,8 @@ blocks:
     source_code: "from datetime import datetime\nimport os\n\nclass timeStamper:\n\
       \n\tdef returnDatetimeNowString(self):\n\t\treturn datetime.now().strftime(\"\
       %Y-%m-%dT%H:%M:%S\")\n\t\t\n\tdef returnFilePath(self,appendDate):\n\t\tdataPath\
-      \ = os.path.join(os.getcwd(),\"scripts\",\"data\",appendDate)\n\t\treturn dataPath\n"
+      \ = os.path.join(os.path.dirname(os.getcwd()),\"scripts\",\"data\",appendDate)\n\
+      \t\treturn dataPath\n"
   states:
     bus_sink: false
     bus_source: false
@@ -226,9 +223,10 @@ blocks:
     state: true
 
 connections:
-- [blocks_throttle_0, '0', low_pass_filter_0, '0']
+- [blocks_throttle2_0, '0', low_pass_filter_0, '0']
 - [low_pass_filter_0, '0', blocks_file_meta_sink_0_0, '0']
-- [sdrplay3_rsp1a_0, '0', blocks_throttle_0, '0']
+- [soapy_sdrplay_source_0, '0', blocks_throttle2_0, '0']
 
 metadata:
   file_format: 1
+  grc_version: 3.10.8.0
