@@ -27,10 +27,13 @@ do
   #kill the observation
   kill $pid
 
+  #compute the acerage spectrogram, save it as a fits file, then delete all the bulky files
+  python3 fMonitoring/CompressedMonitoring.py
+
   #give the script time to stop, so the SDR isnt busy when the new script starts
   sleep 1s
   
   # compute the average spectrogram, save it as a fits file, then delete all the bulky files
-  (cd "$GBOPARENTPATH" && python3 fMonitoring/CompressedMonitoring.py)
+  #(cd "$GBOPARENTPATH" && python3 fMonitoring/CompressedMonitoring.py)
   
 done

@@ -10,4 +10,7 @@ class sys_vars:
         #the path to the data file
         self.path_to_data = os.path.join(os.environ['GBOPARENTPATH'],"data")
 
+        #default time format
+        self.default_time_format="%Y-%m-%dT%H:%M:%S"
+
     

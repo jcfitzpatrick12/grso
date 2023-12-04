@@ -37,7 +37,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 40e6
+    value: 95.8e6
   states:
     bus_sink: false
     bus_source: false
@@ -61,7 +61,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 3e6
+    value: 4e6
   states:
     bus_sink: false
     bus_source: false
@@ -88,7 +88,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [784, 244.0]
+    coordinate: [688, 244.0]
     rotation: 0
     state: enabled
 - name: blocks_throttle2_0
@@ -109,9 +109,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [336, 284.0]
+    coordinate: [296, 284.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: import_0
   id: import
   parameters:
@@ -140,15 +140,15 @@ blocks:
     minoutbuf: '0'
     samp_rate: samp_rate
     type: fir_filter_ccf
-    width: 3e3
+    width: 3e5
     win: window.WIN_HAMMING
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [552, 244.0]
+    coordinate: [480, 124.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: pmtDictMaker
   id: epy_module
   parameters:
@@ -177,6 +177,67 @@ blocks:
     coordinate: [992, 76.0]
     rotation: 0
     state: true
+- name: qtgui_waterfall_sink_x_0
+  id: qtgui_waterfall_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    axislabels: 'True'
+    bw: samp_rate
+    color1: '0'
+    color10: '0'
+    color2: '0'
+    color3: '0'
+    color4: '0'
+    color5: '0'
+    color6: '0'
+    color7: '0'
+    color8: '0'
+    color9: '0'
+    comment: ''
+    fc: center_freq
+    fftsize: '1024'
+    freqhalf: 'True'
+    grid: 'False'
+    gui_hint: ''
+    int_max: '10'
+    int_min: '-160'
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    name: '""'
+    nconnections: '1'
+    showports: 'False'
+    type: complex
+    update_time: '0.005'
+    wintype: window.WIN_BLACKMAN_hARRIS
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [496, 536.0]
+    rotation: 0
+    state: enabled
 - name: soapy_sdrplay_source_0
   id: soapy_sdrplay_source
   parameters:
@@ -191,7 +252,7 @@ blocks:
     comment: ''
     dev_args: ''
     freq_correction: '0'
-    gain: '30'
+    gain: '39'
     lna_state: '1'
     maxoutbuf: '0'
     minoutbuf: '0'
@@ -223,7 +284,9 @@ blocks:
     state: true
 
 connections:
+- [blocks_throttle2_0, '0', blocks_file_meta_sink_0_0, '0']
 - [blocks_throttle2_0, '0', low_pass_filter_0, '0']
+- [blocks_throttle2_0, '0', qtgui_waterfall_sink_x_0, '0']
 - [low_pass_filter_0, '0', blocks_file_meta_sink_0_0, '0']
 - [soapy_sdrplay_source_0, '0', blocks_throttle2_0, '0']
 

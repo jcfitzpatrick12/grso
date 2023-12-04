@@ -3,18 +3,16 @@ from fMisc.sys_vars import sys_vars
 import os 
 #instantiate the pdata class, compute the average spectrogram and save it.
 Chunks=Chunks()
-#print(sys_vars().path_to_data)
 
-#Pdata.chunkDict contains the key_value pairs pseudo_start_time and the DataChunkFile
-#DataChunkFile is so named
-for pseudo_start_time,Chunk in Chunks.dict.items():
-    S = Chunk.buildRadioSpectrogram()
-    #S = S.timeAverage(3)
-    #S.plotSpectrogram()
-    S = Chunk.fits.loadRadioSpectrogram()
-    S = S.timeAverage(100)
-    S.plotSpectrogram()
-    S.plotPower()
-    
+#"%Y-%m-%dT%H:%M:%S"
+#startString = "2023-12-04T14:48:00"
+#endString = "2023-12-04T14:49:00"
 
+startString = "2023-12-04T18:02:43"
+endString = "2023-12-04T18:02:58"
+S=Chunks.buildSpectrogramFromRange(startString,endString)
+S.plotSpectrogram()
+
+
+    #
 

@@ -26,6 +26,7 @@ class RadioSpectrogram:
         self.pseudo_start_datetime=datetimeFuncs().parseDatetime(self.pseudo_start_time)
         self.isCompressed = isCompressed
         self.datetimeArray = self.build_datetimeArray()
+        self.datetimeArray64 = np.array(self.datetimeArray,dtype="datetime64[ms]")
         self.power = self.buildPower()
         self.sys_vars = sys_vars()
 
@@ -86,8 +87,8 @@ class RadioSpectrogram:
         primary_hdu.header['PSTIME'] = self.pseudo_start_time
         primary_hdu.header['ISCOMPR'] = self.isCompressed
 
-        col_time = fits.Column(name='Time', array=self.timeArray, format='D')
-        col_freq = fits.Column(name='Frequency', array=self.freqsMHz, format='D')
+        col_time = fits.Column(name='TIME', array=self.timeArray, format='D')
+        col_freq = fits.Column(name='FREQ', array=self.freqsMHz, format='D')
 
         tb_hdu_time = fits.BinTableHDU.from_columns([col_time])
         tb_hdu_freq = fits.BinTableHDU.from_columns([col_freq])
@@ -100,6 +101,33 @@ class RadioSpectrogram:
         # Write the FITS file
         hdulist.writeto(fpath, overwrite=True)
         pass
+
+    '''
+    function which returns a chopped spectrogram based on the time range
+
+    startRange and endRange are both datetime Objects
+    '''
+    def chop(self,startString,endString):
+        #parse the strings into datetimes
+        start_dt = datetimeFuncs().parseDatetime(startString)
+        end_dt = datetimeFuncs().parseDatetime(endString)
+        #find the index of the nearest matching datetime elements in the array
+        startIndex = datetimeFuncs().findClosestIndex(start_dt,self.datetimeArray)
+        endIndex = datetimeFuncs().findClosestIndex(end_dt,self.datetimeArray)
+
+        #if our start and end indices are identical, the requested range is entirely outwith the RadioSpectrom
+        #return the default null spectrogram
+        if startIndex==endIndex:
+            raise SystemError("start and end indices are equal!")
+        #chop the spectrogram and time values accordinglys
+        chopped_Sxx=self.Sxx[:,startIndex:endIndex]
+        chopped_timeArray = self.timeArray[startIndex:endIndex]
+        #translate the chopped_timeArray to again start at zero.
+        chopped_timeArray-=chopped_timeArray[0]
+        chopped_pseudo_start_time = datetimeFuncs().fromString(self.datetimeArray[startIndex])
+        #return the chopped RadioSpectrogram
+        return RadioSpectrogram(chopped_Sxx,chopped_timeArray,self.freqsMHz,self.center_freq,chopped_pseudo_start_time,self.isCompressed)
+
 
     '''
     function which RETURNS the average spectrogram, and (necessarily) decimated timeArray
