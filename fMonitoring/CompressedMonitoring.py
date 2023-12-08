@@ -16,10 +16,10 @@ for pseudo_start_time,Chunk in Chunks.dict.items():
     #otherwise, the fits file exists and we can simply pass this chunk
     else:
         #build the spectrogram from the Chunk
-        Spectrogram = Chunk.buildRadioSpectrogram()
-        Spectrogram = Spectrogram.timeAverage(10)
+        Spectrogram = Chunk.build_radio_spectrogram()
+        Spectrogram = Spectrogram.time_average(10)
         #save the spectrogram to a fits file
-        Spectrogram.savetoFits()
+        Spectrogram.save_to_fits()
 
 #remove all the non-fits files.
-Chunks.removeBigFiles()
+Chunks.remove_big_files()

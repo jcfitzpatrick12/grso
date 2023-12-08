@@ -11,8 +11,9 @@
 from PyQt5 import Qt
 from gnuradio import qtgui
 from gnuradio import blocks
-from gnuradio import gr
+from gnuradio import filter
 from gnuradio.filter import firdes
+from gnuradio import gr
 from gnuradio.fft import window
 import sys
 import signal
@@ -25,7 +26,6 @@ import pmt
 from gnuradio import soapy
 import observeCollect_pmtDictMaker as pmtDictMaker  # embedded python module
 import observeCollect_timeStamper as timeStamper  # embedded python module
-import sip
 
 
 
@@ -64,7 +64,7 @@ class observeCollect(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 4e6
+        self.samp_rate = samp_rate = 250e3
         self.pseudo_start_time = pseudo_start_time = timeStamper.timeStamper().returnDatetimeNowString()
         self.center_freq = center_freq = 95.8e6
 
@@ -112,41 +112,15 @@ class observeCollect(gr.top_block, Qt.QWidget):
         self.set_soapy_sdrplay_source_0_gain_mode(0, False)
         self.set_soapy_sdrplay_source_0_gain(0, 39)
         self.set_soapy_sdrplay_source_0_lna_state(0, 1)
-        self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
-            1024, #size
-            window.WIN_BLACKMAN_hARRIS, #wintype
-            center_freq, #fc
-            samp_rate, #bw
-            "", #name
-            1, #number of inputs
-            None # parent
-        )
-        self.qtgui_waterfall_sink_x_0.set_update_time(0.005)
-        self.qtgui_waterfall_sink_x_0.enable_grid(False)
-        self.qtgui_waterfall_sink_x_0.enable_axis_labels(True)
-
-
-
-        labels = ['', '', '', '', '',
-                  '', '', '', '', '']
-        colors = [0, 0, 0, 0, 0,
-                  0, 0, 0, 0, 0]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-
-        for i in range(1):
-            if len(labels[i]) == 0:
-                self.qtgui_waterfall_sink_x_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_waterfall_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_waterfall_sink_x_0.set_color_map(i, colors[i])
-            self.qtgui_waterfall_sink_x_0.set_line_alpha(i, alphas[i])
-
-        self.qtgui_waterfall_sink_x_0.set_intensity_range(-160, 10)
-
-        self._qtgui_waterfall_sink_x_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0.qwidget(), Qt.QWidget)
-
-        self.top_layout.addWidget(self._qtgui_waterfall_sink_x_0_win)
+        self.low_pass_filter_0 = filter.fir_filter_ccf(
+            1,
+            firdes.low_pass(
+                1,
+                samp_rate,
+                (samp_rate/2),
+                3e4,
+                window.WIN_HAMMING,
+                6.76))
         self.blocks_throttle2_0 = blocks.throttle( gr.sizeof_gr_complex*1, samp_rate, True, 0 if "auto" == "auto" else max( int(float(0.1) * samp_rate) if "auto" == "time" else int(0.1), 1) )
         self.blocks_file_meta_sink_0_0 = blocks.file_meta_sink(gr.sizeof_gr_complex*1, timeStamper.timeStamper().returnFilePath(pseudo_start_time), samp_rate, 1, blocks.GR_FILE_FLOAT, True, 1000000, pmtDictMaker.BuildDict().GetDict(samp_rate,center_freq,pseudo_start_time), True)
         self.blocks_file_meta_sink_0_0.set_unbuffered(False)
@@ -155,8 +129,8 @@ class observeCollect(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_throttle2_0, 0), (self.blocks_file_meta_sink_0_0, 0))
-        self.connect((self.blocks_throttle2_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
+        self.connect((self.blocks_throttle2_0, 0), (self.low_pass_filter_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.blocks_file_meta_sink_0_0, 0))
         self.connect((self.soapy_sdrplay_source_0, 0), (self.blocks_throttle2_0, 0))
 
 
@@ -174,7 +148,7 @@ class observeCollect(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle2_0.set_sample_rate(self.samp_rate)
-        self.qtgui_waterfall_sink_x_0.set_frequency_range(self.center_freq, self.samp_rate)
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate, (self.samp_rate/2), 3e4, window.WIN_HAMMING, 6.76))
         self.soapy_sdrplay_source_0.set_sample_rate(0, self.samp_rate)
         self.soapy_sdrplay_source_0.set_bandwidth(0, self.samp_rate)
 
@@ -190,7 +164,6 @@ class observeCollect(gr.top_block, Qt.QWidget):
 
     def set_center_freq(self, center_freq):
         self.center_freq = center_freq
-        self.qtgui_waterfall_sink_x_0.set_frequency_range(self.center_freq, self.samp_rate)
         self.soapy_sdrplay_source_0.set_frequency(0, self.center_freq)
 
 

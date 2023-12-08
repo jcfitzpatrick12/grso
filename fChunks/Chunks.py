@@ -9,7 +9,7 @@ from datetime import timedelta
 from fMisc.FileString import FileString
 from fMisc.sys_vars import sys_vars
 from fChunks.Chunk import ChunkFits
-from fMisc.datetimeFuncs import datetimeFuncs
+from fMisc.DatetimeFuncs import DatetimeFuncs
 from fChunks.Chunk import Chunk
 from fSpectrogram.RadioSpectrogram import RadioSpectrogram
 
@@ -20,13 +20,13 @@ class Chunks:
         #build path to pdata
         self.sys_vars=sys_vars()
         #builds the chunkDict
-        self.dict = self.buildDict()
+        self.dict = self.build_dict()
         #sorts the dictionary temporally
-        self.sortDicts()
+        self.sort_dict()
 
 
     #removes all non compressed files
-    def removeBigFiles(self,):
+    def remove_big_files(self,):
         # Loop through files in the directory
         for file in os.listdir(self.sys_vars.path_to_data):
             fs = FileString(file)
@@ -39,15 +39,15 @@ class Chunks:
 
 
 
-    def updateDict(self):
-        self.buildDict()
+    def update_dict(self):
+        self.build_dict()
         pass
 
     '''
     build the dictionaries containing Chunk classes
     '''
 
-    def buildDict(self):
+    def build_dict(self):
         #create a dictionary which whill hold the key,value pairs [pseudo_start_time, dataChunk object]
         dict = {}
         #for each file in Pdata folder
@@ -65,91 +65,115 @@ class Chunks:
     '''
     sorts the dictionaries by its keys
     '''
-    def sortDicts(self):
+    def sort_dict(self):
         self.dict = {k: self.dict[k] for k in sorted(self.dict)}
 
     '''
     Function which returns a dictionary of all Chunks in a specified time range
+
+    [Will possibly be very inefficient for lots of files in data! Must be a more efficient way to check]
+
     - want to be able to return a spectrogram over a custom time range.
 
     -takes in StartString and EndString in the format self.sys_vars.default_time_format
     -then outputs a RadioSpectrogram over the time range specified by StartString and EndString
     '''
 
-    def buildSpectrogramFromRange(self,startString,endString):
+    def build_spectrogram_from_range(self,start_str,end_str):
         #loop through each Chunk in data and chop to the range
-        #create a list of spectrogram objects to joint
-        toJoin = []
+        #initiate an empty list to hold the RadiosSpectrogram objects to join
+        to_join = []
+        #for each Chunk in data, try and chop it to the time range
         for pseudo_start_time,Chunk in self.dict.items():
             #load the spectrogram from the chunk
-            S = Chunk.fits.loadRadioSpectrogram()
+            S = Chunk.fits.load_radio_spectrogram()
             try:
                 #chop the spectrogram according to the requested range
-                S = S.chop(startString,endString)
+                S = S.chop(start_str,end_str)
+                #S.Sxx[:,0]=1000
+                #S.Sxx[:,-1]=1000
                 #if the spectrogram is in the requested range, add it to the spectrograms to join
-                toJoin.append(S)
+                to_join.append(S)
             #otherwise, we'll get an error thrown that the indices are equal. This means the spectrogram is out of range
             #and we can ignore it.
             except:
                 pass
 
-        #if we have spectrograms to join, join them 
-        if len(toJoin)>1:
-            #join all the spectrograms together, padding with zeros between
-            return self.joinSpectrograms(toJoin)   
+        #if we didn't find any spectrograms to join...
+        if len(to_join)==0:
+            raise SystemError("No file matches! Choose a different time range.")
         #if we are looking at a single spectrogram, simple return it chopped accordingly
-        else:
-            return toJoin[0]
+        if len(to_join)==1:
+            return to_join[0]
+        #if we more than one spectrogram to join, join them.
+        elif len(to_join)>1:
+            #join all the spectrograms together, padding with zeros between
+            return self.join_spectrograms(to_join)   
+       
     
     '''
-    join a number of spectrograms in the form of a list.
+    join a number of spectrograms [stored in the "toJoin" list]
+
+    -pads in between with NaNs, since there will be a couple of seconds of downtime
+    -we don't need to worry about the spectrograms being time ordered as the dictionary is already sorted in Chunks
     '''
 
-    def joinSpectrograms(self,toJoin):
+    def join_spectrograms(self,to_join):
 
         #find the number of spectrograms to join
-        num_toJoin = len(toJoin)
+        num_to_join = len(to_join)
         # Padding columns: one less than the number of spectrograms
-        numZeroCols = num_toJoin - 1
+        num_zero_cols = num_to_join - 1
 
-        #the number of time bins for each spectrogram.
-        num_timeBins = []
-        for i, S in enumerate(toJoin):
+        #initialise an empty array to hold the number of time_samples in each spectrogram to join
+        #this is necessary, as the number will naturally vary between each spectrogram [though approximately equal, out in the tens of samples]
+        num_time_samples = []
+        #for each Spectrogram, in those to join.
+        for i, S in enumerate(to_join):
             #if we are considering the first spectrogram, extract the pseudo_start_time and the frequency bins
+            #we will need the former to set the pseudo_start_time of the joined spectrogram
+            #and we will need the latter for initialising the empty array to store the joined spectrograms [need to define its shape]
             if i == 0:
                 new_pseudo_start_time = S.pseudo_start_time
-                numFreqs = len(S.freqsMHz)
+                num_freqs = len(S.freqs_MHz)
                 
-            #keep track of the number of time bins
-            num_timeBins.append(S.Sxx.shape[1])
+            #keep track of the number of timeSamples in each spectrogram.
+            num_time_samples.append(S.Sxx.shape[1])
         
-        #the total number of columns is the number of zeroed columns plus the total sum of the number of timebins in each spectrogram
-        numCols = numZeroCols + sum(num_timeBins)
+        #the total number of columns is the number of zeroed columns plus the total sum of the number of samples in each spectrogram
+        num_cols = num_zero_cols + sum(num_time_samples)
         
         #prepping arrays to hold the joined spectrogram
-        joined_Sxx = np.zeros((numFreqs,numCols))
-        joined_datetimeArray = np.empty(numCols,dtype='datetime64[ms]')
+        joined_Sxx = np.zeros((num_freqs,num_cols))
+        joined_datetime_array = np.empty(num_cols,dtype='datetime64[ns]')
 
         #now for each spectrogram, place in the data with zeros padding between them
-        for i,S in enumerate(toJoin):
-            #if we are at the first spectrogram start from the start
+        for i,S in enumerate(to_join):
+            #if we are at the first spectrogram, we want to start from the 0th index, so set disp=0
             if i==0:
                 disp = 0
-            #otherwise, we displace the start index by the sum of the previous number of bins
+            #otherwise, we displace the start index by the sum of the previous number of samples
             else:
-                disp = sum(num_timeBins[:i])
+                disp = sum(num_time_samples[:i])
     
-            #and finally we displace by the number of zero columns
-            startInd = i+disp
-            endInd = startInd + num_timeBins[i]
-            joined_Sxx[:,startInd:endInd]=S.Sxx
-      
+            #the start index is the sum of the number of zero columns prior to the ith spectrogram [i]
+            #and the displacement, disp, defined as the sum of time samples in spectrograms prior to the ith spectrogram.
+            start_ind = i+disp
+            #the end index is naturally the start index, plus the number of time samples in the ith spectrogram
+            end_ind = start_ind + num_time_samples[i]
+            #we place in the ith spectrogram here.
+            joined_Sxx[:,start_ind:end_ind]=S.Sxx
+
+            #the element of joined_datetimeArray indexed by (startInd-1) is responsible for telling us the width of the padding array
+            #so that the padded section spans the entirety of the downtime between two neighbouring spectrograms
+            #we may simple duplicate the first entry.
             if i>0:
-                joined_datetimeArray[startInd-1]=S.datetimeArray64[0]
+                joined_datetime_array[start_ind-1]=S.datetime_array64[0]
+            #finally, place the original datetimes of the spectrogram into the joined_datetimeArray
+            joined_datetime_array[start_ind:end_ind]=S.datetime_array64
 
-            joined_datetimeArray[startInd:endInd]=S.datetimeArray64
-
-        joined_timeArray = datetimeFuncs().toSeconds(joined_datetimeArray)
+        #convert the joined_datetimeArray into an array of seconds since t=0, so that we can construct the spectrogram object
+        joined_time_array = DatetimeFuncs().to_seconds(joined_datetime_array)
         
-        return RadioSpectrogram(joined_Sxx,joined_timeArray,S.freqsMHz,S.center_freq,new_pseudo_start_time,S.isCompressed)
+        return RadioSpectrogram(joined_Sxx,joined_time_array,S.freqs_MHz,S.center_freq,new_pseudo_start_time,S.is_compressed)
         

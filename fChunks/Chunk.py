@@ -6,6 +6,7 @@ import numpy as np
 from datetime import datetime
 import scipy.signal as signal
 from scipy.signal import spectrogram
+import matplotlib.pyplot as plt
 
 from fChunks.ChunkBin import ChunkBin
 from fChunks.ChunkHdr import ChunkHdr
@@ -42,17 +43,17 @@ class Chunk:
     build the original RadioSpectrogram object from the bin and header files [no compression]
     '''
 
-    def buildRadioSpectrogram(self):
+    def build_radio_spectrogram(self):
         #check that the binary and header files both exist for the chunk.
         if self.bin.exists() and self.hdr.exists():
             #otherwise, create from the original data and save it to memory.
-            IQdata = self.bin.getIQData()
-            headerDict = self.hdr.parseHeader()
+            IQ_data = self.bin.get_IQ_data()
+            headerDict = self.hdr.parse_header()
             #extract some important variables from headerDict
             center_freq = pmt.to_float(headerDict['center_freq'])
             samp_rate = pmt.to_long(headerDict['samp_rate'])
             # Compute the spectrogram with both positive and negative frequencies
-            freqs, timeArray, Sxx = spectrogram(IQdata, fs=samp_rate, window=signal.get_window(self.sys_vars.window_type,self.sys_vars.window_size),return_onesided=False)
+            freqs, timeArray, Sxx = spectrogram(IQ_data, fs=samp_rate, window=signal.get_window(self.sys_vars.window_type,self.sys_vars.window_size),return_onesided=False)
             # Shift the zero-frequency component to the center
             Sxx = np.fft.fftshift(Sxx, axes=0)
             freqs = np.fft.fftshift(freqs)

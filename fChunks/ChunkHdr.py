@@ -12,16 +12,16 @@ class ChunkHdr:
     def __init__(self,pseudo_start_time):
         self.sys_vars=sys_vars()
         self.pseudo_start_time = pseudo_start_time
-        self.path = self.getPath()
+        self.path = self.get_path()
 
     #find the path to the binary
-    def getPath(self):
+    def get_path(self):
         return os.path.join(self.sys_vars.path_to_data,self.pseudo_start_time+'.hdr')
     
     def exists(self):
         return os.path.exists(self.path)
     
-    def parseHeader(self):
+    def parse_header(self):
         #open the header file
         fh = open(self.path, "rb")
         # Reads the header of a fixed length from the current position in the file and moves the read pointer by HEADER_LENGTH bytes.
@@ -32,7 +32,7 @@ class ChunkHdr:
         header_info = parse_file_metadata.parse_header(header,False)
 
         #make a deep copy of the dictionary [Why?]
-        headerDict = header_info.copy()
+        header_dict = header_info.copy()
         
         #extra length in the header, these lines are necessary to move the reading pointer to the start of the next segment
         if header_info["extra_len"] > 0:
@@ -45,6 +45,6 @@ class ChunkHdr:
                 for each element in extra info, append to header_info dict
                 '''
                 for key,value in extra_info.items():
-                    headerDict[key]=value
+                    header_dict[key]=value
 
-        return headerDict
+        return header_dict
