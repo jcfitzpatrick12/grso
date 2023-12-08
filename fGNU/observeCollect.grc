@@ -229,7 +229,7 @@ blocks:
     nconnections: '1'
     showports: 'False'
     type: complex
-    update_time: '0.00025'
+    update_time: '0.01'
     wintype: window.WIN_BLACKMAN_hARRIS
   states:
     bus_sink: false
@@ -237,7 +237,7 @@ blocks:
     bus_structure: null
     coordinate: [664, 596.0]
     rotation: 0
-    state: disabled
+    state: enabled
 - name: soapy_sdrplay_source_0
   id: soapy_sdrplay_source
   parameters:

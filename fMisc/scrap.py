@@ -5,14 +5,9 @@ import numpy as np
 #instantiate the pdata class, compute the average spectrogram and save it.
 Chunks=Chunks()
 
-
-for pseudo_start_time,Chunk in Chunks.dict.items():
-    print(pseudo_start_time)
-    S_original = Chunk.fits.load_radio_spectrogram()
-
 #"%Y-%m-%dT%H:%M:%S"
-start_string = "2023-12-08T17:27:01"
-end_string = "2023-12-08T17:27:09"
+start_string = "2023-12-08T23:26:00"
+end_string = "2023-12-08T23:28:12"
 
 #startString = "2023-12-04T18:02:43"
 #endString = "2023-12-04T18:02:58"

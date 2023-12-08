@@ -9,8 +9,7 @@ class Plotter:
         self.fsize=15
 
     def plot_power(self,datetime_array,power):
-        
-        plt.plot(datetime_array,10 * np.log10(power))
+        plt.stairs(10 * np.log10(power),datetime_array)
         #format the datetime axis 
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
         plt.gca().xaxis.set_major_locator(mdates.SecondLocator(interval=10))  # adjust the interval for your needs
@@ -27,7 +26,7 @@ class Plotter:
     def plot_spectrogram(self,freqs_MHZ, datetime_array, Sxx):
 
         # Plot the spectrogram
-        plt.pcolormesh(datetime_array, freqs_MHZ, 10 * np.log10(Sxx), shading='gouraud')
+        plt.pcolormesh(datetime_array, freqs_MHZ, 10 * np.log10(Sxx))
         #format the datetime axis 
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
         plt.gca().xaxis.set_major_locator(mdates.SecondLocator(interval=1))  # adjust the interval for your needs

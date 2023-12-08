@@ -6,6 +6,7 @@ import numpy as np
 import pickle
 import os
 from astropy.io import fits
+from datetime import timedelta
 
 from fPlotting.Plotter import Plotter
 from fMisc.sys_vars import sys_vars
@@ -19,14 +20,16 @@ class RadioSpectrogram:
     def __init__(self, Sxx, time_array, freqs_MHz, center_freq, pseudo_start_time,is_compressed):
         self.sys_vars = sys_vars()
         self.Sxx = Sxx
-        self.time_array = time_array
+        #displace so that the first element of the time array is at 0 seconds
+        self.time_array = time_array-time_array[0]
         self.freqs_MHz = freqs_MHz
         self.center_freq = center_freq
+        self.is_compressed = is_compressed
+
         self.pseudo_start_time = pseudo_start_time
         self.pseudo_start_datetime=DatetimeFuncs().parse_datetime(self.pseudo_start_time)
-        self.is_compressed = is_compressed
         self.datetime_array = self.build_datetime_array()
-        self.datetime_array64 = np.array(self.datetime_array,dtype="datetime64[ns]")
+        self.datetime64_array = np.array(self.datetime_array,dtype="datetime64[ns]")
         self.power = self.build_power()
         self.sys_vars = sys_vars()
 
@@ -107,10 +110,10 @@ class RadioSpectrogram:
 
     startRange and endRange are both datetime Objects
     '''
-    def chop(self,startString,endString):
+    def chop(self,start_str,end_str):
         #parse the strings into datetimes
-        start_dt = DatetimeFuncs().parse_datetime(startString)
-        end_dt = DatetimeFuncs().parse_datetime(endString)
+        start_dt = DatetimeFuncs().parse_datetime(start_str)
+        end_dt = DatetimeFuncs().parse_datetime(end_str)
         #find the index of the nearest matching datetime elements in the array
         startIndex = DatetimeFuncs().find_closest_index(start_dt,self.datetime_array)
         endIndex = DatetimeFuncs().find_closest_index(end_dt,self.datetime_array)
@@ -121,7 +124,7 @@ class RadioSpectrogram:
             raise SystemError("Start and end indices are equal! Cannot chop.")
         #chop the spectrogram and time values accordinglys
         chopped_Sxx=self.Sxx[:,startIndex:endIndex]
-        chopped_timeArray = self.time_array[startIndex:endIndex]
+        chopped_timeArray = self.time_array[startIndex:endIndex+1]
         #translate the chopped_timeArray to again start at zero.
         chopped_timeArray-=chopped_timeArray[0]
         #extract the new pseudo_start_time
@@ -168,6 +171,10 @@ class RadioSpectrogram:
             averageSxx[:,i] = np.mean(self.Sxx[:,N*i:N*i+N],axis=1)
             timeArrayDecimated.append(self.time_array[i*N])
         
+        #add the final bin edge for the decimated time array
+        dt = timeArrayDecimated[-3]-timeArrayDecimated[-2]
+        timeArrayDecimated.append(timeArrayDecimated[-1]+dt)
+
         #if there is a non-zero remainder, average over the remaining terms
         if remainder:
             averageSxx[:,-1] = np.mean(self.Sxx[:,-remainder::])

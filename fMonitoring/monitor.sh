@@ -28,7 +28,7 @@ do
   kill $pid
 
   #compute the acerage spectrogram, save it as a fits file, then delete all the bulky files
-  python3 fMonitoring/CompressedMonitoring.py
+  python3 fMonitoring/CompressedMonitoring.py 
 
   #give the script time to stop, so the SDR isnt busy when the new script starts
   sleep 1s

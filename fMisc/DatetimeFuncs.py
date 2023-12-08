@@ -1,5 +1,6 @@
 from datetime import datetime
 from datetime import timedelta
+import numpy as np
 from fMisc.sys_vars import sys_vars
 
 class DatetimeFuncs:
@@ -14,17 +15,18 @@ class DatetimeFuncs:
         #create an empty list to hold the datetimes
         datetime_array = []
         #for each time in time array, form the datetime object and append it to the list
-        for time in time_array:
-            new_datetime = start_datetime + timedelta(seconds=time)
+        for i in range(0,len(time_array)):
+            new_datetime = start_datetime + timedelta(seconds=time_array[i])
             datetime_array.append(new_datetime)
         #return the list
         return datetime_array
 
-    def to_seconds(self, datetime_array):
+    def datetime64_array_to_seconds(self, datetime64_array):
         # Convert the entire array to float representing seconds
         # This retains precision for milliseconds or microseconds
-        seconds_array = (datetime_array - datetime_array[0]).astype('timedelta64[ns]').astype(float) / 1e9
-        return seconds_array.tolist()
+        seconds_array = (datetime64_array-datetime64_array[0]).astype('timedelta64[ns]').astype(float) / 1e9
+        #displace by the sample rate
+        return seconds_array
     
     def parse_datetime(self,datetime_string):
         #extract the corresponding datetime
