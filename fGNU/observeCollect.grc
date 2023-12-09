@@ -61,7 +61,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 250e3
+    value: 5e6
   states:
     bus_sink: false
     bus_source: false
@@ -235,9 +235,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [664, 596.0]
+    coordinate: [720, 444.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: soapy_sdrplay_source_0
   id: soapy_sdrplay_source
   parameters:
@@ -272,9 +272,9 @@ blocks:
     comment: ''
     source_code: "from datetime import datetime\nimport os\n\nclass timeStamper:\n\
       \n\tdef returnDatetimeNowString(self):\n\t\treturn datetime.now().strftime(\"\
-      %Y-%m-%dT%H:%M:%S\")\n\t\t\n\tdef returnFilePath(self,appendDate):\n\t\tdataPath\
-      \ = os.path.join(os.environ['GBOPARENTPATH'],\"data\",appendDate)\n\t\treturn\
-      \ dataPath\n"
+      %Y-%m-%dT%H:%M:%S\")\n\t\t\n\tdef returnFilePath(self,appendDate):\n\t\tdata_path\
+      \ = os.path.join(os.environ['GBOPARENTPATH'],\"temp_data\",appendDate)\n\t\t\
+      return data_path\n"
   states:
     bus_sink: false
     bus_source: false

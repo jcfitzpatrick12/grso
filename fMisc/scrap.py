@@ -6,8 +6,8 @@ import numpy as np
 Chunks=Chunks()
 
 #"%Y-%m-%dT%H:%M:%S"
-start_string = "2023-12-08T23:26:00"
-end_string = "2023-12-08T23:28:12"
+start_string = "2023-12-09T21:13:15"
+end_string = "2023-12-09T21:13:30"
 
 #startString = "2023-12-04T18:02:43"
 #endString = "2023-12-04T18:02:58"

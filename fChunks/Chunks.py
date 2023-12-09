@@ -6,6 +6,8 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import timedelta
+import time
+
 from fMisc.FileString import FileString
 from fMisc.sys_vars import sys_vars
 from fChunks.Chunk import ChunkFits
@@ -23,10 +25,12 @@ class Chunks:
         self.dict = self.build_dict()
         #sorts the dictionary temporally
         self.sort_dict()
+        #creates a dictionary to keep track of which files are still being filled by gnuradio
+        self.is_file_static_dict={}
 
 
-    #removes all non compressed files
-    def remove_big_files(self,):
+        #removes all non compressed files
+    def remove_non_fits_files_from_data(self,):
         # Loop through files in the directory
         for file in os.listdir(self.sys_vars.path_to_data):
             fs = FileString(file)
@@ -35,8 +39,8 @@ class Chunks:
                 file_path = os.path.join(self.sys_vars.path_to_data, file)
                 os.remove(file_path)
                 print(f"Deleted {file}")
-        pass  
 
+        return None
 
 
     def update_dict(self):
@@ -96,7 +100,7 @@ class Chunks:
             pseudo_start_time = Chunk.fits.return_info("PSTIME")
             pseudo_start_datetime=DatetimeFuncs().parse_datetime(pseudo_start_time)
             datetime_array = DatetimeFuncs().build_datetime_array(pseudo_start_datetime,time_array)
-
+            
             if not requested_start_datetime <= datetime_array[0] <= requested_end_datetime and not requested_start_datetime <= datetime_array[-1] <= requested_end_datetime:
                 continue
                 
@@ -192,5 +196,5 @@ class Chunks:
         joined_time_array = DatetimeFuncs().datetime64_array_to_seconds(joined_datetime_array)
         
         #raise SystemExit
-        return RadioSpectrogram(joined_Sxx,joined_time_array,S.freqs_MHz,S.center_freq,new_pseudo_start_time,S.is_compressed)
+        return RadioSpectrogram(joined_Sxx,joined_time_array,S.freqs_MHz,S.center_freq,new_pseudo_start_time,S.is_averaged)
         

@@ -40,11 +40,7 @@ class FileString:
 
     #extract pseudo_start_time from the filename [careful! if we have a compressed file]
     def find_pseudo_start_time(self):
-        #if the file begins with a C, take the rest of the filename [without the extension]
-        if self.file_name[0]=="C":
-            return self.file_name[1:]
-        else:
-            return self.file_name
+        return self.file_name
         
 
 

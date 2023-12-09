@@ -59,15 +59,15 @@ class ChunkFits:
                 # Extract other necessary attributes from the header
                 center_freq = primary_hdu.header['CFREQ']
                 pseudo_start_time = primary_hdu.header['PSTIME']
-                isCompressed = primary_hdu.header['ISCOMPR']
+                is_averaged = primary_hdu.header['ISAVR']
 
                 # Assuming timeArray and freqsMHz are stored in a binary table in the second HDU
-                timeArray = hdulist[1].data['TIME']
-                freqsMHz = hdulist[2].data['FREQ']
+                time_array = hdulist[1].data['TIME']
+                freqs_MHz = hdulist[2].data['FREQ']
 
 
                     # Create a new instance of RadioSpectrogram
-            return RadioSpectrogram(Sxx, timeArray, freqsMHz, center_freq, pseudo_start_time, isCompressed)
+            return RadioSpectrogram(Sxx, time_array, freqs_MHz, center_freq, pseudo_start_time, is_averaged)
 
         else:
             raise SystemError('No file found!!')

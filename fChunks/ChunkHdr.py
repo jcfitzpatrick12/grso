@@ -12,18 +12,17 @@ class ChunkHdr:
     def __init__(self,pseudo_start_time):
         self.sys_vars=sys_vars()
         self.pseudo_start_time = pseudo_start_time
-        self.path = self.get_path()
 
-    #find the path to the binary
-    def get_path(self):
-        return os.path.join(self.sys_vars.path_to_data,self.pseudo_start_time+'.hdr')
+    #find the path to data
+    def get_data_path(self):
+        return os.path.join(self.sys_vars.path_to_data,self.pseudo_start_time+".hdr")
     
     def exists(self):
-        return os.path.exists(self.path)
+        return os.path.exists(self.get_data_path())
     
     def parse_header(self):
         #open the header file
-        fh = open(self.path, "rb")
+        fh = open(self.get_data_path(), "rb")
         # Reads the header of a fixed length from the current position in the file and moves the read pointer by HEADER_LENGTH bytes.
         header_str = fh.read(parse_file_metadata.HEADER_LENGTH)
         #deserailise the header_str 

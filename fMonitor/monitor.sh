@@ -27,13 +27,29 @@ do
   #kill the observation
   kill $pid
 
-  #compute the acerage spectrogram, save it as a fits file, then delete all the bulky files
-  python3 fMonitoring/CompressedMonitoring.py 
-
   #give the script time to stop, so the SDR isnt busy when the new script starts
   sleep 1s
+
+  #Move all files in temp_data to data
+  src_dir="$GBOPARENTPATH/temp_data"
+  dest_dir="$GBOPARENTPATH/data"
+
+  # Move all files from the source to the destination directory
+  mv "$src_dir"/* "$dest_dir"/
+
+  #run the postprocessing as a background script if we have another observational cycle to run
+  if (( $i < $max_iter )); then 
+    python3 fMonitor/post_proc.py &
+  else
+  #otherwise, just run as a foreground process so that the script can end gracefully
+    python3 fMonitor/post_proc.py
+  fi
+
   
-  # compute the average spectrogram, save it as a fits file, then delete all the bulky files
-  #(cd "$GBOPARENTPATH" && python3 fMonitoring/CompressedMonitoring.py)
-  
+
+
 done
+
+
+
+

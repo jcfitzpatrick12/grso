@@ -39,24 +39,6 @@ class Chunk:
         #insantiate the ChunkFits class
         self.fits = ChunkFits(pseudo_start_time)
 
-    '''
-    Delete according to extension
-    '''
-    def delete_file(self,file_ext):
-        if file_ext==".bin":
-            file = "{}".format(self.pseudo_start_time,file_ext)
-        else:
-            file = "{}{}".format(self.pseudo_start_time,file_ext)
-        file_path = os.path.join(self.sys_vars.path_to_data, file)
-        print(file_path)
-        raise SystemExit
-        if os.path.exists(file_path):
-            os.remove(file_path)
-            print(file_path)
-            print(f"Deleted {file}")
-        else:
-            raise SystemError("File does not exist!")
-        pass
 
     '''
     build the original RadioSpectrogram object from the bin and header files [no compression]

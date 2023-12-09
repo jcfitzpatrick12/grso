@@ -17,14 +17,14 @@ class RadioSpectrogram:
     '''
     constructor functions
     '''
-    def __init__(self, Sxx, time_array, freqs_MHz, center_freq, pseudo_start_time,is_compressed):
+    def __init__(self, Sxx, time_array, freqs_MHz, center_freq, pseudo_start_time,is_averaged):
         self.sys_vars = sys_vars()
         self.Sxx = Sxx
         #displace so that the first element of the time array is at 0 seconds
         self.time_array = time_array-time_array[0]
         self.freqs_MHz = freqs_MHz
         self.center_freq = center_freq
-        self.is_compressed = is_compressed
+        self.is_averaged = is_averaged
 
         self.pseudo_start_time = pseudo_start_time
         self.pseudo_start_datetime=DatetimeFuncs().parse_datetime(self.pseudo_start_time)
@@ -62,9 +62,13 @@ class RadioSpectrogram:
     '''
     file functions
     '''
-    def get_path(self):
-        fpath = os.path.join(self.sys_vars.path_to_data,self.pseudo_start_time)
-        return fpath
+    #find the path to temporary_data
+    def get_temp_data_path(self):
+        return os.path.join(self.sys_vars.path_to_temp_data,self.pseudo_start_time)
+    
+    #find the path to data
+    def get_data_path(self):
+        return os.path.join(self.sys_vars.path_to_data,self.pseudo_start_time)
     
     '''
     function which saves the current instance to file
@@ -88,7 +92,7 @@ class RadioSpectrogram:
         # Add other attributes as headers in the primary HDU
         primary_hdu.header['CFREQ'] = self.center_freq
         primary_hdu.header['PSTIME'] = self.pseudo_start_time
-        primary_hdu.header['ISCOMPR'] = self.is_compressed
+        primary_hdu.header['ISAVR'] = self.is_averaged
 
         col_time = fits.Column(name='TIME', array=self.time_array, format='D')
         col_freq = fits.Column(name='FREQ', array=self.freqs_MHz, format='D')
@@ -130,7 +134,7 @@ class RadioSpectrogram:
         #extract the new pseudo_start_time
         chopped_pseudo_start_time = DatetimeFuncs().to_string(self.datetime_array[startIndex])
         #return the chopped RadioSpectrogram
-        return RadioSpectrogram(chopped_Sxx,chopped_timeArray,self.freqs_MHz,self.center_freq,chopped_pseudo_start_time,self.is_compressed)
+        return RadioSpectrogram(chopped_Sxx,chopped_timeArray,self.freqs_MHz,self.center_freq,chopped_pseudo_start_time,self.is_averaged)
 
 
     '''
