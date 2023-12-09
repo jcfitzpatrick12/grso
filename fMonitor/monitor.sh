@@ -45,9 +45,6 @@ do
     python3 fMonitor/post_proc.py
   fi
 
-  
-
-
 done
 
 
