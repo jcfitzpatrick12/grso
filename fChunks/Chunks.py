@@ -100,23 +100,23 @@ class Chunks:
             pseudo_start_time = Chunk.fits.return_info("PSTIME")
             pseudo_start_datetime=DatetimeFuncs().parse_datetime(pseudo_start_time)
             datetime_array = DatetimeFuncs().build_datetime_array(pseudo_start_datetime,time_array)
-            
-            if not requested_start_datetime <= datetime_array[0] <= requested_end_datetime and not requested_start_datetime <= datetime_array[-1] <= requested_end_datetime:
+
+            if datetime_array[0] <= requested_start_datetime <= datetime_array[-1] or datetime_array[0] <= requested_end_datetime <= datetime_array[-1]:
+                try:
+                    #load the spectrogram from the chunk
+                    S = Chunk.fits.load_radio_spectrogram()
+                    #chop the spectrogram according to the requested range
+                    S = S.chop(requested_start_str,requested_end_str)
+                    #S.Sxx[:,0]=1000
+                    #S.Sxx[:,-1]=1000
+                    #if the spectrogram is in the requested range, add it to the spectrograms to join
+                    to_join.append(S)
+                #otherwise, we'll get an error thrown that the indices are equal. This means the spectrogram is out of range
+                #and we can ignore it.
+                except:
+                    pass
+            else:
                 continue
-                
-            try:
-                #load the spectrogram from the chunk
-                S = Chunk.fits.load_radio_spectrogram()
-                #chop the spectrogram according to the requested range
-                S = S.chop(requested_start_str,requested_end_str)
-                #S.Sxx[:,0]=1000
-                #S.Sxx[:,-1]=1000
-                #if the spectrogram is in the requested range, add it to the spectrograms to join
-                to_join.append(S)
-            #otherwise, we'll get an error thrown that the indices are equal. This means the spectrogram is out of range
-            #and we can ignore it.
-            except:
-                pass
 
         #if we didn't find any spectrograms to join...
         if len(to_join)==0:

@@ -9,7 +9,8 @@ class Plotter:
         self.fsize=15
 
     def plot_power(self,datetime_array,power):
-        plt.stairs(10 * np.log10(power),datetime_array)
+        plt.stairs(power,datetime_array)
+        plt.ylim(np.min(power)-np.min(power)*0.05,np.max(power)+np.max(power)*0.05)
         #format the datetime axis 
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
         plt.gca().xaxis.set_major_locator(mdates.SecondLocator(interval=10))  # adjust the interval for your needs
