@@ -18,7 +18,7 @@ It may also work on other Linux distributions and other Ubuntu versions. However
 In development. 
 
 ## Contributing
-Contributions to `gbo-docker` are welcome. If you have suggestions or improvements, please open an issue or submit a pull request on the GitHub repository.
+Contributions to `grso-docker` are welcome. If you have suggestions or improvements, please open an issue or submit a pull request on the GitHub repository.
 
 ## Improvements to Come
 - Support for Raspberry Pi.
