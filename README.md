@@ -1,4 +1,4 @@
-# gnuradio_burst_observer
+# GRSO: GNU Radio for Solar Observation
 
 ## Introduction
 Software back-end for solar radio observations using ```gnuradio```. Interfacing with SDRPlay RSP1A through [SoapySDRPlay3](https://github.com/pothosware/SoapySDRPlay3). Automated scripts for the continous collection, storing and post-processing radio spectrograms. Designed to work with [```gbo-docker```](https://github.com/jcfitzpatrick12/gbo-docker.git).
