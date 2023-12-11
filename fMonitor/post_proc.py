@@ -16,7 +16,7 @@ for pseudo_start_time,Chunk in Chunks.dict.items():
     else:
         #build the spectrogram from the Chunk
         Spectrogram = Chunk.build_radio_spectrogram()
-        Spectrogram = Spectrogram.time_average(10)
+        Spectrogram = Spectrogram.time_average(2)
         #save the spectrogram to a fits file
         Spectrogram.save_to_fits()
 
