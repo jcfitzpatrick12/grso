@@ -2,11 +2,9 @@
 
 ## ADD SOME ERROR HANDLING!
 
-echo "How many iterations [integer]?"
-read max_iter
-echo "How long to sleep for [seconds]?"
-read sleepy_time
-
+#basically, run the code saving data each minute, for 8 hours
+max_iter=$1
+sleepy_time=$2
 
 cd "$GBOPARENTPATH"
 

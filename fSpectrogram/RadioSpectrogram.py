@@ -176,7 +176,7 @@ class RadioSpectrogram:
             timeArrayDecimated.append(self.time_array[i*N])
         
         #add the final bin edge for the decimated time array
-        dt = timeArrayDecimated[-3]-timeArrayDecimated[-2]
+        dt = timeArrayDecimated[-2]-timeArrayDecimated[-3]
         timeArrayDecimated.append(timeArrayDecimated[-1]+dt)
 
         #if there is a non-zero remainder, average over the remaining terms

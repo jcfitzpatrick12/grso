@@ -37,7 +37,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 95.8e6
+    value: 57.5e6
   states:
     bus_sink: false
     bus_source: false
@@ -61,7 +61,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 200e3
+    value: 5e6
   states:
     bus_sink: false
     bus_source: false
@@ -88,7 +88,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [904, 252.0]
+    coordinate: [776, 268.0]
     rotation: 0
     state: enabled
 - name: blocks_throttle_0
@@ -107,7 +107,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [328, 324.0]
+    coordinate: [520, 316.0]
     rotation: 0
     state: true
 - name: import_0
@@ -123,30 +123,6 @@ blocks:
     coordinate: [992, 28.0]
     rotation: 0
     state: true
-- name: low_pass_filter_0
-  id: low_pass_filter
-  parameters:
-    affinity: ''
-    alias: ''
-    beta: '6.76'
-    comment: ''
-    cutoff_freq: samp_rate/2
-    decim: '1'
-    gain: '1'
-    interp: '1'
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    samp_rate: samp_rate
-    type: fir_filter_ccf
-    width: 3e4
-    win: window.WIN_HAMMING
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [544, 276.0]
-    rotation: 0
-    state: enabled
 - name: pmtDictMaker
   id: epy_module
   parameters:
@@ -209,7 +185,7 @@ blocks:
     grid: 'False'
     gui_hint: ''
     int_max: '10'
-    int_min: '-160'
+    int_min: '-140'
     label1: ''
     label10: ''
     label2: ''
@@ -227,15 +203,15 @@ blocks:
     nconnections: '1'
     showports: 'False'
     type: complex
-    update_time: '0.005'
+    update_time: '0.05'
     wintype: window.WIN_BLACKMAN_hARRIS
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [704, 508.0]
+    coordinate: [944, 604.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: sdrplay3_rsp1a_0
   id: sdrplay3_rsp1a
   parameters:
@@ -243,7 +219,7 @@ blocks:
     affinity: ''
     agc_set_point: '-30'
     alias: ''
-    bandwidth: 200e3
+    bandwidth: 5000e3
     biasT: 'False'
     center_freq: center_freq
     comment: ''
@@ -266,7 +242,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [104, 260.0]
+    coordinate: [224, 292.0]
     rotation: 0
     state: true
 - name: timeStamper
@@ -288,9 +264,8 @@ blocks:
     state: true
 
 connections:
-- [blocks_throttle_0, '0', low_pass_filter_0, '0']
-- [low_pass_filter_0, '0', blocks_file_meta_sink_0_0, '0']
-- [low_pass_filter_0, '0', qtgui_waterfall_sink_x_0, '0']
+- [blocks_throttle_0, '0', blocks_file_meta_sink_0_0, '0']
+- [blocks_throttle_0, '0', qtgui_waterfall_sink_x_0, '0']
 - [sdrplay3_rsp1a_0, '0', blocks_throttle_0, '0']
 
 metadata:

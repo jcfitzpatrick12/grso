@@ -100,8 +100,11 @@ class Chunks:
             pseudo_start_time = Chunk.fits.return_info("PSTIME")
             pseudo_start_datetime=DatetimeFuncs().parse_datetime(pseudo_start_time)
             datetime_array = DatetimeFuncs().build_datetime_array(pseudo_start_datetime,time_array)
+            # Check if the chunk's time range intersects with the requested time range
+            chunk_start_datetime = datetime_array[0]
+            chunk_end_datetime = datetime_array[-1]
 
-            if datetime_array[0] <= requested_start_datetime <= datetime_array[-1] or datetime_array[0] <= requested_end_datetime <= datetime_array[-1]:
+            if chunk_start_datetime <= requested_end_datetime and chunk_end_datetime >= requested_start_datetime:
                 try:
                     #load the spectrogram from the chunk
                     S = Chunk.fits.load_radio_spectrogram()

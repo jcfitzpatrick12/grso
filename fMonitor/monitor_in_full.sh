@@ -28,7 +28,7 @@ do
   kill $pid
 
   #give the script time to stop, so the SDR isnt busy when the new script starts
-  sleep 1s
+  sleep 1.5s
 
   #Move all files in temp_data to data
   src_dir="$GBOPARENTPATH/temp_data"
