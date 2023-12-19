@@ -33,6 +33,39 @@ options:
     state: enabled
 
 blocks:
+- name: center_freq
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ''
+    label: ''
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: 40e6
+    step: 0.1e6
+    stop: 80e6
+    value: 60e6
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [352, 4.0]
+    rotation: 0
+    state: enabled
+- name: center_freq
+  id: variable
+  parameters:
+    comment: ''
+    value: 60e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [296, 12.0]
+    rotation: 0
+    state: disabled
 - name: samp_rate
   id: variable
   parameters:
@@ -92,13 +125,13 @@ blocks:
     color8: '0'
     color9: '0'
     comment: ''
-    fc: '0'
+    fc: center_freq
     fftsize: '1024'
     freqhalf: 'True'
     grid: 'False'
     gui_hint: ''
     int_max: '10'
-    int_min: '-150'
+    int_min: '-140'
     label1: ''
     label10: ''
     label2: ''
@@ -122,7 +155,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [880, 196.0]
+    coordinate: [880, 188.0]
     rotation: 0
     state: true
 - name: sdrplay3_rsp1a_0
@@ -134,7 +167,7 @@ blocks:
     alias: ''
     bandwidth: 5000e3
     biasT: 'False'
-    center_freq: 62.5e6
+    center_freq: center_freq
     comment: ''
     dab_notch_filter: 'False'
     dc_offset_mode: 'False'

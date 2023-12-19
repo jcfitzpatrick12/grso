@@ -8,7 +8,7 @@ echo "How long to sleep for [seconds]?"
 read sleepy_time
 
 
-cd "$GBOPARENTPATH"
+cd "$GRSOPARENTPATH"
 
 for (( i=1; i<=max_iter; i=i+1 ))
 do

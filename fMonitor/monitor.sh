@@ -1,12 +1,11 @@
 #!/bin/bash
 
-## ADD SOME ERROR HANDLING!
 
 #basically, run the code saving data each minute, for 8 hours
 max_iter=$1
 sleepy_time=$2
 
-cd "$GBOPARENTPATH"
+cd "$GRSOPARENTPATH"
 
 for (( i=1; i<=max_iter; i=i+1 ))
 do
@@ -29,8 +28,8 @@ do
   sleep 1s
 
   #Move all files in temp_data to data
-  src_dir="$GBOPARENTPATH/temp_data"
-  dest_dir="$GBOPARENTPATH/data"
+  src_dir="$GRSOPARENTPATH/temp_data"
+  dest_dir="$GRSOPARENTPATH/data"
 
   # Move all files from the source to the destination directory
   mv "$src_dir"/* "$dest_dir"/

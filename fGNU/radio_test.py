@@ -33,6 +33,8 @@ from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio import sdrplay3
+from gnuradio.qtgui import Range, RangeWidget
+from PyQt5 import QtCore
 
 
 
@@ -75,10 +77,14 @@ class radio_test(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = samp_rate = 5e6
+        self.center_freq = center_freq = 60e6
 
         ##################################################
         # Blocks
         ##################################################
+        self._center_freq_range = Range(40e6, 80e6, 0.1e6, 60e6, 200)
+        self._center_freq_win = RangeWidget(self._center_freq_range, self.set_center_freq, "'center_freq'", "counter_slider", float, QtCore.Qt.Horizontal)
+        self.top_layout.addWidget(self._center_freq_win)
         self.sdrplay3_rsp1a_0 = sdrplay3.rsp1a(
             '',
             stream_args=sdrplay3.stream_args(
@@ -87,7 +93,7 @@ class radio_test(gr.top_block, Qt.QWidget):
             ),
         )
         self.sdrplay3_rsp1a_0.set_sample_rate(samp_rate)
-        self.sdrplay3_rsp1a_0.set_center_freq(62.5e6)
+        self.sdrplay3_rsp1a_0.set_center_freq(center_freq)
         self.sdrplay3_rsp1a_0.set_bandwidth(5000e3)
         self.sdrplay3_rsp1a_0.set_gain_mode(False)
         self.sdrplay3_rsp1a_0.set_gain(-40, 'IF')
@@ -105,7 +111,7 @@ class radio_test(gr.top_block, Qt.QWidget):
         self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
             1024, #size
             window.WIN_BLACKMAN_hARRIS, #wintype
-            0, #fc
+            center_freq, #fc
             samp_rate, #bw
             "", #name
             1, #number of inputs
@@ -132,7 +138,7 @@ class radio_test(gr.top_block, Qt.QWidget):
             self.qtgui_waterfall_sink_x_0.set_color_map(i, colors[i])
             self.qtgui_waterfall_sink_x_0.set_line_alpha(i, alphas[i])
 
-        self.qtgui_waterfall_sink_x_0.set_intensity_range(-150, 10)
+        self.qtgui_waterfall_sink_x_0.set_intensity_range(-140, 10)
 
         self._qtgui_waterfall_sink_x_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0.qwidget(), Qt.QWidget)
 
@@ -161,8 +167,16 @@ class radio_test(gr.top_block, Qt.QWidget):
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
         self.blocks_throttle_0.set_sample_rate(self.samp_rate)
-        self.qtgui_waterfall_sink_x_0.set_frequency_range(0, self.samp_rate)
+        self.qtgui_waterfall_sink_x_0.set_frequency_range(self.center_freq, self.samp_rate)
         self.sdrplay3_rsp1a_0.set_sample_rate(self.samp_rate)
+
+    def get_center_freq(self):
+        return self.center_freq
+
+    def set_center_freq(self, center_freq):
+        self.center_freq = center_freq
+        self.qtgui_waterfall_sink_x_0.set_frequency_range(self.center_freq, self.samp_rate)
+        self.sdrplay3_rsp1a_0.set_center_freq(self.center_freq)
 
 
 

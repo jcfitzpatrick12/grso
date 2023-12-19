@@ -37,14 +37,14 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 57.5e6
+    value: 60e6
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [304, 12.0]
+    coordinate: [288, 12.0]
     rotation: 0
-    state: true
+    state: enabled
 - name: pseudo_start_time
   id: variable
   parameters:
@@ -54,7 +54,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [424, 12.0]
+    coordinate: [408, 12.0]
     rotation: 0
     state: enabled
 - name: samp_rate
@@ -253,7 +253,7 @@ blocks:
     source_code: "from datetime import datetime\nimport os\n\nclass timeStamper:\n\
       \n\tdef returnDatetimeNowString(self):\n\t\treturn datetime.now().strftime(\"\
       %Y-%m-%dT%H:%M:%S\")\n\t\t\n\tdef returnFilePath(self,appendDate):\n\t\tdata_path\
-      \ = os.path.join(os.environ['GBOPARENTPATH'],\"temp_data\",appendDate)\n\t\t\
+      \ = os.path.join(os.environ['GRSOPARENTPATH'],\"temp_data\",appendDate)\n\t\t\
       return data_path\n"
   states:
     bus_sink: false

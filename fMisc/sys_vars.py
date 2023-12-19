@@ -8,8 +8,8 @@ class sys_vars:
         self.window_type = "blackmanharris"
         self.average_over_int = 10
         #the path to the data file
-        self.path_to_data = os.path.join(os.environ['GBOPARENTPATH'],"data")
-        self.path_to_temp_data = os.path.join(os.environ['GBOPARENTPATH'],"temp_data")
+        self.path_to_data = os.path.join(os.environ['GRSOPARENTPATH'],"data")
+        self.path_to_temp_data = os.path.join(os.environ['GRSOPARENTPATH'],"temp_data")
 
         #default time format
         self.default_time_format="%Y-%m-%dT%H:%M:%S"

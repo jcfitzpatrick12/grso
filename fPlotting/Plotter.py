@@ -29,7 +29,7 @@ class Plotter:
     def plot_spectrogram(self,freqs_MHZ, datetime_array, Sxx):
         # Plot the spectrogram
         plt.pcolormesh(datetime_array, freqs_MHZ, Sxx)
-        #plt.pcolormesh(datetime_array, freqs_MHZ, np.log10(Sxx))
+        #plt.pcolormesh(datetime_array, freqs_MHZ, np.log10(Sxx),vmin=1e-18,vmax=1e-17)
         #format the datetime axis 
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
         plt.gca().xaxis.set_major_locator(mdates.SecondLocator(interval=10))  # adjust the interval for your needs
@@ -38,7 +38,7 @@ class Plotter:
         plt.ylabel('Frequency [MHz]',size=self.fsize_head)
         plt.xlabel('Time [GMT]',size=self.fsize_head)
         #create the colorbar
-        #cbar = plt.colorbar()
+        #cbar = plt.colorbar(min=1e-17,max=1e-19)
         #cbar.set_label('dB above the [?]', size=self.fsize_head)
         #cbar.ax.tick_params(labelsize=self.fsize)
         #format the x and y tick labels

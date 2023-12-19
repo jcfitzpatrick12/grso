@@ -78,7 +78,7 @@ class observeCollect(gr.top_block, Qt.QWidget):
         ##################################################
         self.samp_rate = samp_rate = 5e6
         self.pseudo_start_time = pseudo_start_time = timeStamper.timeStamper().returnDatetimeNowString()
-        self.center_freq = center_freq = 57.5e6
+        self.center_freq = center_freq = 60e6
 
         ##################################################
         # Blocks
