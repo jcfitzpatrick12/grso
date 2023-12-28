@@ -6,18 +6,18 @@ import numpy as np
 Chunks=Chunks()
 
 #"%Y-%m-%dT%H:%M:%S"
-start_string = "2023-12-19T11:28:00"
-end_string = "2023-12-19T11:28:30"
+start_string = "2023-12-24T13:11:00"
+end_string = "2023-12-24T13:11:20"
 
 S=Chunks.build_spectrogram_from_range(start_string,end_string)
 
-i=520
-j=800
-S.Sxx=S.Sxx[i:j,:]
-S.freqs_MHz=S.freqs_MHz[i:j+1]
-S.time_average(10)
-#S.plot_power()
-#S.plot_spectrogram()
+#i=500
+#j=530
+#S.Sxx=S.Sxx[i:j,:]
+#S.freqs_MHz=S.freqs_MHz[i:j+1]
+S.time_average(100)
+S.plot_power()
+S.plot_spectrogram()
 #S = S.time_average(100)
 
 

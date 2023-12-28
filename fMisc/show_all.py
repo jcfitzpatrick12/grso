@@ -4,7 +4,7 @@ import numpy as np
 
 Chunks = Chunks()
 
-look_after = datetime(year=2023,month=12,day=19,hour=13,minute=37)
+look_after = datetime(year=2023,month=12,day=28,hour=9,minute=30)
 #look_before = datetime(year=2023,month=12,day=14,hour=17,minute=7)
 
 for Chunk in Chunks.dict.values():
@@ -18,6 +18,6 @@ for Chunk in Chunks.dict.values():
         #print(np.mean(S.Sxx))
         #print(np.min(S.Sxx))
         #print(np.max(S.Sxx))
-        #S.plot_power()
+        S.plot_power()
         S.plot_spectrogram()
         
