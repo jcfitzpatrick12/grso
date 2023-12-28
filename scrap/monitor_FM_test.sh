@@ -1,11 +1,17 @@
 #!/bin/bash
 
-
 #basically, run the code saving data each minute, for 8 hours
 max_iter=$1
 sleepy_time=$2
 
 cd "$GRSOPARENTPATH"
+
+#create the temporary data folder if it does not exist
+bash fMonitor/create_dir.sh temp_data
+#build the data path if it does not already exist
+date_dir=$(date +"%Y/%m/%d")
+data_dir="data/$date_dir"
+bash fMonitor/create_dir.sh $data_dir
 
 for (( i=1; i<=max_iter; i=i+1 ))
 do
@@ -13,7 +19,7 @@ do
   echo "Running iteration $i"
 
   # Start the Python script as a background process, then kill it after sleepy_time seconds
-  python3 fGNU/FM_observing_test.py &
+  python3 fGNU/FM_observing_test.py 96300000 700000 -59 &
 
   #capture the processing id of the script
   pid=$!
@@ -29,7 +35,7 @@ do
 
   #Move all files in temp_data to data
   src_dir="$GRSOPARENTPATH/temp_data"
-  dest_dir="$GRSOPARENTPATH/data"
+  dest_dir="$GRSOPARENTPATH/$data_dir"
 
   # Move all files from the source to the destination directory
   mv "$src_dir"/* "$dest_dir"/

@@ -32,17 +32,17 @@ from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio import gr, blocks
 from gnuradio import sdrplay3
-import FM_observing_test_pmtDictMaker as pmtDictMaker  # embedded python module
-import FM_observing_test_timeStamper as timeStamper  # embedded python module
+import fGNU.BuildDict as BuildDict  # embedded python module
+import fGNU.TimeStamper as TimeStamper # embedded python module
 import pmt
 
 
 
 from gnuradio import qtgui
 
-class FM_observing_test(gr.top_block, Qt.QWidget):
+class observe_collect(gr.top_block, Qt.QWidget):
 
-    def __init__(self):
+    def __init__(self,center_freq,samp_rate,IF_gain):
         gr.top_block.__init__(self, "Not titled yet", catch_exceptions=True)
         Qt.QWidget.__init__(self)
         self.setWindowTitle("Not titled yet")
@@ -63,7 +63,7 @@ class FM_observing_test(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "FM_observing_test")
+        self.settings = Qt.QSettings("GNU Radio", "observe_collect")
 
         try:
             if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
@@ -76,9 +76,10 @@ class FM_observing_test(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 300e3
-        self.pseudo_start_time = pseudo_start_time = timeStamper.timeStamper().returnDatetimeNowString()
-        self.center_freq = center_freq = 95.8e6
+        self.samp_rate = samp_rate 
+        self.pseudo_start_time = TimeStamper.TimeStamper().return_time_now_as_string()
+        self.center_freq = center_freq 
+        self.IF_gain = IF_gain
 
         ##################################################
         # Blocks
@@ -90,16 +91,16 @@ class FM_observing_test(gr.top_block, Qt.QWidget):
                 channels_size=1
             ),
         )
-        self.sdrplay3_rsp1a_0.set_sample_rate(samp_rate)
-        self.sdrplay3_rsp1a_0.set_center_freq(center_freq)
-        self.sdrplay3_rsp1a_0.set_bandwidth(300e3)
-        self.sdrplay3_rsp1a_0.set_gain_mode(True)
-        self.sdrplay3_rsp1a_0.set_gain(-59, 'IF')
-        self.sdrplay3_rsp1a_0.set_gain(-float('10'), 'RF')
+        self.sdrplay3_rsp1a_0.set_sample_rate(self.samp_rate)
+        self.sdrplay3_rsp1a_0.set_center_freq(self.center_freq)
+        self.sdrplay3_rsp1a_0.set_bandwidth(self.samp_rate)
+        self.sdrplay3_rsp1a_0.set_gain_mode(False)
+        self.sdrplay3_rsp1a_0.set_gain(self.IF_gain, 'IF')
+        self.sdrplay3_rsp1a_0.set_gain(-float('0'), 'RF')
         self.sdrplay3_rsp1a_0.set_freq_corr(0)
         self.sdrplay3_rsp1a_0.set_dc_offset_mode(False)
         self.sdrplay3_rsp1a_0.set_iq_balance_mode(False)
-        self.sdrplay3_rsp1a_0.set_agc_setpoint(-40)
+        self.sdrplay3_rsp1a_0.set_agc_setpoint(-30)
         self.sdrplay3_rsp1a_0.set_rf_notch_filter(False)
         self.sdrplay3_rsp1a_0.set_dab_notch_filter(False)
         self.sdrplay3_rsp1a_0.set_biasT(False)
@@ -107,7 +108,7 @@ class FM_observing_test(gr.top_block, Qt.QWidget):
         self.sdrplay3_rsp1a_0.set_sample_sequence_gaps_check(False)
         self.sdrplay3_rsp1a_0.set_show_gain_changes(False)
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
-        self.blocks_file_meta_sink_0_0 = blocks.file_meta_sink(gr.sizeof_gr_complex*1, timeStamper.timeStamper().returnFilePath(pseudo_start_time), samp_rate, 1, blocks.GR_FILE_FLOAT, True, 1000000, pmtDictMaker.BuildDict().GetDict(samp_rate,center_freq,pseudo_start_time), True)
+        self.blocks_file_meta_sink_0_0 = blocks.file_meta_sink(gr.sizeof_gr_complex*1, TimeStamper.TimeStamper().return_temp_file_path(self.pseudo_start_time), samp_rate, 1, blocks.GR_FILE_FLOAT, True, 1000000, BuildDict.BuildDict().GetDict(samp_rate,center_freq,self.pseudo_start_time), True)
         self.blocks_file_meta_sink_0_0.set_unbuffered(False)
 
 
@@ -119,7 +120,7 @@ class FM_observing_test(gr.top_block, Qt.QWidget):
 
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "FM_observing_test")
+        self.settings = Qt.QSettings("GNU Radio", "observe_collect")
         self.settings.setValue("geometry", self.saveGeometry())
         self.stop()
         self.wait()
@@ -139,7 +140,7 @@ class FM_observing_test(gr.top_block, Qt.QWidget):
 
     def set_pseudo_start_time(self, pseudo_start_time):
         self.pseudo_start_time = pseudo_start_time
-        self.blocks_file_meta_sink_0_0.open(timeStamper.timeStamper().returnFilePath(self.pseudo_start_time))
+        self.blocks_file_meta_sink_0_0.open(TimeStamper.TimeStamper().return_temp_file_path(self.pseudo_start_time))
 
     def get_center_freq(self):
         return self.center_freq
@@ -151,14 +152,23 @@ class FM_observing_test(gr.top_block, Qt.QWidget):
 
 
 
-def main(top_block_cls=FM_observing_test, options=None):
+def main(top_block_cls=observe_collect, options=None):
+
+    # Parsing command line arguments
+    if len(sys.argv) != 4:
+        print("Make sure you're passing in the right number of arguments! We need center_freq, samp_rate and IF_gain.")
+        sys.exit(1)
+
+    center_freq = float(sys.argv[1])
+    samp_rate = float(sys.argv[2])
+    IF_gain = float(sys.argv[3])
 
     if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
-    tb = top_block_cls()
+    tb = top_block_cls(center_freq=center_freq,samp_rate=samp_rate,IF_gain=IF_gain)
 
     tb.start()
 

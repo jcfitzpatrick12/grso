@@ -2,15 +2,39 @@ from datetime import datetime
 from datetime import timedelta
 import numpy as np
 from fMisc.sys_vars import sys_vars
+import os
 
 class DatetimeFuncs:
     def __init__(self,):
         self.sys_vars=sys_vars()
 
     '''
+    function which builds the data directory for the current day
+    '''
+
+    def build_data_dir_today(self):
+        # Get the current date
+        current_date = datetime.now()
+        # Format the date to YYYY/mm/dd with leading zeros for month and day
+        date_path_today = current_date.strftime("%Y/%m/%d")
+        return os.path.join(self.sys_vars.path_to_data, date_path_today)
+
+    '''
+    function which builds the data directory for a particular pseudo_start_time [in the default format]
+    '''
+    
+    def build_data_dir_from_pseudo_start_time(self,pseudo_start_time):
+        # Parse the datetime string to a datetime object
+        dt_obj = datetime.strptime(pseudo_start_time, self.sys_vars.default_time_format)
+        # Format the datetime object to the desired string format
+        formatted_date = dt_obj.strftime("%Y/%m/%d")
+        return os.path.join(self.sys_vars.path_to_data, formatted_date)
+    
+    '''
     function which takes a starting datetime, and an array of times [from 0] and builds the 
     corresponding datetime array
     '''
+    
     def build_datetime_array(self,start_datetime,time_array):
         #create an empty list to hold the datetimes
         datetime_array = []

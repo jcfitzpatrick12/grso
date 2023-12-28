@@ -25,22 +25,22 @@ class Chunks:
         self.dict = self.build_dict()
         #sorts the dictionary temporally
         self.sort_dict()
-        #creates a dictionary to keep track of which files are still being filled by gnuradio
-        self.is_file_static_dict={}
 
 
         #removes all non compressed files
     def remove_non_fits_files_from_data(self,):
         # Loop through files in the directory
-        for file in os.listdir(self.sys_vars.path_to_data):
+        #for each file in data [will be in some subdirectory according to its date]
+        all_files = self.list_all_files()
+        for file in all_files:
             fs = FileString(file)
             # If the file is not a compressed-spectrogram, delete
             if fs.type!="fits":
-                file_path = os.path.join(self.sys_vars.path_to_data, file)
+                file_dir = DatetimeFuncs().build_data_dir_from_pseudo_start_time(fs.pseudo_start_time)
+                file_path = os.path.join(file_dir, file)
                 os.remove(file_path)
                 print(f"Deleted {file}")
-
-        return None
+        pass
 
 
     def update_dict(self):
@@ -55,8 +55,8 @@ class Chunks:
         #create a dictionary which whill hold the key,value pairs [pseudo_start_time, dataChunk object]
         dict = {}
         #for each file in Pdata folder
-        files = os.listdir(self.sys_vars.path_to_data)
-        for file in files:
+        all_files = self.list_all_files()
+        for file in all_files:
             #create the FileString class which deals with all files saved to Pdata [hdr, bin, npy files]
             fs = FileString(file)
             #otherwise, create the DataChunkFile class! This will do all the manipulations with the hdr and bin files
@@ -67,6 +67,20 @@ class Chunks:
         return dict
     
     '''
+    list all files regardless of subdirectories in data
+    '''
+
+    def list_all_files(self):
+        all_files = []
+        #walk through all the subdirectories in data
+        for root, dirs, files in os.walk(self.sys_vars.path_to_data):
+            for file in files:
+                #full_path = os.path.join(root, file)
+                all_files.append(file)  # Store the full path to the file
+                # ... (rest of your code to handle each file)
+        return all_files
+    
+    '''
     sorts the dictionaries by its keys
     '''
     def sort_dict(self):
@@ -75,7 +89,7 @@ class Chunks:
     '''
     Function which returns a dictionary of all Chunks in a specified time range
 
-    [Will possibly be very inefficient for lots of files in data! Must be a more efficient way to check]
+    [optimise for now current data subdirectory structure]
 
     -return a spectrogram over a custom time range.
     -takes in start_str and end_str in the format self.sys_vars.default_time_format

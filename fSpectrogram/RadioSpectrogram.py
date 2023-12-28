@@ -32,6 +32,7 @@ class RadioSpectrogram:
         self.datetime64_array = np.array(self.datetime_array,dtype="datetime64[ns]")
         self.power = self.build_power()
         self.sys_vars = sys_vars()
+        self.data_dir=DatetimeFuncs().build_data_dir_from_pseudo_start_time(self.pseudo_start_time)
 
 
     def build_datetime_array(self,):
@@ -67,8 +68,8 @@ class RadioSpectrogram:
         return os.path.join(self.sys_vars.path_to_temp_data,self.pseudo_start_time)
     
     #find the path to data
-    def get_data_path(self):
-        return os.path.join(self.sys_vars.path_to_data,self.pseudo_start_time)
+    def get_path(self):
+        return os.path.join(self.data_dir,self.pseudo_start_time)
     
     '''
     function which saves the current instance to file
@@ -104,7 +105,7 @@ class RadioSpectrogram:
         hdulist.append(tb_hdu_freq)
 
         #name the path according to the pseudo_start_time
-        fpath = os.path.join(self.sys_vars.path_to_data,self.pseudo_start_time+".fits")
+        fpath = os.path.join(self.get_path()+".fits")
         # Write the FITS file
         hdulist.writeto(fpath, overwrite=True)
         pass

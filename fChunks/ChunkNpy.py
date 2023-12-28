@@ -3,21 +3,22 @@ import os
 import pickle
 
 from fMisc.sys_vars import sys_vars
+from fMisc.DatetimeFuncs import DatetimeFuncs
 
 
 class ChunkNpy:
     def __init__(self,pseudo_start_time):
         self.sys_vars=sys_vars()
         self.pseudo_start_time=pseudo_start_time
-        self.path = self.get_path()
+        self.data_dir=DatetimeFuncs().build_data_dir_from_pseudo_start_time(self.pseudo_start_time)
 
     #find the path to the binary
     def get_path(self):
-        return os.path.join(self.sys_vars.path_to_data,self.pseudo_start_time+".npy")
+        return os.path.join(self.data_dir,self.pseudo_start_time+".npy")
     
     #find out if the path exists
     def exists(self):
-        return os.path.exists(self.path)
+        return os.path.exists(self.get_path())
     
     def load_radio_spectrogram(self):
         if self.exists():
