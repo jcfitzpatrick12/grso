@@ -6,6 +6,7 @@ from fMisc.sys_vars import sys_vars
 
 class Plotter:  
     def __init__(self):
+        #plt.style.use("seaborn")
         self.fsize_head=20
         self.fsize=15
         self.sys_vars=sys_vars()
@@ -28,8 +29,9 @@ class Plotter:
 
     def plot_spectrogram(self,freqs_MHZ, datetime_array, Sxx):
         # Plot the spectrogram
+        
         plt.pcolormesh(datetime_array, freqs_MHZ, Sxx)
-        #plt.pcolormesh(datetime_array, freqs_MHZ, np.log10(Sxx),vmin=1e-18,vmax=1e-17)
+        #plt.pcolormesh(datetime_array, freqs_MHZ, 10*np.log10(Sxx))
         #format the datetime axis 
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
         plt.gca().xaxis.set_major_locator(mdates.SecondLocator(interval=10))  # adjust the interval for your needs

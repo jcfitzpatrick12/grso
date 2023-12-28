@@ -88,11 +88,6 @@ class Chunks:
         to_join = []
         #for each Chunk in data, try and chop it to the time range
         for pseudo_start_time,Chunk in self.dict.items():
-
-            '''
-            Write a method which checks if start_str and end_str are both outside 
-            WITHOUT having to load the spectrogram
-            '''
             
             requested_start_datetime = DatetimeFuncs().parse_datetime(requested_start_str)
             requested_end_datetime = DatetimeFuncs().parse_datetime(requested_end_str)

@@ -14,11 +14,15 @@ for pseudo_start_time,Chunk in Chunks.dict.items():
         pass
     #otherwise, the fits file exists and we can simply pass this chunk
     else:
-        #build the spectrogram from the Chunk
-        Spectrogram = Chunk.build_radio_spectrogram()
-        Spectrogram = Spectrogram.time_average(100)
-        #save the spectrogram to a fits file
-        Spectrogram.save_to_fits()
+        try:
+            #build the spectrogram from the Chunk
+            Spectrogram = Chunk.build_radio_spectrogram()
+            Spectrogram = Spectrogram.time_average(100)
+            #save the spectrogram to a fits file
+            Spectrogram.save_to_fits()
+        except:
+            print("Couldn't make spectrogram for this Chunk!")
+            pass
 
 
 #delete all non-fits files from data

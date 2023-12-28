@@ -76,9 +76,9 @@ class observeCollect(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 5e6
+        self.samp_rate = samp_rate = 6e6
         self.pseudo_start_time = pseudo_start_time = timeStamper.timeStamper().returnDatetimeNowString()
-        self.center_freq = center_freq = 60e6
+        self.center_freq = center_freq = 53e6
 
         ##################################################
         # Blocks
@@ -92,9 +92,9 @@ class observeCollect(gr.top_block, Qt.QWidget):
         )
         self.sdrplay3_rsp1a_0.set_sample_rate(samp_rate)
         self.sdrplay3_rsp1a_0.set_center_freq(center_freq)
-        self.sdrplay3_rsp1a_0.set_bandwidth(5000e3)
+        self.sdrplay3_rsp1a_0.set_bandwidth(6000e3)
         self.sdrplay3_rsp1a_0.set_gain_mode(False)
-        self.sdrplay3_rsp1a_0.set_gain(-40, 'IF')
+        self.sdrplay3_rsp1a_0.set_gain(-35, 'IF')
         self.sdrplay3_rsp1a_0.set_gain(-float('0'), 'RF')
         self.sdrplay3_rsp1a_0.set_freq_corr(0)
         self.sdrplay3_rsp1a_0.set_dc_offset_mode(False)
