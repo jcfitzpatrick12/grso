@@ -1,0 +1,15 @@
+name: gbo-env
+channels:
+  - defaults
+  - conda-forge
+  - ryanvolz
+  
+dependencies:
+  - numpy
+  - scipy
+  - astropy
+  - matplotlib
+  - python
+  - gnuradio=3.10
+  - gnuradio-build-deps
+  - sdrplay_api
