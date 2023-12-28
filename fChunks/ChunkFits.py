@@ -4,21 +4,22 @@ from astropy.io import fits
 
 from fMisc.sys_vars import sys_vars
 from fSpectrogram.RadioSpectrogram import RadioSpectrogram
+from fMisc.DatetimeFuncs import DatetimeFuncs 
 
 class ChunkFits:
     def __init__(self,pseudo_start_time):
         self.sys_vars=sys_vars()
         self.pseudo_start_time=pseudo_start_time
-        self.path = self.get_path()
+        self.data_dir=DatetimeFuncs().build_data_dir_from_pseudo_start_time(self.pseudo_start_time)
         self.valid_request_strings = ['Sxx','CFREQ','PSTIME','ISCOMPR','TIME','FREQ']
 
     #find the path to the binary
     def get_path(self):
-        return os.path.join(self.sys_vars.path_to_data,self.pseudo_start_time+".fits")
+        return os.path.join(self.data_dir,self.pseudo_start_time+".fits")
     
     #find out if the path exists
     def exists(self):
-        return os.path.exists(self.path)
+        return os.path.exists(self.get_path())
 
     #function which returns requested information about a Chunk.
     def return_info(self,request_string):

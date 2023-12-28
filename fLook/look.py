@@ -6,7 +6,7 @@ import numpy as np
 Chunks=Chunks()
 
 #"%Y-%m-%dT%H:%M:%S"
-start_string = "2023-12-24T13:11:00"
+start_string = "2023-12-28T13:11:00"
 end_string = "2023-12-24T13:11:20"
 
 S=Chunks.build_spectrogram_from_range(start_string,end_string)

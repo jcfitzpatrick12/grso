@@ -8,6 +8,14 @@
 # Title: Not titled yet
 # GNU Radio version: 3.10.1.1
 
+'''
+import arguments
+
+0 - center_freq
+1 - sample_rate
+2  
+'''
+
 from packaging.version import Version as StrictVersion
 
 if __name__ == '__main__':
@@ -32,17 +40,17 @@ from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
 from gnuradio import gr, blocks
 from gnuradio import sdrplay3
-import observeCollect_pmtDictMaker as pmtDictMaker  # embedded python module
-import observeCollect_timeStamper as timeStamper  # embedded python module
+import FM_observing_test_pmtDictMaker as pmtDictMaker  # embedded python module
+import FM_observing_test_timeStamper as timeStamper  # embedded python module
 import pmt
 
 
 
 from gnuradio import qtgui
 
-class observeCollect(gr.top_block, Qt.QWidget):
+class FM_observing_test(gr.top_block, Qt.QWidget):
 
-    def __init__(self):
+    def __init__(self,center_freq,samp_rate,IF_gain):
         gr.top_block.__init__(self, "Not titled yet", catch_exceptions=True)
         Qt.QWidget.__init__(self)
         self.setWindowTitle("Not titled yet")
@@ -63,7 +71,7 @@ class observeCollect(gr.top_block, Qt.QWidget):
         self.top_grid_layout = Qt.QGridLayout()
         self.top_layout.addLayout(self.top_grid_layout)
 
-        self.settings = Qt.QSettings("GNU Radio", "observeCollect")
+        self.settings = Qt.QSettings("GNU Radio", "FM_observing_test")
 
         try:
             if StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
@@ -76,9 +84,9 @@ class observeCollect(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 6e6
+        self.samp_rate = samp_rate 
         self.pseudo_start_time = pseudo_start_time = timeStamper.timeStamper().returnDatetimeNowString()
-        self.center_freq = center_freq = 53e6
+        self.center_freq = center_freq
 
         ##################################################
         # Blocks
@@ -92,14 +100,14 @@ class observeCollect(gr.top_block, Qt.QWidget):
         )
         self.sdrplay3_rsp1a_0.set_sample_rate(samp_rate)
         self.sdrplay3_rsp1a_0.set_center_freq(center_freq)
-        self.sdrplay3_rsp1a_0.set_bandwidth(6000e3)
-        self.sdrplay3_rsp1a_0.set_gain_mode(False)
-        self.sdrplay3_rsp1a_0.set_gain(-35, 'IF')
-        self.sdrplay3_rsp1a_0.set_gain(-float('0'), 'RF')
+        self.sdrplay3_rsp1a_0.set_bandwidth(samp_rate)
+        self.sdrplay3_rsp1a_0.set_gain_mode(True)
+        self.sdrplay3_rsp1a_0.set_gain(IF_gain, 'IF')
+        self.sdrplay3_rsp1a_0.set_gain(-float('10'), 'RF')
         self.sdrplay3_rsp1a_0.set_freq_corr(0)
         self.sdrplay3_rsp1a_0.set_dc_offset_mode(False)
         self.sdrplay3_rsp1a_0.set_iq_balance_mode(False)
-        self.sdrplay3_rsp1a_0.set_agc_setpoint(-30)
+        self.sdrplay3_rsp1a_0.set_agc_setpoint(-40)
         self.sdrplay3_rsp1a_0.set_rf_notch_filter(False)
         self.sdrplay3_rsp1a_0.set_dab_notch_filter(False)
         self.sdrplay3_rsp1a_0.set_biasT(False)
@@ -119,7 +127,7 @@ class observeCollect(gr.top_block, Qt.QWidget):
 
 
     def closeEvent(self, event):
-        self.settings = Qt.QSettings("GNU Radio", "observeCollect")
+        self.settings = Qt.QSettings("GNU Radio", "FM_observing_test")
         self.settings.setValue("geometry", self.saveGeometry())
         self.stop()
         self.wait()
@@ -151,14 +159,23 @@ class observeCollect(gr.top_block, Qt.QWidget):
 
 
 
-def main(top_block_cls=observeCollect, options=None):
+def main(top_block_cls=FM_observing_test, options=None):
+
+    # Parsing command line arguments
+    if len(sys.argv) != 4:
+        print("Make sure you're passing in the right number of arguments! We need center_freq, samp_rate and IF_gain.")
+        sys.exit(1)
+
+    center_freq = float(sys.argv[1])
+    samp_rate = float(sys.argv[2])
+    IF_gain = float(sys.argv[3])
 
     if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
-    tb = top_block_cls()
+    tb = top_block_cls(center_freq=center_freq,samp_rate=samp_rate,IF_gain=IF_gain)
 
     tb.start()
 

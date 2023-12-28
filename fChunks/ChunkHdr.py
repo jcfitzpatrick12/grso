@@ -3,6 +3,7 @@ from gnuradio.blocks import parse_file_metadata
 import os
 
 from fMisc.sys_vars import sys_vars
+from fMisc.DatetimeFuncs import DatetimeFuncs
 
 '''
 The header file contains all the header data associated with the bin file.
@@ -12,17 +13,18 @@ class ChunkHdr:
     def __init__(self,pseudo_start_time):
         self.sys_vars=sys_vars()
         self.pseudo_start_time = pseudo_start_time
+        self.data_dir=DatetimeFuncs().build_data_dir_from_pseudo_start_time(self.pseudo_start_time)
 
     #find the path to data
-    def get_data_path(self):
-        return os.path.join(self.sys_vars.path_to_data,self.pseudo_start_time+".hdr")
+    def get_path(self):
+        return os.path.join(self.data_dir,self.pseudo_start_time+".hdr")
     
     def exists(self):
-        return os.path.exists(self.get_data_path())
+        return os.path.exists(self.get_path())
     
     def parse_header(self):
         #open the header file
-        fh = open(self.get_data_path(), "rb")
+        fh = open(self.get_path(), "rb")
         # Reads the header of a fixed length from the current position in the file and moves the read pointer by HEADER_LENGTH bytes.
         header_str = fh.read(parse_file_metadata.HEADER_LENGTH)
         #deserailise the header_str 

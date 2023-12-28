@@ -14,7 +14,7 @@ for Chunk in Chunks.dict.values():
     else:
         print('showing {}'.format(Chunk.pseudo_start_datetime))
         S = Chunk.fits.load_radio_spectrogram()
-        S = S.time_average(10)
+        #S = S.time_average(100)
         #print(np.mean(S.Sxx))
         #print(np.min(S.Sxx))
         #print(np.max(S.Sxx))
