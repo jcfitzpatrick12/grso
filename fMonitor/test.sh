@@ -1,2 +1,0 @@
-cd "$GRSOPARENTPATH"
-echo $(pwd)
