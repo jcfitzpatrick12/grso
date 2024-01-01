@@ -20,8 +20,7 @@ do
   echo "Running iteration $i"
 
   # Start the Python script as a background process, then kill it after sleepy_time seconds
-  #python3 fGNU/observe_collect.py 95800000 300000 -59 &
-  python3 fGNU/observe_collect.py 53000000 5000000 -30 &
+  python3 fGNU/observe_collect.py &
 
 
   #capture the processing id of the script

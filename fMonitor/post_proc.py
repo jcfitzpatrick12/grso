@@ -2,8 +2,10 @@
 script will convert the binary and header data to fits files in data folder
 '''
 from fChunks.Chunks import Chunks
+from fMisc.sys_vars import sys_vars
 
 def main():
+    sv = sys_vars()
     #instantiate the pdata class, compute the average spectrogram and save it.
     MyChunks=Chunks()
     #DataChunkFile is so named
@@ -17,7 +19,7 @@ def main():
             try:
             #build the spectrogram from the Chunk
                 Spectrogram = Chunk.build_radio_spectrogram()
-                Spectrogram = Spectrogram.time_average(100)
+                Spectrogram = Spectrogram.time_average(sv.average_over_int)
                 #save the spectrogram to a fits file
                 Spectrogram.save_to_fits()
             except:
