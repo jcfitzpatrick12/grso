@@ -5,10 +5,9 @@ import os
 '''
 variables for gnuradio
 '''
-
 #the central frequency you wish to observe around [Hz]
 #center_freq = 57.5e6
-center_freq = 60e6
+center_freq = 62.5e6
 #center_freq = 95.8e6
 #the sampling rate of the SDR [samples per second]
 samp_rate = 5e6
@@ -27,22 +26,23 @@ noverlap=int(nperseg/2)
 #average over this many integer samples [so that the final spectrograms have a sample rate
 # of samp_rate/average_over_int]
 average_over_int = 100
-'''
-Chunks to include to build the background frequency vector [Chunks are characterised by their pseudo_start_time]
-'''
-background_interval = ["2024-01-21T09:54:00","2024-01-21T09:54:30"]
+#average_over_int=2
 
 '''
-plotting 
+Interval overwhich to evaluate the background vector over frequency.
 '''
+background_interval = ["2024-01-21T15:19:33","2024-01-21T15:20:00"]
 
-seconds_interval=10
+'''
+plotting  params
+'''
+seconds_interval=360
 dBb_vmin = -2
 dBb_vmax = 4
-average_over_before_plotting = 2
+average_over_before_plotting = 100
 
 '''
-data config variables
+global config variables
 '''
 #the default string format for defining the string format for the pseudo_start_time
 default_time_format="%Y-%m-%dT%H:%M:%S"

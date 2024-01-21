@@ -4,7 +4,10 @@ import numpy as np
 import os
 
 MyChunks = Chunks()
-background_spectrogram = MyChunks.get_background_spectrogram()
+try:
+    background_spectrogram = MyChunks.get_background_spectrogram()
+except:
+    raise ValueError("Choose a valid background interval.")
 background_vector = background_spectrogram.total_time_average()
 np.save(os.path.join(CONFIG.path_to_background_data,"background_vector"), background_vector)
 

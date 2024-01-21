@@ -6,13 +6,11 @@ from src.fConfig import CONFIG
 
 def main(requested_start_str,requested_end_str,requested_plot_types):
     from src.fBackground import set_background_vector
-
     MyChunks = Chunks()
     S = MyChunks.build_spectrogram_from_range(requested_start_str,requested_end_str)
     S = S.time_average(CONFIG.average_over_before_plotting)
     S.stack_plots(requested_plot_types)
-    # S.plot_power()
-    # S.plot_spectrogram(plot_type=requested_plot_type)
+
 
 if __name__ == '__main__':
     start_string = sys.argv[1]

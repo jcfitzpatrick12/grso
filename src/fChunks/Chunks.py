@@ -65,11 +65,12 @@ class Chunks:
             #loop through each Chunk in data and chop to the range
             #initiate an empty list to hold the RadiosSpectrogram objects to join
             to_join = []
-            #for each Chunk in data, try and chop it to the time range
+
             for pseudo_start_time,Chunk in self.dict.items():
                 pseudo_start_datetime=DatetimeFuncs.parse_datetime(pseudo_start_time)
                 if pseudo_start_datetime.day!=requested_day:
                     continue
+
                 time_array = Chunk.fits.return_info("TIME")
                 #pseudo_start_time = Chunk.fits.return_info("PSTIME")
                 datetime_array = DatetimeFuncs.build_datetime_array(pseudo_start_datetime,time_array)
@@ -77,6 +78,7 @@ class Chunks:
                 chunk_start_datetime = datetime_array[0]
                 chunk_end_datetime = datetime_array[-1]
                 if chunk_start_datetime <= requested_end_datetime and chunk_end_datetime >= requested_start_datetime:
+                    
                     try:
                         #load the spectrogram from the chunk
                         S = Chunk.fits.load_radio_spectrogram()

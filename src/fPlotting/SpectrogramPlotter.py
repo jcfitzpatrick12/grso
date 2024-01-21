@@ -30,14 +30,23 @@ class SpectrogramPlotter:
         return self.plot_kwargs_dict[plot_type]
     
     def stack_plots(self, plot_types, **kwargs):
+            if len(plot_types)==1:
+                is_one_plot=True
+            else:
+                is_one_plot=False
             # Create a figure with subplots for plots and colorbars
-            fig, axs = plt.subplots(len(plot_types), 2, figsize=(12, len(plot_types)*3),
+            fig, axs = plt.subplots(len(plot_types), 2, figsize=(15,10),
                                     gridspec_kw={'width_ratios': [3, 0.1], 'wspace': 0.05})
-
             # Iterate over the plot types and their respective axes
             for idx, plot_type in enumerate(plot_types):
-                ax = axs[idx, 0]  # Plot on the first column
-                cax = axs[idx, 1]  # Colorbar on the second column
+
+                if not is_one_plot:
+                    ax = axs[idx, 0]  # Plot on the first column
+                    cax = axs[idx, 1]  # Colorbar on the second column
+                else:
+                    ax=axs[0]
+                    cax=axs[1]
+
                 cax.axis('off')  # Initially turn off the colorbar axis; it will be turned on if needed
 
                 # Get the plotting function
@@ -49,6 +58,9 @@ class SpectrogramPlotter:
                 # Hide x-axis labels for all but the bottom plot
                 if idx < len(plot_types) - 1:
                     ax.tick_params(labelbottom=False)
+                
+                if idx ==len(plot_types)-1 or is_one_plot:
+                    ax.set_xlabel('Time [GMT]', size=self.fsize_head)
 
             # Automatically adjust subplot params for better layout
             plt.tight_layout()
@@ -71,7 +83,6 @@ class SpectrogramPlotter:
         ax.tick_params(axis='x', labelsize=self.fsize)
         ax.tick_params(axis='y', labelsize=self.fsize)
         ax.set_ylabel('Normalised Power', size=self.fsize_head)
-        ax.set_xlabel('Time', size=self.fsize_head)
 
 
     '''
@@ -97,7 +108,7 @@ class SpectrogramPlotter:
 
         # Assign the x and y labels with specified font size
         ax.set_ylabel('Frequency [MHz]', size=self.fsize_head)
-        ax.set_xlabel('Time [GMT]', size=self.fsize_head)
+        #ax.set_xlabel('Time [GMT]', size=self.fsize_head)
 
         # Format the x and y tick labels with specified font size
         ax.tick_params(axis='x', labelsize=self.fsize)
@@ -127,7 +138,6 @@ class SpectrogramPlotter:
 
         # Assign the x and y labels with specified font size
         ax.set_ylabel('Frequency [MHz]', size=self.fsize_head)
-        ax.set_xlabel('Time [GMT]', size=self.fsize_head)
 
         # Format the x and y tick labels with specified font size
         ax.tick_params(axis='x', labelsize=self.fsize)
@@ -150,7 +160,6 @@ class SpectrogramPlotter:
 
         # Assign the x and y labels with specified font size
         ax.set_ylabel('Frequency [MHz]', size=self.fsize_head)
-        ax.set_xlabel('Time [GMT]', size=self.fsize_head)
 
         # Format the x and y tick labels with specified font size
         ax.tick_params(axis='x', labelsize=self.fsize)
