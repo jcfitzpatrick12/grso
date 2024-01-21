@@ -8,7 +8,7 @@ import os
 from astropy.io import fits
 from datetime import timedelta
 
-from src.fPlotting.Plotter import Plotter
+from src.fPlotting.SpectrogramPlotter import SpectrogramPlotter
 from src.fConfig import CONFIG
 from src.utils import DatetimeFuncs 
 
@@ -41,18 +41,9 @@ class RadioSpectrogram:
     returns a vector of length (len(freqs_MHz)) so that each element is the time average over that frequency bin
     of the entire spectrogram
     '''
+
     def total_time_average(self,):
         return np.nanmean(self.Sxx,-1)
-    '''
-    Return a spectrogram with units of dB above the background.
-    '''
-
-    def convert_to_dB_above_background(self,background_vector):
-        background_vector_array = np.ones(np.shape(self.Sxx))
-        for freq_bin_ind in range(len(self.freqs_MHz)-1):
-            background_vector_array[freq_bin_ind,:]*=background_vector[freq_bin_ind]
-        self.Sxx = 10*np.log10(self.Sxx/background_vector_array)
-        pass
 
     def build_power(self):
         num_freq_bins = np.shape(self.Sxx)[0]
@@ -67,21 +58,6 @@ class RadioSpectrogram:
         return power
 
     '''
-    Plotting functions
-    '''
-    def plot_power(self):
-        Plotter().plot_power(self.datetime_array,self.power)
-        pass
-
-    def plot_spectrogram(self,**kwargs):
-        units_dB = kwargs.get("units_dB",True)
-        if units_dB:
-            Plotter().plot_spectrogram(self.freqs_MHz,self.datetime_array,self.Sxx)
-        else:
-            Plotter().plot_raw_spectrogram(self.freqs_MHz,self.datetime_array,self.Sxx)
-
-        pass
-    '''
     file functions
     '''
     #find the path to temporary_data
@@ -92,20 +68,13 @@ class RadioSpectrogram:
     def get_path(self):
         return os.path.join(self.data_dir,self.pseudo_start_time)
 
-    
-    
-    '''
-    function which saves the current instance to file
-    '''
     def save_self(self):
         # Serialize the instance to bytes using pickle
         serialized_instance = pickle.dumps(self)
         # Convert the byte stream to a NumPy uint8 array
         instance_array = np.frombuffer(serialized_instance, dtype=np.uint8)
         np.save(self.get_path(), instance_array)
-    '''
-    function which saves the relevent data to rebuild the instance to a fits file!
-    '''
+
     def save_to_fits(self):
         # Create a Primary HDU object with the Sxx data
         primary_hdu = fits.PrimaryHDU(self.Sxx)
@@ -134,8 +103,9 @@ class RadioSpectrogram:
         pass
 
     '''
-    function which returns a chopped spectrogram based on the time range
+    factory functions
     '''
+
     def chop(self,start_str,end_str):
         #parse the strings into datetimes
         start_dt = DatetimeFuncs.parse_datetime(start_str)
@@ -163,13 +133,14 @@ class RadioSpectrogram:
     function which RETURNS the average spectrogram, and (necessarily) decimated timeArray
     '''
 
+    def to_dBb(self,background_vector):
+        Sxx_dBb=SpectrogramFuncs.Sxx_to_dBb(self.Sxx)
+        return RadioSpectrogram(Sxx_dBb,self.time_array, self.freqs_MHz, self.center_freq, self.pseudo_start_time, self.is_averaged)
+
+
     def time_average(self,average_over_int):
-        '''
-        average in time over averageOver samples in the full spectrogram, create fields and save to a numpy array
-        ''' 
         if average_over_int==1:
             return self
-
         #find the number of frequenct samples
         num_freq_samples = np.shape(self.Sxx)[0]
         #find the number of temporal samples
@@ -187,31 +158,44 @@ class RadioSpectrogram:
         if remainder:
             num_temporal_samples_after_averaging+=1
 
-        #print(num_temporal_samples_after_averaging)
-
         #instantiate an array to hold the averaged spectrogram
-        averageSxx = np.empty((num_freq_samples,num_temporal_samples_after_averaging))
+        average_Sxx = np.empty((num_freq_samples,num_temporal_samples_after_averaging))
 
         #create an array to hold the decimated datetime array
-        timeArrayDecimated = []
+        time_array_decimated = []
 
         #loop through the spectrogram and average the columns
         for i in range(num_temporal_samples_after_averaging):
-            averageSxx[:,i] = np.mean(self.Sxx[:,N*i:N*i+N],axis=1)
-            timeArrayDecimated.append(self.time_array[i*N])
+            average_Sxx[:,i] = np.mean(self.Sxx[:,N*i:N*i+N],axis=1)
+            time_array_decimated.append(self.time_array[i*N])
         
         #add the final bin edge for the decimated time array
-        dt = timeArrayDecimated[-2]-timeArrayDecimated[-3]
-        timeArrayDecimated.append(timeArrayDecimated[-1]+dt)
+        dt = time_array_decimated[-2]-time_array_decimated[-3]
+        time_array_decimated.append(time_array_decimated[-1]+dt)
 
         #if there is a non-zero remainder, just cut the final entry
         if remainder:
-            #averageSxx[:,-1] = np.nanmean(self.Sxx[:,-remainder:],axis=1)
-            averageSxx=averageSxx[:,:-1]
-            timeArrayDecimated=timeArrayDecimated[:-1]
-        
-        averageRadioSpectrogram = RadioSpectrogram(averageSxx,timeArrayDecimated,self.freqs_MHz,self.center_freq,self.pseudo_start_time,True)
-        return averageRadioSpectrogram
+            #average_Sxx[:,-1] = np.nanmean(self.Sxx[:,-remainder:],axis=1)
+            average_Sxx=average_Sxx[:,:-1]
+            time_array_decimated=time_array_decimated[:-1]
+        return RadioSpectrogram(average_Sxx,time_array_decimated,self.freqs_MHz,self.center_freq,self.pseudo_start_time,True)
+    
 
+    '''
+    Plotting functions
+    '''
 
+    # def plot_spectrogram(self,**kwargs):
+    #     plot_type = kwargs.get("plot_type", None)
+    #     if not plot_type:
+    #         raise ValueError(f"Specify plot type to be one of {Plotter().spectrogram_plot_type}")
+    #     plot_spectrogram = Plotter().get_plot_spectrogram_func(plot_type)
+    #     plot_spectrogram(self.freqs_MHz,self.datetime_array,self.Sxx)
+    #     pass
 
+    # def plot_power(self):
+    #     Plotter().plot_power(self.datetime_array,self.power)
+    #     pass
+
+    def stack_plots(self,plot_types,**kwargs):
+        SpectrogramPlotter(self).stack_plots(plot_types,**kwargs)

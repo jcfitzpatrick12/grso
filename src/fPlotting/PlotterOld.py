@@ -1,14 +1,23 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from matplotlib.colors import LogNorm
 from src.fConfig import CONFIG
-
+import os
+from src.utils import SpectrogramFuncs
+ 
 
 class Plotter:  
     def __init__(self):
         #plt.style.use("seaborn")
         self.fsize_head=20
         self.fsize=15
+        
+        self.spectrogram_plot_type = {
+            "dBb": self.plot_spectrogram_dBb,
+            "raw": self.plot_spectrogram_raw,
+            "rawlog": self.plot_spectrogram_rawlog,
+        }
 
     '''
     assumes that power is normalised to integrate to unity.
@@ -31,18 +40,23 @@ class Plotter:
 
 
     '''
-    assumes we are plotting the raw spectrogram data.
+    Spectrogram plotting functions.
     '''
 
-    def plot_raw_spectrogram(self,freqs_MHz, datetime_array, Sxx):
-        # Plot the spectrogram with fixed vmin and vmax
-        
-        plt.pcolormesh(datetime_array, freqs_MHz, Sxx)
-        #plt.pcolormesh(datetime_array, freqs_MHz, 10*np.log10(Sxx))
+
+    def get_plot_spectrogram_func(self, plot_type):
+        try:
+            return self.spectrogram_plot_type[plot_type]
+        except:
+            raise ValueError(f"Warning! Error fetching function. Check {plot_type} is a valid plot_type.")
+    
+    def plot_spectrogram_rawlog(self,freqs_MHz, datetime_array, Sxx):
+        # Plot the spectrogram with LogNorm
+        spectrogram = plt.pcolormesh(datetime_array, freqs_MHz, Sxx, norm=LogNorm(vmin=np.min(Sxx[Sxx > 0]), vmax=np.max(Sxx)))
 
         # Format the x-axis to display time in HH:MM:SS
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
-        plt.gca().xaxis.set_major_locator(mdates.SecondLocator(interval=CONFIG.seconds_interval))  # adjust the interval for your needs
+        plt.gca().xaxis.set_major_locator(mdates.SecondLocator(interval=CONFIG.seconds_interval))  # Adjust the interval as needed
 
         # Rotate date labels automatically
         plt.gcf().autofmt_xdate()
@@ -55,6 +69,27 @@ class Plotter:
         plt.xticks(size=self.fsize)
         plt.yticks(size=self.fsize)
 
+        # Add a colorbar
+        plt.colorbar(spectrogram, ax=plt.gca())
+
+        # Display the plot
+        plt.show()
+
+    def plot_spectrogram_raw(self,freqs_MHz, datetime_array, Sxx):
+        # Plot the spectrogram with fixed vmin and vmax
+        plt.pcolormesh(datetime_array, freqs_MHz, Sxx)
+        #plt.pcolormesh(datetime_array, freqs_MHz, 10*np.log10(Sxx))
+        # Format the x-axis to display time in HH:MM:SS
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
+        plt.gca().xaxis.set_major_locator(mdates.SecondLocator(interval=CONFIG.seconds_interval))  # adjust the interval for your needs
+        # Rotate date labels automatically
+        plt.gcf().autofmt_xdate()
+        # Assign the x and y labels with specified font size
+        plt.ylabel('Frequency [MHz]', size=self.fsize_head)
+        plt.xlabel('Time [GMT]', size=self.fsize_head)
+        # Format the x and y tick labels with specified font size
+        plt.xticks(size=self.fsize)
+        plt.yticks(size=self.fsize)
         # Display the plot
         plt.show()
 
@@ -62,10 +97,14 @@ class Plotter:
     assumes the spectrogram is in units of dB above the background.
     '''
 
-    def plot_spectrogram(self, freqs_MHZ, datetime_array, Sxx):
+    def plot_spectrogram_dBb(self, freqs_MHZ, datetime_array, Sxx):
 
-        vmin=-2
-        vmax=14
+        background_vector=np.load(os.path.join(CONFIG.path_to_background_data,"background_vector.npy"))
+        #background_vector = Chunks().return_background_vector()
+        Sxx = SpectrogramFuncs.Sxx_to_dBb(Sxx,background_vector)
+
+        vmin=CONFIG.dBb_vmin
+        vmax=CONFIG.dBb_vmax
         # Plot the spectrogram with fixed vmin and vmax
         plt.pcolormesh(datetime_array, freqs_MHZ, Sxx, vmin=vmin, vmax=vmax)
 

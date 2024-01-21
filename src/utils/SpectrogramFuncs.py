@@ -1,16 +1,20 @@
 import numpy as np
 from src.utils import DatetimeFuncs
 from src.fSpectrogram.RadioSpectrogram import RadioSpectrogram
-'''
-join a number of spectrograms [stored in the to_join list]
 
--pads in between with zero, since there will be a couple of seconds of downtime
--we don't need to worry about the spectrograms being time ordered as the dictionary is already sorted in Chunks
-'''
+def Sxx_to_dBb(Sxx,background_vector):
+    background_vector_array = np.ones(np.shape(Sxx))
+    num_freqs = np.shape(Sxx)[0]
+    for freq_bin_ind in range(num_freqs-1):
+        background_vector_array[freq_bin_ind,:]*=background_vector[freq_bin_ind]
+    Sxx_dBb = 10*np.log10(Sxx/background_vector_array)
+    return Sxx_dBb
 
 def join_spectrograms(list_of_spectrograms_to_join):
     #find the number of spectrograms to join
     num_to_join = len(list_of_spectrograms_to_join)
+    if num_to_join == 0:
+        raise ValueError("No spectrograms to join!")
     # Padding columns: one less than the number of spectrograms
     num_zero_cols = num_to_join - 1
     #initialise an array to hold the time dimension 

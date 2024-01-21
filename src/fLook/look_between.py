@@ -1,28 +1,24 @@
 import os 
 import numpy as np
 import sys
-
 from src.fChunks.Chunks import Chunks
-from src.fChunks.BackgroundChunks import BackgroundChunks
 from src.fConfig import CONFIG
 
-def main(start_string,end_string):
-    background_vector = BackgroundChunks().return_background_vector()
+def main(requested_start_str,requested_end_str,requested_plot_types):
+    from src.fBackground import set_background_vector
+
     MyChunks = Chunks()
-    S=MyChunks.build_spectrogram_from_range(start_string,end_string)
-    S=S.time_average(10)
-    S.plot_power()
-    S.convert_to_dB_above_background(background_vector)
-    S.plot_spectrogram(units_dB=True)
+    S = MyChunks.build_spectrogram_from_range(requested_start_str,requested_end_str)
+    S = S.time_average(CONFIG.average_over_before_plotting)
+    S.stack_plots(requested_plot_types)
+    # S.plot_power()
+    # S.plot_spectrogram(plot_type=requested_plot_type)
 
 if __name__ == '__main__':
     start_string = sys.argv[1]
     end_string = sys.argv[2]
-    main(start_string,end_string)
+    requested_plot_type = sys.argv[3:]
+    main(start_string,end_string,requested_plot_type)
 
 
-#print(S.Sxx[:,10])
-#print(S_original.Sxx[:,10])
-
-#print(np.sum(S.Sxx-S_original.Sxx))
 

@@ -4,15 +4,14 @@ Chunks deals with all the files in Pdata
 
 import os
 import numpy as np
-import matplotlib.pyplot as plt
 from datetime import timedelta
 import time
 
 from src.fConfig import CONFIG
-from src.fChunks.Chunk import ChunkFits
 from src.utils import DatetimeFuncs, SpectrogramFuncs
 from src.fChunks.Chunk import Chunk
-from src.fSpectrogram.RadioSpectrogram import RadioSpectrogram
+
+
 
 
 class Chunks:
@@ -36,13 +35,11 @@ class Chunks:
         #sorts the dictionary temporally
         self.sort_dict()
 
-    
-    def sort_dict(self):
-        self.dict = {k: self.dict[k] for k in sorted(self.dict)}
-
     def get_dict(self):
         return self.dict
 
+    def sort_dict(self):
+        self.dict = {k: self.dict[k] for k in sorted(self.dict)}
 
     def list_all_files(self):
         all_files = []
@@ -55,71 +52,59 @@ class Chunks:
         return all_files
     
 
-
-    '''
-    Function which returns a dictionary of all Chunks in a specified time range
-
-    [optimise for now current data subdirectory structure]
-
-    -return a spectrogram over a custom time range.
-    -takes in start_str and end_str in the format CONFIG.default_time_format
-    -then outputs a RadioSpectrogram over the time range specified
-    '''
-
     def build_spectrogram_from_range(self,requested_start_str,requested_end_str):
-        requested_start_datetime = DatetimeFuncs.parse_datetime(requested_start_str)
-        requested_end_datetime = DatetimeFuncs.parse_datetime(requested_end_str)
+            requested_start_datetime = DatetimeFuncs.parse_datetime(requested_start_str)
+            requested_end_datetime = DatetimeFuncs.parse_datetime(requested_end_str)
 
-        try:
-            assert requested_start_datetime.day == requested_end_datetime.day
-            requested_day = requested_start_datetime.day
-        except:
-            raise ValueError("Make sure your time interval is within one day.")
+            try:
+                assert requested_start_datetime.day == requested_end_datetime.day
+                requested_day = requested_start_datetime.day
+            except:
+                raise ValueError("Make sure your time interval is within one day.")
 
-        #loop through each Chunk in data and chop to the range
-        #initiate an empty list to hold the RadiosSpectrogram objects to join
-        to_join = []
-        #for each Chunk in data, try and chop it to the time range
-        for pseudo_start_time,Chunk in self.dict.items():
-            pseudo_start_datetime=DatetimeFuncs.parse_datetime(pseudo_start_time)
-            if pseudo_start_datetime.day!=requested_day:
-                continue
-            time_array = Chunk.fits.return_info("TIME")
-            #pseudo_start_time = Chunk.fits.return_info("PSTIME")
-            datetime_array = DatetimeFuncs.build_datetime_array(pseudo_start_datetime,time_array)
-            # Check if the chunk's time range intersects with the requested time range
-            chunk_start_datetime = datetime_array[0]
-            chunk_end_datetime = datetime_array[-1]
-            if chunk_start_datetime <= requested_end_datetime and chunk_end_datetime >= requested_start_datetime:
-                try:
-                    #load the spectrogram from the chunk
-                    S = Chunk.fits.load_radio_spectrogram()
+            #loop through each Chunk in data and chop to the range
+            #initiate an empty list to hold the RadiosSpectrogram objects to join
+            to_join = []
+            #for each Chunk in data, try and chop it to the time range
+            for pseudo_start_time,Chunk in self.dict.items():
+                pseudo_start_datetime=DatetimeFuncs.parse_datetime(pseudo_start_time)
+                if pseudo_start_datetime.day!=requested_day:
+                    continue
+                time_array = Chunk.fits.return_info("TIME")
+                #pseudo_start_time = Chunk.fits.return_info("PSTIME")
+                datetime_array = DatetimeFuncs.build_datetime_array(pseudo_start_datetime,time_array)
+                # Check if the chunk's time range intersects with the requested time range
+                chunk_start_datetime = datetime_array[0]
+                chunk_end_datetime = datetime_array[-1]
+                if chunk_start_datetime <= requested_end_datetime and chunk_end_datetime >= requested_start_datetime:
+                    try:
+                        #load the spectrogram from the chunk
+                        S = Chunk.fits.load_radio_spectrogram()
 
-                    #chop the spectrogram according to the requested range
-                    S = S.chop(requested_start_str,requested_end_str)
-                    #S.Sxx[:,0]=1000
-                    #S.Sxx[:,-1]=1000
+                        #chop the spectrogram according to the requested range
+                        S = S.chop(requested_start_str,requested_end_str)
+                        #S.Sxx[:,0]=1000
+                        #S.Sxx[:,-1]=1000
 
-                    #if the spectrogram is in the requested range, add it to the spectrograms to join
-                    to_join.append(S)
-                #otherwise, we'll get an error thrown that the indices are equal. This means the spectrogram is out of range
-                #and we can ignore it.
-
-                except:
-                    pass
-            else:
-                continue
-            
-        #if we didn't find any spectrograms to join...
-        if len(to_join)==0:
-            raise SystemError("No file matches! Choose a different time range.")
-        #if we are looking at a single spectrogram, simple return it chopped accordingly
-        if len(to_join)==1:
-            return to_join[0]
-        #if we more than one spectrogram to join, join them.
-        elif len(to_join)>1:
-            #join all the spectrograms together, padding with zeros between
-            return SpectrogramFuncs.join_spectrograms(to_join) 
+                        #if the spectrogram is in the requested range, add it to the spectrograms to join
+                        to_join.append(S)
+                    #otherwise, we'll get an error thrown that the indices are equal. This means the spectrogram is out of range
+                    #and we can ignore it.
+                    except:
+                        pass
+                else:
+                    continue
+                
+            #if we didn't find any spectrograms to join...
+            if len(to_join)==0:
+                raise SystemError("No file matches! Choose a different time range.")
+            #if we are looking at a single spectrogram, simple return it chopped accordingly
+            if len(to_join)==1:
+                return to_join[0]
+            #if we more than one spectrogram to join, join them.
+            elif len(to_join)>1:
+                #join all the spectrograms together, padding with zeros between
+                return SpectrogramFuncs.join_spectrograms(to_join) 
 
     def remove_non_fits_files_from_data(self,):
         # Loop through files in the directory
@@ -135,4 +120,22 @@ class Chunks:
                 print(f"Deleted {file}")
         pass  
        
+    def find_nearest_chunk(self,look_after_datetime):
+        for Chunk in self.dict.values():
+            if Chunk.pseudo_start_datetime <= look_after_datetime:
+                pass
+            else:
+                return Chunk
+
+    def get_background_spectrogram(self,**kwargs):
+        start_background_str = kwargs.get("start_background",CONFIG.background_interval[0])
+        end_background_str = kwargs.get("end_background",CONFIG.background_interval[1])
+        return self.build_spectrogram_from_range(start_background_str,end_background_str)
+
+    # def find_neighbouring_chunk(self,Chunk,**kwargs):
+    #     go_backwards = kwargs.get("go_backwards",False)
+
+        
+
+
     
