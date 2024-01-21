@@ -1,7 +1,7 @@
 # grso: GNU Radio for Solar Observations
 
 ## Introduction
-Software back-end for solar radio observations using ```gnuradio```. Interfacing with SDRPlay RSP1A through [gr-sdrplay3](https://github.com/fventuri/gr-sdrplay3.git). Automated scripts for the continous collection, storing and post-processing radio spectrograms. Designed to work with [```grso-docker```](https://github.com/jcfitzpatrick12/grso-docker.git).
+Software back-end for solar radio observations using ```gnuradio```. Interfacing with SDRPlay RSP1A through [gr-sdrplay3](https://github.com/fventuri/gr-sdrplay3.git). Automated scripts for the continous collection, storing and post-processing radio spectrograms. Designed to work with [```grso-docker```](https://github.com/jcfitzpatrick12/grso-docker.git). 
 
 ## Supported Operating Systems
 
