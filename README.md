@@ -27,7 +27,7 @@ Contributions to `grso-docker` are welcome. If you have suggestions or improveme
 
 ## Improvements to Come
 - Support for Raspberry Pi.
-- Front-end
+- Front-end.
 - Custom gnuradio sink block for continous streaming of raw IQ data into spectrograms (current method employs a batch-process approach using the gnuradio block "file meta sink").
 
 ## License
