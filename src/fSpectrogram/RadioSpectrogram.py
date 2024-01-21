@@ -128,16 +128,6 @@ class RadioSpectrogram:
         #return the chopped RadioSpectrogram
         return RadioSpectrogram(chopped_Sxx,chopped_timeArray,self.freqs_MHz,self.center_freq,chopped_pseudo_start_time,self.is_averaged)
 
-
-    '''
-    function which RETURNS the average spectrogram, and (necessarily) decimated timeArray
-    '''
-
-    def to_dBb(self,background_vector):
-        Sxx_dBb=SpectrogramFuncs.Sxx_to_dBb(self.Sxx)
-        return RadioSpectrogram(Sxx_dBb,self.time_array, self.freqs_MHz, self.center_freq, self.pseudo_start_time, self.is_averaged)
-
-
     def time_average(self,average_over_int):
         if average_over_int==1:
             return self
