@@ -15,13 +15,21 @@ It may also work on other Linux distributions and other Ubuntu versions. However
 - Please ensure that you have installed [```grso-docker```](https://github.com/jcfitzpatrick12/grso-docker.git). Follow the instructions on this repository
 
 ## Usage
-In development. 
+In development. The below instructions assume the user has correctly installed [```grso-docker```](https://github.com/jcfitzpatrick12/grso-docker.git). All instructions assume you are inside the container, and have cd'd into the ```grso``` directory.
 
+- Running  ```service cron start``` will start daily observations.  
+- Running ```bash src/fMonitor/monitor.sh N M``` which will collect N discrete segments of data for, where each segment is M seconds long.
+- To visualise the data over some time segment, run ```python3 src/fLook/look_between.py [START_TIME] [END_TIME]``` where START_TIME END_TIME are formatted like %Y-%m-%dT%H:%M:%S.
+- Any parameter configurations can be made within the module ```src/fConfig/CONFIG.py```
+
+- 
 ## Contributing
 Contributions to `grso-docker` are welcome. If you have suggestions or improvements, please open an issue or submit a pull request on the GitHub repository.
 
 ## Improvements to Come
 - Support for Raspberry Pi.
+- Front-end
+- Custom gnuradio sink block for continous streaming of raw IQ data into spectrograms (current method employs a batch-process approach using the gnuradio block "file meta sink").
 
 ## License
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT) - see the [LICENSE](LICENSE).
