@@ -22,7 +22,6 @@ In development. The below instructions assume the user has correctly installed [
 - To visualise the data over some time segment, run ```python3 src/fLook/look_between.py [START_TIME] [END_TIME]``` where START_TIME END_TIME are formatted like %Y-%m-%dT%H:%M:%S.
 - Any parameter configurations can be made within the module ```src/fConfig/CONFIG.py```
 
-- 
 ## Contributing
 Contributions to `grso-docker` are welcome. If you have suggestions or improvements, please open an issue or submit a pull request on the GitHub repository.
 
