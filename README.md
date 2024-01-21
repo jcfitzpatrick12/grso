@@ -22,9 +22,6 @@ This section will be subject to modification in the future. The below commands a
 - To visualise the data over some time segment, run ```python3 src/fLook/look_between.py [START_TIME] [END_TIME] power dBb``` where ```[START_TIME]``` and ```[END_TIME]``` are formatted like ```%Y-%m-%dT%H:%M:%S```, and the subsequent arguments indicate which plots to stack in the figure. ```power``` will plot normalised power over the time interval requested, and ```dBb``` will plot the corresponding spectrogram in units of dB above the background.
 - Any parameter configurations can be made within the module ```src/fConfig/CONFIG.py```
 
-## Troubleshooting
-This software is in active development! Tinkering with the parameters in ```src/fConfig/CONFIG.py``` may be required.
-
 ## Contributing
 Contributions to `grso-docker` are welcome. If you have suggestions or improvements, please open an issue or submit a pull request on the GitHub repository.
 
