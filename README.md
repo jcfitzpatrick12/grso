@@ -19,7 +19,7 @@ In development. The below instructions assume the user has correctly installed [
 
 - Running  ```service cron start``` will start daily observations.  
 - Running ```bash src/fMonitor/monitor.sh N M``` which will collect N discrete segments of data for, where each segment is M seconds long.
-- To visualise the data over some time segment, run ```python3 src/fLook/look_between.py [START_TIME] [END_TIME] power dBb``` where START_TIME END_TIME are formatted like ```%Y-%m-%dT%H:%M:%S```, and the subsequent arguments indicate which plots to stack. Power will plot normalised power over the time interval requested, and dBb will plot the corresponding spectrogram in units of dB above the background.
+- To visualise the data over some time segment, run ```python3 src/fLook/look_between.py [START_TIME] [END_TIME] power dBb``` where ```[START_TIME]``` and ```[END_TIME]``` are formatted like ```%Y-%m-%dT%H:%M:%S```, and the subsequent arguments indicate which plots to stack. Power will plot normalised power over the time interval requested, and dBb will plot the corresponding spectrogram in units of dB above the background.
 - Any parameter configurations can be made within the module ```src/fConfig/CONFIG.py```
 
 ## Contributing
