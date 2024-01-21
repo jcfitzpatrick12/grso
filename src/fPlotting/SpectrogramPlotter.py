@@ -118,10 +118,6 @@ class SpectrogramPlotter:
         cbar.set_label('dB above background', size=self.fsize_head)
         cbar.set_ticks(range(vmin, vmax, 2))
 
-
-
-
-
     
     def plot_spectrogram_rawlog(self, ax=None, cax=None):
         freqs_MHz = self.S.freqs_MHz

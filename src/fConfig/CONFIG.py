@@ -31,7 +31,7 @@ average_over_int = 100
 '''
 Interval overwhich to evaluate the background vector over frequency.
 '''
-background_interval = ["2024-01-21T15:19:33","2024-01-21T15:20:00"]
+background_interval = ["2024-01-21T16:30:00","2024-01-21T16:31:00"]
 
 '''
 plotting  params

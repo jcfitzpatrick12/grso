@@ -12,8 +12,6 @@ from src.utils import DatetimeFuncs, SpectrogramFuncs
 from src.fChunks.Chunk import Chunk
 
 
-
-
 class Chunks:
     def __init__(self):
         self.set_dict()
