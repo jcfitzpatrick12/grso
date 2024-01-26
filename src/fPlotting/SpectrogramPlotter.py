@@ -20,8 +20,6 @@ class SpectrogramPlotter:
             "raw": self.plot_spectrogram_raw,
             "rawlog": self.plot_spectrogram_rawlog,
         }
-
-
         
     def get_plot_func(self, plot_type):
         return self.plot_type_dict[plot_type]
@@ -29,14 +27,17 @@ class SpectrogramPlotter:
     def get_plot_kwargs(self, plot_type):
         return self.plot_kwargs_dict[plot_type]
     
-    def stack_plots(self, plot_types, **kwargs):
+    def stack_plots(self, fig, plot_types):
+            
             if len(plot_types)==1:
                 is_one_plot=True
             else:
                 is_one_plot=False
-            # Create a figure with subplots for plots and colorbars
-            fig, axs = plt.subplots(len(plot_types), 2, figsize=(15,10),
-                                    gridspec_kw={'width_ratios': [3, 0.1], 'wspace': 0.05})
+            
+            # # Create a figure with subplots for plots and colorbars
+            # fig, axs = plt.subplots(len(plot_types), 2, figsize=(15,10),
+            #                         gridspec_kw={'width_ratios': [3, 0.1], 'wspace': 0.05})
+            axs = fig.subplots(len(plot_types), 2, gridspec_kw={'width_ratios': [3, 0.1], 'wspace': 0.05})
             # Iterate over the plot types and their respective axes
             for idx, plot_type in enumerate(plot_types):
 
@@ -66,7 +67,7 @@ class SpectrogramPlotter:
             plt.tight_layout()
 
             # Show the stacked plot
-            plt.show()
+            #plt.show()
 
 
     '''

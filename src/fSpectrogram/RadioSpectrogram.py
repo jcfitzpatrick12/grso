@@ -175,17 +175,5 @@ class RadioSpectrogram:
     Plotting functions
     '''
 
-    # def plot_spectrogram(self,**kwargs):
-    #     plot_type = kwargs.get("plot_type", None)
-    #     if not plot_type:
-    #         raise ValueError(f"Specify plot type to be one of {Plotter().spectrogram_plot_type}")
-    #     plot_spectrogram = Plotter().get_plot_spectrogram_func(plot_type)
-    #     plot_spectrogram(self.freqs_MHz,self.datetime_array,self.Sxx)
-    #     pass
-
-    # def plot_power(self):
-    #     Plotter().plot_power(self.datetime_array,self.power)
-    #     pass
-
-    def stack_plots(self,plot_types,**kwargs):
-        SpectrogramPlotter(self).stack_plots(plot_types,**kwargs)
+    def stack_plots(self,fig,plot_types,**kwargs):
+        SpectrogramPlotter(self).stack_plots(fig, plot_types,**kwargs)
