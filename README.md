@@ -18,8 +18,8 @@ It may also work on other Linux distributions and other Ubuntu versions. However
 This section will be subject to modification in the future. The below commands assume the user has correctly installed [```grso-docker```](https://github.com/jcfitzpatrick12/grso-docker.git). All commands assume you are inside the container, and have cd'd into the ```grso``` directory.
 
 - Running  ```service cron start``` will enable daily observations. 
-- Running ```bash src/fMonitor/monitor.sh N M``` will collect ```N``` discrete radio spectrograms, where each data segment is ```M``` seconds long. The spectrogram is saved as a ```fits``` file in the appropriate directory in data according to the time of collection. 
-- To visualise the data over some time segment, run ```python3 src/fLook/look_between.py [START_TIME] [END_TIME] power dBb``` where ```[START_TIME]``` and ```[END_TIME]``` are formatted like ```%Y-%m-%dT%H:%M:%S```, and the subsequent arguments indicate which plots to stack in the figure. ```power``` will plot normalised power over the time interval requested, and ```dBb``` will plot the corresponding spectrogram in units of dB above the background.
+- Running ```bash src/fMonitor/monitor.sh N M``` will collect ```N``` discrete radio spectrograms, where each data segment is ```M``` seconds long. The spectrogram is saved as a ```fits``` file in the appropriate directory in data according to the time of collection.
+- To visualise the data using the basic GUI, run ```python3 src/fGUI/LookBetween.py```
 - Any parameter configurations are made within the module ```src/fConfig/CONFIG.py```
 
 ## Contributing
