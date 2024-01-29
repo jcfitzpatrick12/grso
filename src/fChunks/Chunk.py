@@ -83,7 +83,7 @@ class Chunk:
             dt = time_array[-2]-time_array[-3]
             extended_time_array[-1] = time_array[-1]+dt
             #build the RadioSpectrogram class
-            return RadioSpectrogram(Sxx,extended_time_array,freqsMHz, center_freq,self.chunk_start_time,False)
+            return RadioSpectrogram(Sxx,extended_time_array,freqsMHz, center_freq,self.chunk_start_time,self.tag)
         
         else:
             raise SystemError("Files missing! We have that .bin exists {} and .hdr exists {}".format(self.bin.exists(),self.hdr.exists()))

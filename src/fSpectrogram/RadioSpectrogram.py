@@ -115,7 +115,7 @@ class RadioSpectrogram:
         hdulist.append(tb_hdu_freq)
 
         #name the path according to the chunk_start_time
-        fpath = os.path.join(self.get_path()+".fits")
+        fpath = os.path.join(self.get_path())
         # Write the FITS file
         hdulist.writeto(fpath, overwrite=True)
         pass

@@ -162,6 +162,7 @@ class SpectrogramPlotter:
         # Format the x and y tick labels with specified font size
         ax.tick_params(axis='x', labelsize=self.fsize)
         ax.tick_params(axis='y', labelsize=self.fsize)
-        cax.axis("On")
-        cbar = plt.colorbar(pcolor_plot,ax=ax,cax=cax)
+        
+        #cax.axis("On")
+        #cbar = plt.colorbar(pcolor_plot,ax=ax,cax=cax)
 

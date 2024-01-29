@@ -7,7 +7,7 @@ from src.fConfig import CONFIG
 
 def main():
     #instantiate the pdata class, compute the average spectrogram and save it.
-    my_chunks=Chunks(CONFIG.path_to_data, Chunk)
+    my_chunks=Chunks("00")
     #DataChunkFile is so named
     for chunk_start_time,chunk in my_chunks.dict.items():
         #move all files from temp_data to data
@@ -20,7 +20,6 @@ def main():
                 #build the spectrogram from the Chunk
                 Spectrogram = chunk.build_radio_spectrogram()
                 Spectrogram = Spectrogram.time_average(CONFIG.average_over_int)
-                #save the spectrogram to a fits file
                 Spectrogram.save_to_fits()
             except Exception as e:
                 print(f"Couldn't make spectrogram for this Chunk! {e}")
