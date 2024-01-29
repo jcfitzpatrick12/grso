@@ -11,32 +11,33 @@ import os
 
 from src.fChunks.ChunkBin import ChunkBin
 from src.fChunks.ChunkHdr import ChunkHdr
-from src.fChunks.ChunkNpy import ChunkNpy
+#from src.fChunks.ChunkNpy import ChunkNpy
 from src.fChunks.ChunkFits import ChunkFits
 from src.fSpectrogram.RadioSpectrogram import RadioSpectrogram
 from src.fConfig import CONFIG
 import pmt
 
 '''
-ChunkFiles are characterised by pseudo_start_time
+ChunkFiles are characterised by chunk_start_time
 '''
 
 class Chunk:
     #constructor for SingleFileHandler
-    def __init__(self,pseudo_start_time):
+    def __init__(self,chunk_start_time, tag):
         #instantiate the timeStampStr field
-        self.pseudo_start_time = pseudo_start_time
-        #type of the file
-        #extract the datetime from pseudo_start_time
-        self.pseudo_start_datetime = datetime.strptime(self.pseudo_start_time,"%Y-%m-%dT%H:%M:%S")
+        self.chunk_start_time = chunk_start_time
+        self.tag = tag
+        self.time_format = f"{CONFIG.default_time_format}_{tag}"
+        #extract the datetime from chunk_start_time
+        self.chunk_start_datetime = datetime.strptime(self.chunk_start_time, CONFIG.default_time_format)
         #instantiate the ChunkBin class
-        self.bin=ChunkBin(pseudo_start_time)
+        self.bin=ChunkBin(chunk_start_time, self.tag)
         #instantiate the ChunkHdr class
-        self.hdr=ChunkHdr(pseudo_start_time)
+        self.hdr=ChunkHdr(chunk_start_time, self.tag)
         #instantiate the ChunkNpy class
-        self.npy = ChunkNpy(pseudo_start_time)
+        #self.npy = ChunkNpy(chunk_start_time)
         #insantiate the ChunkFits class
-        self.fits = ChunkFits(pseudo_start_time)
+        self.fits = ChunkFits(chunk_start_time, self.tag)
 
 
     '''
@@ -82,7 +83,7 @@ class Chunk:
             dt = time_array[-2]-time_array[-3]
             extended_time_array[-1] = time_array[-1]+dt
             #build the RadioSpectrogram class
-            return RadioSpectrogram(Sxx,extended_time_array,freqsMHz, center_freq,self.pseudo_start_time,False)
+            return RadioSpectrogram(Sxx,extended_time_array,freqsMHz, center_freq,self.chunk_start_time,False)
         
         else:
             raise SystemError("Files missing! We have that .bin exists {} and .hdr exists {}".format(self.bin.exists(),self.hdr.exists()))

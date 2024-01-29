@@ -7,14 +7,15 @@ from src.fConfig import CONFIG
 from src.fSpectrogram.RadioSpectrogram import RadioSpectrogram
 
 class ChunkFits:
-    def __init__(self,pseudo_start_time):
-        self.pseudo_start_time=pseudo_start_time
-        self.data_dir=DatetimeFuncs.build_data_dir_from_pseudo_start_time(self.pseudo_start_time)
+    def __init__(self,chunk_start_time, tag):
+        self.chunk_start_time=chunk_start_time
+        self.tag = tag
+        self.data_dir=DatetimeFuncs.build_data_dir_from_chunk_start_time(CONFIG.path_to_data, self.chunk_start_time)
         self.valid_request_strings = ['Sxx','CFREQ','PSTIME','ISCOMPR','TIME','FREQ']
 
-    #find the path to the binary
+    #find the path to data
     def get_path(self):
-        return os.path.join(self.data_dir,self.pseudo_start_time+".fits")
+        return os.path.join(self.data_dir,f"{self.chunk_start_time}_{self.tag}.fits")
     
     #find out if the path exists
     def exists(self):
@@ -29,12 +30,12 @@ class ChunkFits:
                 Sxx = primary_hdu.data
                 #make sure we have a valid request string
                 if request_string in self.valid_request_strings:
-                    if request_string == "Sxx":
+                    if request_string == "TIME":
+                        return(hdulist[1].data[request_string])
+                    elif request_string == "Sxx":
                         return(primary_hdu.data)
                     elif request_string in ["CFREQ", "PSTIME", "ISCOMPR"]:
                         return primary_hdu.header[request_string]
-                    elif request_string == "TIME":
-                        return(hdulist[1].data[request_string])
                     elif request_string=="FREQ":
                         return(hdulist[2].data[request_string])
                     else:
@@ -58,8 +59,7 @@ class ChunkFits:
 
                 # Extract other necessary attributes from the header
                 center_freq = primary_hdu.header['CFREQ']
-                pseudo_start_time = primary_hdu.header['PSTIME']
-                is_averaged = primary_hdu.header['ISAVR']
+                chunk_start_time = primary_hdu.header['PSTIME']
 
                 # Assuming timeArray and freqsMHz are stored in a binary table in the second HDU
                 time_array = hdulist[1].data['TIME']
@@ -67,7 +67,7 @@ class ChunkFits:
 
 
                     # Create a new instance of RadioSpectrogram
-            return RadioSpectrogram(Sxx, time_array, freqs_MHz, center_freq, pseudo_start_time, is_averaged)
+            return RadioSpectrogram(Sxx, time_array, freqs_MHz, center_freq, chunk_start_time, self.tag)
 
         else:
             raise SystemError('No file found!!')

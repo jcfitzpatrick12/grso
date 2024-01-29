@@ -21,12 +21,12 @@ class BuildDict:
 
 
 
-	def GetDict(self,samp_rate,center_freq,pseudo_start_time):
+	def GetDict(self,samp_rate,center_freq,chunk_start_time):
 		# Define a list of key-value pairs with different types
 		key_value_pairs = [
 		('samp_rate', int(samp_rate)),
 		('center_freq', float(center_freq)),
-		('pseudo_start_time', pseudo_start_time),
+		('chunk_start_time', chunk_start_time),
 		# Add more key-value pairs here
 		]
 		# Add key-value pairs to the PMT dictionary

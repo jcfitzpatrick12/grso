@@ -16,15 +16,23 @@ def build_data_dir_today():
     return os.path.join(CONFIG.path_to_data, date_path_today)
 
 '''
-function which builds the data directory for a particular pseudo_start_time [in the default format]
+function which builds the data directory for a particular chunk_start_time [in the default format]
 '''
 
-def build_data_dir_from_pseudo_start_time(pseudo_start_time):
+def build_data_dir_from_chunk_start_time(root_data_dir, chunk_start_time):
     # Parse the datetime string to a datetime object
-    dt_obj = datetime.strptime(pseudo_start_time, CONFIG.default_time_format)
+    dt_obj = datetime.strptime(chunk_start_time, CONFIG.default_time_format)
     # Format the datetime object to the desired string format
     formatted_date = dt_obj.strftime("%Y/%m/%d")
-    return os.path.join(CONFIG.path_to_data, formatted_date)
+    return os.path.join(root_data_dir, formatted_date)
+
+def transform_time_format(input_string, original_format, transformed_format):
+    # Parse the input string according to the CALLISTO time format
+    parsed_time = datetime.strptime(input_string, original_format)
+    
+    # Format the parsed datetime object into the default string format
+    default_time_str = datetime.strftime(parsed_time, transformed_format)
+    return default_time_str
 
 '''
 function which takes a starting datetime, and an array of times [from 0] and builds the 
@@ -48,12 +56,12 @@ def datetime64_array_to_seconds(datetime64_array):
     #displace by the sample rate
     return seconds_array
 
-def parse_datetime(datetime_string):
+def strptime(datetime_string, time_format):
     #extract the corresponding datetime
     try:
-        return datetime.strptime(datetime_string,CONFIG.default_time_format)
+        return datetime.strptime(datetime_string, time_format)
     except:
-        raise SystemError("Could not parse {}. Need in the format {}".format(datetime_string,CONFIG.default_time_format))
+        raise SystemError("Could not parse {}. Need in the format {}".format(datetime_string, time_format))
 
 def to_string(datetime_obj):
     return datetime.strftime(datetime_obj,CONFIG.default_time_format)

@@ -83,7 +83,7 @@ class observe_collect(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.samp_rate = CONFIG.samp_rate 
-        self.pseudo_start_time = TimeStamper.TimeStamper().return_time_now_as_string()
+        self.chunk_start_time = TimeStamper.TimeStamper().return_time_now_as_string()
         self.center_freq = CONFIG.center_freq 
         self.IF_gain = CONFIG.IF_gain
 
@@ -114,7 +114,7 @@ class observe_collect(gr.top_block, Qt.QWidget):
         self.sdrplay3_rsp1a_0.set_sample_sequence_gaps_check(False)
         self.sdrplay3_rsp1a_0.set_show_gain_changes(False)
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, self.samp_rate,True)
-        self.blocks_file_meta_sink_0_0 = blocks.file_meta_sink(gr.sizeof_gr_complex*1, TimeStamper.TimeStamper().return_temp_file_path(self.pseudo_start_time), self.samp_rate, 1, blocks.GR_FILE_FLOAT, True, 1000000, BuildDict.BuildDict().GetDict(self.samp_rate,self.center_freq,self.pseudo_start_time), True)
+        self.blocks_file_meta_sink_0_0 = blocks.file_meta_sink(gr.sizeof_gr_complex*1, TimeStamper.TimeStamper().return_temp_file_path(self.chunk_start_time), self.samp_rate, 1, blocks.GR_FILE_FLOAT, True, 1000000, BuildDict.BuildDict().GetDict(self.samp_rate,self.center_freq,self.chunk_start_time), True)
         self.blocks_file_meta_sink_0_0.set_unbuffered(False)
 
 
@@ -141,12 +141,12 @@ class observe_collect(gr.top_block, Qt.QWidget):
         self.blocks_throttle_0.set_sample_rate(samp_rate)
         self.sdrplay3_rsp1a_0.set_sample_rate(samp_rate)
 
-    def get_pseudo_start_time(self):
-        return self.pseudo_start_time
+    def get_chunk_start_time(self):
+        return self.chunk_start_time
 
-    def set_pseudo_start_time(self, pseudo_start_time):
-        self.pseudo_start_time = pseudo_start_time
-        self.blocks_file_meta_sink_0_0.open(TimeStamper.TimeStamper().return_temp_file_path(self.pseudo_start_time))
+    def set_chunk_start_time(self, chunk_start_time):
+        self.chunk_start_time = chunk_start_time
+        self.blocks_file_meta_sink_0_0.open(TimeStamper.TimeStamper().return_temp_file_path(self.chunk_start_time))
 
     def get_center_freq(self):
         return self.center_freq

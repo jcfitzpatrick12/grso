@@ -11,13 +11,14 @@ The header file contains all the header data associated with the bin file.
 '''
 
 class ChunkHdr:
-    def __init__(self,pseudo_start_time):
-        self.pseudo_start_time = pseudo_start_time
-        self.data_dir=DatetimeFuncs.build_data_dir_from_pseudo_start_time(self.pseudo_start_time)
+    def __init__(self,chunk_start_time, tag):
+        self.chunk_start_time=chunk_start_time
+        self.tag = tag
+        self.data_dir=DatetimeFuncs.build_data_dir_from_chunk_start_time(CONFIG.path_to_data, self.chunk_start_time)
 
     #find the path to data
     def get_path(self):
-        return os.path.join(self.data_dir,self.pseudo_start_time+".hdr")
+        return os.path.join(self.data_dir,f"{self.chunk_start_time}_{self.tag}.hdr")
     
     def exists(self):
         return os.path.exists(self.get_path())

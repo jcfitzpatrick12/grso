@@ -4,15 +4,15 @@ import matplotlib.dates as mdates
 from matplotlib.colors import LogNorm
 from src.fConfig import CONFIG
 import os
-from src.utils import SpectrogramFuncs
+from src.utils import SpectrogramFuncs, ArrayFuncs
  
 
 class SpectrogramPlotter:  
-    def __init__(self,S):
+    def __init__(self, S, **kwargs):
         self.S = S
-        #plt.style.use("seaborn")
         self.fsize_head=20
         self.fsize=15
+        self.cmap = "viridis"
 
         self.plot_type_dict = {
             "power": self.plot_power,
@@ -90,19 +90,19 @@ class SpectrogramPlotter:
     Spectrogram plotting functions.
     '''
 
-
     def plot_spectrogram_dBb(self, ax, cax):
         datetime_array = self.S.datetime_array
         freqs_MHz = self.S.freqs_MHz
         Sxx = self.S.Sxx
-        background_vector = np.load(os.path.join(CONFIG.path_to_background_data, "background_vector.npy"))
-        Sxx = SpectrogramFuncs.Sxx_to_dBb(Sxx, background_vector)
+        bvect = self.S.background_vector
+
+        Sxx = SpectrogramFuncs.Sxx_to_dBb(Sxx, bvect)
+
 
         vmin = CONFIG.dBb_vmin
         vmax = CONFIG.dBb_vmax
 
-        pcolor_plot = ax.pcolormesh(datetime_array, freqs_MHz, Sxx, vmin=vmin, vmax=vmax)
-
+        pcolor_plot = ax.pcolormesh(datetime_array, freqs_MHz, Sxx, vmin=vmin, vmax=vmax, cmap=self.cmap)
         # Format the x-axis to display time in HH:MM:SS
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
         ax.xaxis.set_major_locator(mdates.SecondLocator(interval=CONFIG.seconds_interval))
@@ -117,7 +117,7 @@ class SpectrogramPlotter:
         cax.axis("On")
         cbar = plt.colorbar(pcolor_plot,ax=ax,cax=cax)
         cbar.set_label('dB above background', size=self.fsize_head)
-        cbar.set_ticks(range(vmin, vmax, 2))
+        cbar.set_ticks(range(vmin, vmax+1, 1))
 
     
     def plot_spectrogram_rawlog(self, ax=None, cax=None):
@@ -127,7 +127,8 @@ class SpectrogramPlotter:
 
         # Plot the spectrogram with LogNorm
         pcolor_plot = ax.pcolormesh(datetime_array, freqs_MHz, Sxx, 
-                                    norm=LogNorm(vmin=np.min(Sxx[Sxx > 0]), vmax=np.max(Sxx)))
+                                    norm=LogNorm(vmin=np.min(Sxx[Sxx > 0]), vmax=np.max(Sxx))
+                                    , cmap=self.cmap)
 
         # Format the x-axis to display time in HH:MM:SS
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
@@ -149,7 +150,7 @@ class SpectrogramPlotter:
         Sxx = self.S.Sxx
 
         # Plot the spectrogram with fixed vmin and vmax
-        pcolor_plot = ax.pcolormesh(datetime_array, freqs_MHz, Sxx)
+        pcolor_plot = ax.pcolormesh(datetime_array, freqs_MHz, Sxx, cmap=self.cmap)
 
         # Format the x-axis to display time in HH:MM:SS
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
