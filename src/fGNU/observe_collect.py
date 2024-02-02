@@ -86,6 +86,7 @@ class observe_collect(gr.top_block, Qt.QWidget):
         self.chunk_start_time = TimeStamper.TimeStamper().return_time_now_as_string()
         self.center_freq = CONFIG.center_freq 
         self.IF_gain = CONFIG.IF_gain
+        self.RF_gain = CONFIG.RF_gain
 
         ##################################################
         # Blocks
@@ -102,7 +103,7 @@ class observe_collect(gr.top_block, Qt.QWidget):
         self.sdrplay3_rsp1a_0.set_bandwidth(self.samp_rate)
         self.sdrplay3_rsp1a_0.set_gain_mode(False)
         self.sdrplay3_rsp1a_0.set_gain(self.IF_gain, 'IF')
-        self.sdrplay3_rsp1a_0.set_gain(-float('0'), 'RF')
+        self.sdrplay3_rsp1a_0.set_gain(self.RF_gain, 'RF')
         self.sdrplay3_rsp1a_0.set_freq_corr(0)
         self.sdrplay3_rsp1a_0.set_dc_offset_mode(False)
         self.sdrplay3_rsp1a_0.set_iq_balance_mode(False)

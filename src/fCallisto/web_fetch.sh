@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the date you want to fetch data for in YYYYMMDD format
-date="20240129"
+date="20240202"
 
 # Define the base URL
 base_url="https://www.astro.gla.ac.uk/users/eduard/callisto"
@@ -32,4 +32,4 @@ url="${base_url}/${year}/${month}/${day}/"
 wget -r -l1 -np -nd -A .fit -P "${data_path}" "${url}"
 
 # Note: Replace "path/to/destination/folder" with the actual path where you want to save the files.
-python3 src/fCallisto/standardise_file_names.py
+python3 standardise_file_names.py

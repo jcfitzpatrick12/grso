@@ -24,7 +24,7 @@ def build_background(tag):
         np.load(os.path.join(CONFIG.path_to_background_data, f"background_vector_{tag}.npy"))
         print(f"Succesfully constructed background vector for tag {tag}.")
     except Exception as e:
-        raise SystemError(f"Error making background vector: {e}")
+        raise SystemError(f"Error making background vector for tag {tag}: {e}")
 
 
 if __name__=="__main__":

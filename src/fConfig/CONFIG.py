@@ -5,15 +5,15 @@ import os
 '''
 variables for gnuradio
 '''
+
 #the central frequency you wish to observe around [Hz]
 center_freq = 50.95e6
 #center_freq = 440e6
 #the sampling rate of the SDR [samples per second]
 samp_rate = 1e6
 #samp_rate = 300e3
-#value of IF_gain [dB]
-#IF_gain = -50
-IF_gain=-25
+IF_gain = -25 # [dB] [more negative, more attenuation]
+RF_gain = 0 # [dB, more negative, more attenuation, max seems to be 0 dB]
 
 '''
 signal.spectrogram params
@@ -30,17 +30,18 @@ average_over_int = 100
 Interval overwhich to evaluate the background vector over frequency.
 '''
 
-background_interval = ["2024-01-29T14:00:00","2024-01-29T14:01:00"]
+background_interval = ["2024-02-02T11:06:00","2024-02-02T11:06:30"]
+
 
 '''
 plotting  params
 '''
 
-seconds_interval = 10
+seconds_interval = 60
 dBb_vmin = -1
-dBb_vmax = 1
-time_average_over_before_plotting = 10
-freq_average_over_before_plotting = 20
+dBb_vmax = 6
+time_average_over_before_plotting = 1
+freq_average_over_before_plotting = 1
 
 '''
 callisto fetching data variables
@@ -55,7 +56,6 @@ chunk_start_time formats
 #the default string format for defining the string format for the chunk_start_time
 default_time_format = "%Y-%m-%dT%H:%M:%S"
 glasgow_callisto_time_format = "GLASGOW_%Y%m%d_%H%M%S_01"
-
 
 '''
 global config variables

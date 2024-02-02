@@ -8,11 +8,11 @@ from src.fChunks.Chunk import Chunk
 from src.fConfig import CONFIG
 
 class ChunkNavigator:
-    def __init__(self, master):
+    def __init__(self, master, tag):
         self.master = master
         master.title("Chunk Navigator")
 
-        self.Chunks = Chunks(CONFIG.path_to_data, Chunk)
+        self.Chunks = Chunks(tag)
         self.current_chunk_index = len(self.Chunks.dict)-1
         self.current_chunk = self.Chunks.get_chunk_by_index(self.current_chunk_index)
 
@@ -43,6 +43,7 @@ class ChunkNavigator:
         self.exit_button = tk.Button(self.master, text="Exit", command=self.exit_application).pack(side=tk.RIGHT)
 
         self.create_plot_type_checkboxes()
+
 
     def create_plot_type_checkboxes(self):
         self.plot_type_frame = tk.Frame(self.master)
@@ -107,5 +108,9 @@ class ChunkNavigator:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = ChunkNavigator(root)
+    try:
+        default_tag = sys.argv[1]
+    except:
+        default_tag = "00"
+    app = ChunkNavigator(root, default_tag)
     root.mainloop()

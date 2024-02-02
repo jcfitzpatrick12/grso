@@ -239,9 +239,9 @@ class RadioSpectrogram:
 
             #if there is a non-zero remainder, just cut the final entry
             if remainder:
-                #average_Sxx[:,-1] = np.nanmean(self.Sxx[:,-remainder:],axis=1)
-                average_Sxx=average_Sxx[:-1,:]
-                frequency_array_decimated=frequency_array_decimated[:-1]
+                average_Sxx[-1,:] = np.nanmean(self.Sxx[-remainder:,:],axis=0)
+                #average_Sxx=average_Sxx[:-1,:]
+                #frequency_array_decimated=frequency_array_decimated[:-1]
 
             bvect_averaged = ArrayFuncs.average_every_n_elements(self.background_vector, N)
             return RadioSpectrogram(average_Sxx,self.time_array,frequency_array_decimated,self.center_freq,self.chunk_start_time, self.tag, bvect = bvect_averaged)
