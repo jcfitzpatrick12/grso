@@ -1,5 +1,6 @@
 import os
 
+
 def list_all_files(parent_dir):
         all_files = []
         #walk through all the subdirectories in data
