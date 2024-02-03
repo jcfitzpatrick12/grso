@@ -78,10 +78,10 @@ class BatchObserve(gr.top_block, Qt.QWidget):
 
         batch_config = load_config(tag)
         self.samp_rate = batch_config.get_samp_rate()
-        self.chunk_start_time = TimeStamper.return_time_now_as_string()
-        self.center_freq = batch_config.get_center_freq()
         self.IF_gain = batch_config.get_IF_gain()
         self.RF_gain = batch_config.get_RF_gain()
+        self.center_freq = batch_config.get_center_freq()
+        self.chunk_start_time = TimeStamper.return_time_now_as_string()
 
         ##################################################
         # Blocks
@@ -134,29 +134,6 @@ class BatchObserve(gr.top_block, Qt.QWidget):
         self.wait()
 
         event.accept()
-
-    def get_samp_rate(self):
-        return self.samp_rate
-
-    def set_samp_rate(self, samp_rate):
-        self.samp_rate = samp_rate
-        self.blocks_throttle_0.set_sample_rate(samp_rate)
-        self.sdrplay3_rsp1a_0.set_sample_rate(samp_rate)
-
-    def get_chunk_start_time(self):
-        return self.chunk_start_time
-
-    def set_chunk_start_time(self, chunk_start_time):
-        self.chunk_start_time = chunk_start_time
-        self.blocks_file_meta_sink_0_0.open(TimeStamper.return_temp_file_path(self.chunk_start_time))
-
-    def get_center_freq(self):
-        return self.center_freq
-
-    def set_center_freq(self, center_freq):
-        self.center_freq = center_freq
-        self.sdrplay3_rsp1a_0.set_center_freq(self.center_freq)
-
 
 
 
