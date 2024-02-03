@@ -10,10 +10,15 @@ cd "$GRSOPARENTPATH"
 
 #create the temporary data folder if it does not exist
 bash src/shell_utils/create_dir.sh "temp_data_${tag}"
+
 #build the data path if it does not already exist
 date_dir=$(date +"%Y/%m/%d")
 data_dir="data/$date_dir"
 bash src/shell_utils/create_dir.sh $data_dir
+
+
+temp_path="${GRSOPARENTPATH}/temp_data_${tag}"
+data_path="$GRSOPARENTPATH/$data_dir"
 
 
 for (( i=1; i<=max_iter; i=i+1 ))
@@ -33,10 +38,6 @@ do
   #kill the observation
   kill $pid
 
-  temp_path="${GRSOPARENTPATH}/temp_data_${tag}"
-
-  data_path="$GRSOPARENTPATH/$data_dir"
-
   # Move all files from the source to the destination directory
   mv "$temp_path"/* "$data_path"/
 
@@ -54,6 +55,7 @@ do
 
 done
 
+## clean-up
 rm -r $temp_path
 
 
