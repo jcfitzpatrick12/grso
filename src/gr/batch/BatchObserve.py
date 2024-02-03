@@ -37,8 +37,8 @@ import pmt
 
 from src.configs import GLOBAL_CONFIG
 from src.configs.BatchConfig import load_config
-from src.gr.MetaDict import MetaDict  # embedded python module
-from src.gr import TimeStamper  # embedded python module
+from src.gr.batch.MetaDict import MetaDict  # embedded python module
+from src.gr.batch import TimeStamper  # embedded python module
 
 class BatchObserve(gr.top_block, Qt.QWidget):
     def __init__(self, tag):

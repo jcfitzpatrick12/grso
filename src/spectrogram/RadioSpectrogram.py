@@ -11,6 +11,7 @@ from src.configs import GLOBAL_CONFIG
 from src.configs.tag_maps.tag_to_plotter import tag_to_plotter_dict
 from src.utils import DatetimeFuncs, ArrayFuncs
 
+
 class RadioSpectrogram:
     def __init__(self, Sxx, time_array, freqs_MHz, center_freq, chunk_start_time, tag, **kwargs):
         self.Sxx = Sxx

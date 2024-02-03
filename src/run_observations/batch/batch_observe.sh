@@ -27,7 +27,7 @@ do
   echo "Running iteration $i"
   
   # Start the Python script as a background process, then kill it after sleepy_time seconds
-  python3 src/gr/BatchObserve.py $tag &
+  python3 src/gr/batch/BatchObserve.py $tag &
 
   #capture the processing id of the script
   pid=$!
@@ -43,10 +43,10 @@ do
 
   #run the postprocessing as a background script if we have another observational cycle to run
   if (( $i < $max_iter )); then 
-    python3 src/observe/batch/proc_batch.py $tag &
+    python3 src/run_observations/batch/proc_batch.py $tag &
   else
   #otherwise, just run as a foreground process so that the script can end gracefully
-    python3 src/observe/batch/proc_batch.py $tag
+    python3 src/run_observations/batch/proc_batch.py $tag
   fi
 
   #give the script time to stop, so the SDR isnt busy when the new script starts
