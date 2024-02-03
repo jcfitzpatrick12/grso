@@ -9,7 +9,7 @@ tag=$3
 cd "$GRSOPARENTPATH"
 
 #create the temporary data folder if it does not exist
-bash src/shell_utils/create_dir.sh temp_data
+bash src/shell_utils/create_dir.sh "temp_data_${tag}"
 #build the data path if it does not already exist
 date_dir=$(date +"%Y/%m/%d")
 data_dir="data/$date_dir"
@@ -33,12 +33,12 @@ do
   #kill the observation
   kill $pid
 
-  #Move all files in temp_data to data
-  src_dir="$GRSOPARENTPATH/temp_data"
-  dest_dir="$GRSOPARENTPATH/$data_dir"
+  temp_path="${GRSOPARENTPATH}/temp_data_${tag}"
+
+  data_path="$GRSOPARENTPATH/$data_dir"
 
   # Move all files from the source to the destination directory
-  mv "$src_dir"/* "$dest_dir"/
+  mv "$temp_path"/* "$data_path"/
 
   #run the postprocessing as a background script if we have another observational cycle to run
   if (( $i < $max_iter )); then 
@@ -50,10 +50,11 @@ do
 
   #give the script time to stop, so the SDR isnt busy when the new script starts
   # If you give it too much time, there will be deadtime at the start of the spectrograms!
-  sleep 0.25s
+  sleep 0.5s
 
 done
 
+rm -r $temp_path
 
 
 
