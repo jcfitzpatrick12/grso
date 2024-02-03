@@ -15,12 +15,7 @@ It may also work on other Linux distributions and other Ubuntu versions. However
 - Please ensure that you have installed [```grso-docker```](https://github.com/jcfitzpatrick12/grso-docker.git). Follow the instructions on this repository
 
 ## Usage
-This section will be subject to modification in the future. The below commands assume the user has correctly installed [```grso-docker```](https://github.com/jcfitzpatrick12/grso-docker.git). All commands assume you are inside the container, and have cd'd into the ```grso``` directory.
-
-- Running  ```service cron start``` will enable daily observations. 
-- Running ```bash src/fMonitor/monitor.sh N M``` will collect ```N``` discrete radio spectrograms, where each data segment is ```M``` seconds long. The spectrogram is saved as a ```fits``` file in the appropriate directory in data according to the time of collection.
-- To visualise the data using the basic GUI, run ```python3 src/fGUI/LookBetween.py```
-- Any parameter configurations are made within the module ```src/fConfig/CONFIG.py```
+Section will be written once finalised.
 
 ## Contributing
 Contributions to `grso-docker` are welcome. If you have suggestions or improvements, please open an issue or submit a pull request on the GitHub repository.
