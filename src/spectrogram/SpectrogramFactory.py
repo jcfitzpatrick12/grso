@@ -1,7 +1,7 @@
 import numpy as np
-from src.spectrogram.RadioSpectrogram import RadioSpectrogram
 from src.utils import DatetimeFuncs, ArrayFuncs
 from src.configs import GLOBAL_CONFIG
+from src.configs.tag_maps.tag_to_radio_spectrogram import tag_to_radio_spectrogram_dict
 
 
 def frequency_chop(S, start_freq_MHz, end_freq_MHz):
@@ -14,10 +14,16 @@ def frequency_chop(S, start_freq_MHz, end_freq_MHz):
         
     chopped_Sxx=S.Sxx[startIndex:endIndex, :]
     chopped_freqs_MHz = S.freqs_MHz[startIndex:endIndex+1]
-    bvect_chopped = S.background_vector[startIndex:endIndex+1]
-    #return the chopped S
-    return RadioSpectrogram(chopped_Sxx, S.time_array, chopped_freqs_MHz, S.center_freq, S.chunk_start_time, S.tag, bvect = bvect_chopped)
+
+    if S.bvect is None:
+        bvect = None
+    else:
+        bvect = S.bvect[startIndex:endIndex+1]
     
+    RadioSpectrogram = tag_to_radio_spectrogram_dict[S.tag]
+    return RadioSpectrogram(chopped_Sxx, S.time_array, chopped_freqs_MHz, S.chunk_start_time, S.tag, bvect = bvect)
+    
+
 def time_chop(S, start_str, end_str):
     #parse the strings into datetimes
     start_dt = DatetimeFuncs.strptime(start_str, GLOBAL_CONFIG.default_time_format)
@@ -38,7 +44,10 @@ def time_chop(S, start_str, end_str):
     #extract the new chunk_start_time
     chopped_chunk_start_time = DatetimeFuncs.to_string(S.datetime_array[startIndex])
     #return the chopped S
-    return RadioSpectrogram(chopped_Sxx,chopped_timeArray,S.freqs_MHz,S.center_freq,chopped_chunk_start_time, S.tag)
+
+    RadioSpectrogram = tag_to_radio_spectrogram_dict[S.tag]
+    return RadioSpectrogram(chopped_Sxx,chopped_timeArray,S.freqs_MHz, chopped_chunk_start_time, S.tag)
+
 
 def time_average(S, average_over_int):
     if average_over_int==1:
@@ -80,7 +89,10 @@ def time_average(S, average_over_int):
         #average_Sxx[:,-1] = np.nanmean(S.Sxx[:,-remainder:],axis=1)
         average_Sxx=average_Sxx[:,:-1]
         time_array_decimated=time_array_decimated[:-1]
-    return RadioSpectrogram(average_Sxx,time_array_decimated,S.freqs_MHz,S.center_freq,S.chunk_start_time, S.tag)
+
+    RadioSpectrogram = tag_to_radio_spectrogram_dict[S.tag]
+    return RadioSpectrogram(average_Sxx, time_array_decimated, S.freqs_MHz, S.chunk_start_time, S.tag)
+
 
 def frequency_average(S, average_over_int):
         if average_over_int==1:
@@ -123,8 +135,13 @@ def frequency_average(S, average_over_int):
             #average_Sxx=average_Sxx[:-1,:]
             #frequency_array_decimated=frequency_array_decimated[:-1]
 
-        bvect_averaged = ArrayFuncs.average_every_n_elements(S.background_vector, N)
-        return RadioSpectrogram(average_Sxx,S.time_array,frequency_array_decimated,S.center_freq,S.chunk_start_time, S.tag, bvect = bvect_averaged)
+        if S.bvect is None:
+            bvect = None
+        else:
+            bvect = ArrayFuncs.average_every_n_elements(S.bvect, N)
+
+        RadioSpectrogram = tag_to_radio_spectrogram_dict[S.tag]
+        return RadioSpectrogram(average_Sxx, S.time_array, frequency_array_decimated, S.chunk_start_time, S.tag, bvect = bvect)
 
 
 def join_spectrograms(list_of_spectrograms_to_join):
@@ -184,4 +201,5 @@ def join_spectrograms(list_of_spectrograms_to_join):
         #convert the joined_datetimeArray into an array of seconds since t=0, so that we can construct the spectrogram object
         joined_time_array = DatetimeFuncs.datetime64_array_to_seconds(joined_datetime_array)
         
-        return RadioSpectrogram(joined_Sxx, joined_time_array, S.freqs_MHz, S.center_freq, new_chunk_start_time, S.tag)
+        RadioSpectrogram = tag_to_radio_spectrogram_dict[S.tag]
+        return RadioSpectrogram(joined_Sxx, joined_time_array, S.freqs_MHz, new_chunk_start_time, S.tag)

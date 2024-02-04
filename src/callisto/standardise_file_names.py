@@ -1,7 +1,7 @@
 import os
 import re
 
-from src.configs import CONFIG
+from src.configs import GLOBAL_CONFIG
 from src.utils import DatetimeFuncs
 from datetime import datetime 
 
@@ -24,13 +24,13 @@ def file_describes_callisto_data(s):
 
 def main():
 #walk through all the subdirectories in data
-    for root, dirs, files in os.walk(CONFIG.path_to_data):
+    for root, dirs, files in os.walk(GLOBAL_CONFIG.path_to_data):
         for file in files:
             current_path = os.path.join(root, file)
             name, ext = os.path.splitext(file)
             if file_describes_callisto_data(name):
                 try:
-                    new_name = DatetimeFuncs.transform_time_format(name, CONFIG.glasgow_callisto_time_format, CONFIG.default_time_format)
+                    new_name = DatetimeFuncs.transform_time_format(name, GLOBAL_CONFIG.glasgow_callisto_time_format, GLOBAL_CONFIG.default_time_format)
                 except Exception as e:
                     print(f"Could not transform file name to standard format! For file named {name}, received the error {e}")
                 new_path = os.path.join(root, f"{new_name}_01.fits")

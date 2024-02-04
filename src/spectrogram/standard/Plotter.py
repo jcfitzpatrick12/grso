@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.colors import LogNorm
-from src.spectrogram.plotting.Stacker import Stacker
+from src.spectrogram.Stacker import Stacker
 
 
 class Plotter(Stacker):
@@ -39,11 +39,11 @@ class Plotter(Stacker):
     '''
 
     def Sxx_in_dBb(self, Sxx, bvect):
-        background_vector_array = np.ones(np.shape(Sxx))
+        bvect_array = np.ones(np.shape(Sxx))
         num_freqs = np.shape(Sxx)[0]
         for freq_bin_ind in range(num_freqs-1):
-            background_vector_array[freq_bin_ind,:]*=bvect[freq_bin_ind]
-        Sxx_dBb = 10*np.log10(Sxx/background_vector_array)
+            bvect_array[freq_bin_ind,:]*=bvect[freq_bin_ind]
+        Sxx_dBb = 10*np.log10(Sxx/bvect_array)
         return Sxx_dBb
 
 
@@ -51,7 +51,7 @@ class Plotter(Stacker):
         datetime_array = self.S.datetime_array
         freqs_MHz = self.S.freqs_MHz
         Sxx = self.S.Sxx
-        bvect = self.S.background_vector
+        bvect = self.S.bvect
         Sxx = self.Sxx_in_dBb(Sxx, bvect)
 
         vmin = -2

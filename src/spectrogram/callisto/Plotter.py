@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.colors import LogNorm
-from src.spectrogram.plotting.Stacker import Stacker
+from src.spectrogram.Stacker import Stacker
 
 
 class Plotter(Stacker):
@@ -13,10 +13,10 @@ class Plotter(Stacker):
                 "power": self.power,
                 "raw": self.raw,
             }
-            
 
     def get_plot_types(self,):
         return self.plot_type_dict.keys()
+
 
     def power(self,ax,cax):
         datetime_array = self.S.datetime_array

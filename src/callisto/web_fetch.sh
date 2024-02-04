@@ -45,7 +45,7 @@ done
 date_dir="$year/$month/$day"
 data_dir="data/$date_dir"
 data_path="$GRSOPARENTPATH/$data_dir"
-bash src/monitor/create_dir.sh $data_path
+bash src/shell_utils/create_dir.sh $data_path
 
 # Build the URL for the day
 url="${base_url}/${year}/${month}/${day}/"
@@ -55,4 +55,4 @@ url="${base_url}/${year}/${month}/${day}/"
 wget -r -l1 -np -nd -A .fit -P "${data_path}" "${url}"
 
 # Note: Replace "path/to/destination/folder" with the actual path where you want to save the files.
-python3 ./standardise_file_names.py
+python3 src/callisto/standardise_file_names.py

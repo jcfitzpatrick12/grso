@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from src.utils import DatetimeFuncs
 from src.configs import GLOBAL_CONFIG
-from src.spectrogram.RadioSpectrogram import RadioSpectrogram
+from src.spectrogram.callisto.RadioSpectrogram import RadioSpectrogram
 
 
 class ChunkFits:
@@ -72,15 +72,11 @@ class ChunkFits:
                 # The column names ('TIME' and 'FREQUENCY') must match those in the FITS file
                 time_array = data['TIME'][0]
                 freqs_MHz = data['FREQUENCY'][0]
-                
-
-                center_freq_index = int(round(len(freqs_MHz)/2))
-                center_freq = freqs_MHz[center_freq_index]
 
             #truncate the 2D array to follow shape conventions
             Sxx = Sxx[:-1,:-1]
 
-            return RadioSpectrogram(Sxx, time_array, freqs_MHz, center_freq, self.chunk_start_time, self.tag)
+            return RadioSpectrogram(Sxx, time_array, freqs_MHz, self.chunk_start_time, self.tag)
 
         else:
             print(f"Warning! No fits file for this chunk: {self.chunk_start_time}")
