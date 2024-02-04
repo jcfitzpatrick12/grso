@@ -13,7 +13,6 @@ from src.configs.tag_maps.tag_to_chunk import tag_to_chunk_dict
 
 from src.utils import DatetimeFuncs, DirFuncs
 
-from src.spectrogram.RadioSpectrogram import RadioSpectrogram
 from src.spectrogram import SpectrogramFactory
 
 
@@ -142,8 +141,7 @@ class Chunks:
                     # otherwise, we'll get an error thrown that the indices are equal. This means the spectrogram is out of range
                     # and we can ignore it.
                 except Exception as e:
-                    #raise ValueError(f"Received the following error: {e}")
-                    #exit()
+                    raise ValueError(f"Received the following error: {e}")
                     pass
             else:
                 continue

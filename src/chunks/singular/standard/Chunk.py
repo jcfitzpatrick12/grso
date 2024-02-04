@@ -12,9 +12,8 @@ import os
 from src.chunks.singular.standard.ChunkBin import ChunkBin
 from src.chunks.singular.standard.ChunkHdr import ChunkHdr
 from src.chunks.singular.standard.ChunkFits import ChunkFits
-from src.spectrogram.RadioSpectrogram import RadioSpectrogram
+from src.spectrogram.standard.RadioSpectrogram import RadioSpectrogram
 from src.configs import GLOBAL_CONFIG
-from src.configs.BatchConfig import load_config
 import pmt
 
 '''
@@ -27,7 +26,6 @@ class Chunk:
         #instantiate the timeStampStr field
         self.chunk_start_time = chunk_start_time
         self.tag = tag
-        self.batch_config = load_config(tag)
         self.time_format = f"{GLOBAL_CONFIG.default_time_format}_{tag}"
         #extract the datetime from chunk_start_time
         self.chunk_start_datetime = datetime.strptime(self.chunk_start_time, GLOBAL_CONFIG.default_time_format)
@@ -66,11 +64,9 @@ class Chunk:
             freqs = np.fft.fftshift(freqs)
             # Adjust the frequency axis for the center frequency translation
             freqs += center_freq
-            '''
-            We are going to modify the output of signal.spectrogram, so that time_array and freqs 
-            describe the BIN EDGES!
-            '''
-            #append to the arrays so that we are describing the EDGES OF BINS and not the BIN CENTERS
+
+
+            #pad frequency and time arrays
             freqsMHz = np.empty((len(freqs)+1))
             #place in the original data
             freqsMHz[:-1]=freqs*10**-6
@@ -81,8 +77,8 @@ class Chunk:
             extended_time_array[:-1]=time_array
             dt = time_array[-2]-time_array[-3]
             extended_time_array[-1] = time_array[-1]+dt
-            #build the RadioSpectrogram class
-            return RadioSpectrogram(Sxx,extended_time_array,freqsMHz, center_freq,self.chunk_start_time,self.tag)
+            
+            return RadioSpectrogram(Sxx, extended_time_array, freqsMHz, self.chunk_start_time, self.tag)
         
         else:
             raise SystemError("Files missing! We have that .bin exists {} and .hdr exists {}".format(self.bin.exists(),self.hdr.exists()))

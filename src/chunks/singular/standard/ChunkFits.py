@@ -4,7 +4,7 @@ from astropy.io import fits
 
 from src.utils import DatetimeFuncs
 from src.configs import GLOBAL_CONFIG
-from src.spectrogram.RadioSpectrogram import RadioSpectrogram
+from src.spectrogram.standard.RadioSpectrogram import RadioSpectrogram
 
 class ChunkFits:
     def __init__(self,chunk_start_time, tag):
@@ -56,9 +56,7 @@ class ChunkFits:
                 # Extract the primary HDU data (Sxx spectrogram)
                 primary_hdu = hdulist[0]
                 Sxx = primary_hdu.data
-
-                # Extract other necessary attributes from the header
-                center_freq = primary_hdu.header['CFREQ']
+              
                 chunk_start_time = primary_hdu.header['PSTIME']
 
                 # Assuming timeArray and freqsMHz are stored in a binary table in the second HDU
@@ -67,7 +65,7 @@ class ChunkFits:
 
 
                     # Create a new instance of RadioSpectrogram
-            return RadioSpectrogram(Sxx, time_array, freqs_MHz, center_freq, chunk_start_time, self.tag)
+            return RadioSpectrogram(Sxx, time_array, freqs_MHz, chunk_start_time, self.tag)
 
         else:
             raise SystemError('No file found!!')

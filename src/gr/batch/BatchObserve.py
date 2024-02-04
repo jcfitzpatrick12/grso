@@ -36,7 +36,7 @@ from gnuradio import qtgui
 import pmt
 
 from src.configs import GLOBAL_CONFIG
-from src.configs.BatchConfig import load_config
+from src.configs.JsonConfig import load_config
 from src.gr.batch.MetaDict import MetaDict  # embedded python module
 from src.gr.batch import TimeStamper  # embedded python module
 
@@ -76,11 +76,11 @@ class BatchObserve(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
 
-        batch_config = load_config(tag)
-        self.samp_rate = batch_config.get_samp_rate()
-        self.IF_gain = batch_config.get_IF_gain()
-        self.RF_gain = batch_config.get_RF_gain()
-        self.center_freq = batch_config.get_center_freq()
+        config_dict = load_config("batch", tag)
+        self.samp_rate = config_dict['samp_rate']
+        self.IF_gain = config_dict['IF_gain']
+        self.RF_gain = config_dict['RF_gain']
+        self.center_freq = config_dict['center_freq']
         self.chunk_start_time = TimeStamper.return_time_now_as_string()
 
         ##################################################

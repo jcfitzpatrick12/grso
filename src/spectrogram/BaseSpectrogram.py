@@ -12,13 +12,12 @@ from src.configs.tag_maps.tag_to_plotter import tag_to_plotter_dict
 from src.utils import DatetimeFuncs, ArrayFuncs
 
 
-class RadioSpectrogram:
-    def __init__(self, Sxx, time_array, freqs_MHz, center_freq, chunk_start_time, tag, **kwargs):
+class BaseSpectrogram:
+    def __init__(self, Sxx, time_array, freqs_MHz, chunk_start_time, tag, **kwargs):
         self.Sxx = Sxx
         #displace so that the first element of the time array is always at 0 seconds
         self.time_array = time_array-time_array[0]
         self.freqs_MHz = freqs_MHz
-        self.center_freq = center_freq
         self.chunk_start_time = chunk_start_time
         self.tag = tag
 
@@ -30,22 +29,21 @@ class RadioSpectrogram:
         bvect = kwargs.get("bvect", None)
         if bvect is None:
             try:
-                self.set_background_vector_from_memory()
+                self.set_bvect_from_memory()
             except:
-                self.set_background_vector(None)
+                self.set_bvect(None)
         else:
-            self.set_background_vector(bvect)
+            self.set_bvect(bvect)
 
-    def set_background_vector_from_memory(self, ):
+    def set_bvect_from_memory(self):
         try:
-            self.background_vector = np.load(os.path.join(GLOBAL_CONFIG.path_to_config_data, f"background_vector_{self.tag}.npy"))
-
+            self.bvect = np.load(os.path.join(GLOBAL_CONFIG.path_to_config_data, f"bvect_{self.tag}.npy"))
         except Exception as e:
-            raise SystemError(f"Error loading background vector: {e}")
+            raise SystemError(f"Error loading bvect: {e}")
 
 
-    def set_background_vector(self, bvect):
-        self.background_vector = bvect
+    def set_bvect(self, bvect):
+        self.bvect = bvect
     
 
     def get_path(self):
@@ -54,33 +52,6 @@ class RadioSpectrogram:
 
     def build_datetime_array(self,):
         return DatetimeFuncs.build_datetime_array(self.chunk_start_datetime,self.time_array)
-
-
-    def save_to_fits(self):
-        # Create a Primary HDU object with the Sxx data
-        primary_hdu = fits.PrimaryHDU(self.Sxx)
-
-        # Create a Header Data Unit (HDU) list and add the primary HDU
-        hdulist = fits.HDUList([primary_hdu])
-
-        # Add other attributes as headers in the primary HDU
-        primary_hdu.header['CFREQ'] = self.center_freq
-        primary_hdu.header['PSTIME'] = self.chunk_start_time
-
-        col_time = fits.Column(name='TIME', array=self.time_array, format='D')
-        col_freq = fits.Column(name='FREQ', array=self.freqs_MHz, format='D')
-
-        tb_hdu_time = fits.BinTableHDU.from_columns([col_time])
-        tb_hdu_freq = fits.BinTableHDU.from_columns([col_freq])
-
-        hdulist.append(tb_hdu_time)
-        hdulist.append(tb_hdu_freq)
-
-        #name the path according to the chunk_start_time
-        fpath = os.path.join(self.get_path())
-        # Write the FITS file
-        hdulist.writeto(fpath, overwrite=True)
-        pass
     
 
     def stack_plots(self, fig, plot_types):

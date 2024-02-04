@@ -4,12 +4,12 @@ script will convert the binary and header data to fits files in data folder
 from src.chunks.Chunks import Chunks
 from src.spectrogram import SpectrogramFactory
 from src.configs import GLOBAL_CONFIG
-from src.configs.BatchConfig import load_config
+from src.configs.JsonConfig import load_config
 
 import sys
 
 def main(tag):
-    batch_config = load_config(tag)
+    config_dict = load_config("batch", tag)
     my_chunks=Chunks(tag)
     for chunk in my_chunks.dict.values():
         if chunk.fits.exists():
@@ -17,7 +17,7 @@ def main(tag):
         else:
             try:
                 S = chunk.build_radio_spectrogram()
-                average_over_int = batch_config.get_average_over_int()
+                average_over_int = config_dict['average_over_int']
                 S = SpectrogramFactory.time_average(S, average_over_int)
                 S.save_to_fits()
             except Exception as e:
