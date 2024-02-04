@@ -46,7 +46,7 @@ def time_chop(S, start_str, end_str):
     #return the chopped S
 
     RadioSpectrogram = tag_to_radio_spectrogram_dict[S.tag]
-    return RadioSpectrogram(chopped_Sxx,chopped_timeArray,S.freqs_MHz, chopped_chunk_start_time, S.tag)
+    return RadioSpectrogram(chopped_Sxx,chopped_timeArray,S.freqs_MHz, chopped_chunk_start_time, S.tag, bvect = S.bvect)
 
 
 def time_average(S, average_over_int):
@@ -91,7 +91,7 @@ def time_average(S, average_over_int):
         time_array_decimated=time_array_decimated[:-1]
 
     RadioSpectrogram = tag_to_radio_spectrogram_dict[S.tag]
-    return RadioSpectrogram(average_Sxx, time_array_decimated, S.freqs_MHz, S.chunk_start_time, S.tag)
+    return RadioSpectrogram(average_Sxx, time_array_decimated, S.freqs_MHz, S.chunk_start_time, S.tag, bvect = S.bvect)
 
 
 def frequency_average(S, average_over_int):

@@ -119,9 +119,10 @@ class LookBetween:
         
         time_avg = int(self.entries['time_avg'].get())
         freq_avg = int(self.entries['freq_avg'].get())
-        S = SpectrogramFactory.time_average(S, time_avg)
+        
         S = SpectrogramFactory.frequency_average(S, freq_avg)
-
+        S = SpectrogramFactory.time_average(S, time_avg)
+        
         selected_plot_types = self.get_selected_plot_types()
         if selected_plot_types:
             S.stack_plots(self.figure, selected_plot_types)
