@@ -55,4 +55,4 @@ url="${base_url}/${year}/${month}/${day}/"
 wget -r -l1 -np -nd -A .fit -P "${data_path}" "${url}"
 
 # Note: Replace "path/to/destination/folder" with the actual path where you want to save the files.
-python3 src/fetch/standardise_glasgow_callisto_file_names
+python3 src/web_fetch/standardise_file_names
