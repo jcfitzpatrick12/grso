@@ -29,7 +29,7 @@ class LookBetween:
         plot_button.grid(row=8, column=0, sticky="ew")
         
         save_button = tk.Button(self.master, text="Save as PDF", command=self.save_figure_as_pdf)
-        save_button.grid(row=8, column=1, sticky="ew")
+        save_button.grid(row=8, column=2, sticky="ew")
 
         self.figure = Figure(figsize=(10, 10))
         self.canvas = FigureCanvasTkAgg(self.figure, master=self.master)
@@ -54,11 +54,25 @@ class LookBetween:
             'freq_avg': 1
         }
 
+    def get_field_titles_dict(self):
+        
+        field_titles_dict = {
+            'start': "Start time: ",
+            'end': "End time: ",
+            'lower_freq': "Lower frequency [MHz]: ",
+            'upper_freq': "Higher frequency [MHz]: ",
+            'time_avg': "Average over int (time): ",
+            'freq_avg': "Average over int (frequency): ",
+        }
+
+        return field_titles_dict
+
     def update_entry_fields(self):
         self.entries = {}
         fields = ['start', 'end', 'lower_freq', 'upper_freq', 'time_avg', 'freq_avg']
+        field_titles_dict = self.get_field_titles_dict()
         for i, field in enumerate(fields, start=1):
-            self.entries[field] = self.create_entry(f"{field.replace('_', ' ').title()}: ", self.default_values[field], i)
+            self.entries[field] = self.create_entry(field_titles_dict[field], self.default_values[field], i)
 
     def draw_plot_types(self):
         # Clear previous checkboxes if they exist
@@ -121,7 +135,7 @@ class LookBetween:
     def save_figure_as_pdf(self):
         if not os.path.exists(GLOBAL_CONFIG.path_to_figures):
             os.mkdir(GLOBAL_CONFIG.path_to_figures)
-        save_path = os.path.join(GLOBAL_CONFIG.path_to_figures, "figure.pdf")
+        save_path = os.path.join(GLOBAL_CONFIG.path_to_figures, f"figure_{self.tag}")
         self.figure.savefig(save_path, format='pdf')
 
     def exit_application(self):
