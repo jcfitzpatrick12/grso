@@ -23,7 +23,7 @@ Contributions to `grso` are welcome. If you have suggestions or improvements, pl
 ## Improvements to Come
 - Support for Raspberry Pi.
 - Front-end.
-- Custom gnuradio sink block for continous streaming of raw IQ data into spectrograms (current method employs a batch-process approach using the gnuradio block "file meta sink").
+- Streaming and frequency sweeping observation modes.
 
 ## License
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT) - see the [LICENSE](LICENSE).
