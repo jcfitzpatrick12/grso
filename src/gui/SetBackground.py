@@ -32,7 +32,7 @@ class SetBackground:
         self.entries['start_background'] = self.create_entry("Start Background: ", "", 1)
         self.entries['end_background'] = self.create_entry("End Background: ", "", 2)
 
-        plot_button = tk.Button(self.master, text="Plot Loaded", command=self.plot_data)
+        plot_button = tk.Button(self.master, text="Load from memory", command=self.plot_data)
         plot_button.grid(row=8, column=0, sticky="ew")
         
         save_button = tk.Button(self.master, text="Save", command=self.save_background_to_memory)
