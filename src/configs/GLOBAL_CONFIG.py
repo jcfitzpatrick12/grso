@@ -1,6 +1,5 @@
 import os
 
-
 defined_tags = ["00", "01", "02", "03"]
 
 default_time_format = "%Y-%m-%dT%H:%M:%S"

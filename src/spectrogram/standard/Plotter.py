@@ -20,7 +20,7 @@ class Plotter(Stacker):
     def get_plot_types(self,):
         return self.plot_type_dict.keys()
 
-    def power(self,ax,cax):
+    def power(self, ax, cax):
         datetime_array = self.S.datetime_array
 
         power = self.S.integrated_power()
@@ -76,7 +76,7 @@ class Plotter(Stacker):
         cbar.set_ticks(range(vmin, vmax+1, 1))
 
     
-    def rawlog(self, ax=None, cax=None):
+    def rawlog(self, ax, cax):
         freqs_MHz = self.S.freqs_MHz
         datetime_array = self.S.datetime_array
         Sxx = self.S.Sxx

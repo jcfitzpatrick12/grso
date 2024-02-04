@@ -18,7 +18,7 @@ class Plotter(Stacker):
         return self.plot_type_dict.keys()
 
 
-    def power(self,ax,cax):
+    def power(self,ax, cax):
         datetime_array = self.S.datetime_array
         power = self.S.integrated_power()
         ax.stairs(power, datetime_array)
@@ -30,7 +30,7 @@ class Plotter(Stacker):
         ax.set_ylabel('Normalised Power', size=self.fsize_head)
 
 
-    def raw(self, ax,cax):
+    def raw(self, ax, cax):
         freqs_MHz = self.S.freqs_MHz
         datetime_array = self.S.datetime_array
         Sxx = self.S.Sxx
