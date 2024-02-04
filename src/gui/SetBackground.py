@@ -32,11 +32,11 @@ class SetBackground:
         self.entries['start_background'] = self.create_entry("Start Background: ", "", 1)
         self.entries['end_background'] = self.create_entry("End Background: ", "", 2)
 
-        plot_button = tk.Button(self.master, text="Load from memory", command=self.plot_data)
-        plot_button.grid(row=8, column=0, sticky="ew")
-        
         save_button = tk.Button(self.master, text="Save", command=self.save_background_to_memory)
-        save_button.grid(row=8, column=2, sticky="ew")
+        save_button.grid(row=8, column=0, sticky="ew")
+
+        plot_button = tk.Button(self.master, text="Load from memory", command=self.plot_data)
+        plot_button.grid(row=8, column=2, sticky="ew")
 
         self.figure = Figure(figsize=(10, 4))  # Adjusted for a more standard aspect ratio
         self.canvas = FigureCanvasTkAgg(self.figure, master=self.master)
@@ -45,6 +45,35 @@ class SetBackground:
 
     def update_tag(self, new_tag):
         self.tag = new_tag
+        self.set_default_values()
+        self.update_entry_fields()
+
+    
+    def set_default_values(self):
+            try:
+                freqs_MHz, bvect, bvect_interval = self.load_background_from_memory()
+            except:
+                bvect_interval = ["", ""]
+            self.default_values = {
+                'start_background': bvect_interval[0],
+                'end_background': bvect_interval[1],
+            }
+
+
+    def get_field_titles_dict(self):
+        field_titles_dict = {
+                    'start_background': "Start Background: ",
+                    'end_background': "End Background: ",
+                }
+        return field_titles_dict
+
+
+    def update_entry_fields(self):
+        self.entries = {}
+        fields = ['start_background', 'end_background']
+        field_titles_dict = self.get_field_titles_dict()
+        for i, field in enumerate(fields, start=1):
+            self.entries[field] = self.create_entry(field_titles_dict[field], self.default_values[field], i)
 
 
     def create_entry(self, label, default, row):
@@ -67,13 +96,13 @@ class SetBackground:
         start_background = self.entries['start_background'].get()
         end_background = self.entries['end_background'].get()
         # Assuming load_background function exists and returns the expected data
-        freqs_MHz, bvect = load_bvect(self.tag)
-        return freqs_MHz, bvect
+        freqs_MHz, bvect, bvect_interval = load_bvect(self.tag)
+        return freqs_MHz, bvect, bvect_interval
 
         
     def plot_data(self):
         self.figure.clear()
-        freqs_MHz, bvect = self.load_background_from_memory()
+        freqs_MHz, bvect, bvect_interval = self.load_background_from_memory()
         ax = self.figure.add_subplot(111)
         ax.stairs(bvect, freqs_MHz)
         ax.set_xlabel('Frequency [MHz]')
