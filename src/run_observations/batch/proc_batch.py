@@ -1,7 +1,7 @@
 '''
 script will convert the binary and header data to fits files in data folder
 '''
-from src.chunks.plural.Chunks import Chunks
+from src.chunks.Chunks import Chunks
 from src.spectrogram import SpectrogramFactory
 from src.configs import GLOBAL_CONFIG
 from src.configs.BatchConfig import load_config

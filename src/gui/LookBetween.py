@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 
 # Assuming src.fChunks.Chunks and src.fConfig.CONFIG are available modules
-from src.chunks.plural.Chunks import Chunks
+from src.chunks.Chunks import Chunks
 from src.spectrogram import SpectrogramFactory
 from src.configs import GLOBAL_CONFIG
 from src.configs.tag_maps import tag_to_plot_types
