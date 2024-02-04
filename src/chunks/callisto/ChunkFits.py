@@ -29,14 +29,10 @@ class ChunkFits:
             with fits.open(self.get_path(), mode='readonly') as hdulist:
                 # Access the primary HDU
                 primary_hdu = hdulist['PRIMARY']
-                
                 # Access the data part of the primary HDU
                 Sxx = primary_hdu.data
-                                
-
                 # The index of the BINTABLE varies; commonly, it's the first extension, hence hdul[1]
                 bintable_hdu = hdulist[1]
-
                 # Access the data within the BINTABLE
                 data = bintable_hdu.data
                 #make sure we have a valid request string

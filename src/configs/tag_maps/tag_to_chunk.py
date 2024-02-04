@@ -1,5 +1,5 @@
-from src.chunks.singular.standard.Chunk import Chunk
-from src.chunks.singular.callisto.Chunk import Chunk as CallistoChunk
+from src.chunks.standard.Chunk import Chunk
+from src.chunks.callisto.Chunk import Chunk as CallistoChunk
 
 tag_to_chunk_dict =  {
             "00": Chunk,

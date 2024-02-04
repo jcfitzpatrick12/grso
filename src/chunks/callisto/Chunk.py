@@ -5,7 +5,7 @@ chunkFile class deals with all files of the form %Y-%m-%dT%H:%M:%S[.EXT]
 import numpy as np
 from datetime import datetime
 from src.configs import GLOBAL_CONFIG
-from src.chunks.singular.callisto.ChunkFits import ChunkFits as CallistoChunkFits
+from src.chunks.callisto.ChunkFits import ChunkFits as CallistoChunkFits
 
 '''
 ChunkFiles are characterised by chunk_start_time

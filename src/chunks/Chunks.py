@@ -99,7 +99,7 @@ class Chunks:
         #for each file in data [will be in some subdirectory according to its date]
         all_data_files = self.get_all_data_files()
         for file in all_data_files:
-            file_name,ext = os.path.splitext(file)
+            file_name, ext = os.path.splitext(file)
             chunk_start_time, tag = file_name.split("_", 1)
             # If the file is not a compressed-spectrogram, delete
             if ext!=".fits":

@@ -9,9 +9,9 @@ from scipy.signal import spectrogram
 import matplotlib.pyplot as plt
 import os
 
-from src.chunks.singular.standard.ChunkBin import ChunkBin
-from src.chunks.singular.standard.ChunkHdr import ChunkHdr
-from src.chunks.singular.standard.ChunkFits import ChunkFits
+from src.chunks.standard.ChunkBin import ChunkBin
+from src.chunks.standard.ChunkHdr import ChunkHdr
+from src.chunks.standard.ChunkFits import ChunkFits
 from src.spectrogram.standard.RadioSpectrogram import RadioSpectrogram
 from src.configs import GLOBAL_CONFIG
 import pmt
