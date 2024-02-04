@@ -6,20 +6,12 @@ import numpy as np
 from datetime import datetime
 from src.configs import GLOBAL_CONFIG
 from src.chunks.callisto.ChunkFits import ChunkFits as CallistoChunkFits
+from src.chunks.ChunkBase import ChunkBase
 
-'''
-ChunkFiles are characterised by chunk_start_time
-'''
-
-class Chunk:
+class Chunk(ChunkBase):
     #constructor for SingleFileHandler
     def __init__(self,chunk_start_time, tag):
-        #instantiate the timeStampStr field
-        self.chunk_start_time = chunk_start_time
-        self.tag = tag
-        #type of the file
-        #extract the datetime from chunk_start_time
-        self.chunk_start_datetime = datetime.strptime(self.chunk_start_time, GLOBAL_CONFIG.default_time_format)
+        super().__init__(chunk_start_time, tag)
         self.fits = CallistoChunkFits(chunk_start_time, self.tag)
 
 

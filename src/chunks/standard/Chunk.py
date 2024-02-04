@@ -9,6 +9,7 @@ from scipy.signal import spectrogram
 import matplotlib.pyplot as plt
 import os
 
+from src.chunks.ChunkBase import ChunkBase
 from src.chunks.standard.ChunkBin import ChunkBin
 from src.chunks.standard.ChunkHdr import ChunkHdr
 from src.chunks.standard.ChunkFits import ChunkFits
@@ -20,15 +21,10 @@ import pmt
 ChunkFiles are characterised by chunk_start_time
 '''
 
-class Chunk:
+class Chunk(ChunkBase):
     #constructor for SingleFileHandler
     def __init__(self,chunk_start_time, tag):
-        #instantiate the timeStampStr field
-        self.chunk_start_time = chunk_start_time
-        self.tag = tag
-        self.time_format = f"{GLOBAL_CONFIG.default_time_format}_{tag}"
-        #extract the datetime from chunk_start_time
-        self.chunk_start_datetime = datetime.strptime(self.chunk_start_time, GLOBAL_CONFIG.default_time_format)
+        super().__init__(chunk_start_time, tag)
         #instantiate the ChunkBin class
         self.bin=ChunkBin(chunk_start_time, self.tag)
         #instantiate the ChunkHdr class
