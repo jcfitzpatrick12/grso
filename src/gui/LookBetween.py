@@ -132,8 +132,8 @@ class LookBetween:
         self.figure.clear()
         S = self.get_spectrogram()
         
-        time_avg = int(self.entries['time_avg'].get())
-        freq_avg = int(self.entries['freq_avg'].get())
+        time_avg = int(self.entries['avg_over_int_time'].get())
+        freq_avg = int(self.entries['avg_over_int_freq'].get())
         
         S = SpectrogramFactory.frequency_average(S, freq_avg)
         S = SpectrogramFactory.time_average(S, time_avg)
