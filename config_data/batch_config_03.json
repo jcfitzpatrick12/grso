@@ -1,0 +1,7 @@
+{
+    "center_freq": 95.8e6,
+    "samp_rate": 300e3,
+    "IF_gain": -25,
+    "RF_gain": 0,
+    "average_over_int": 1
+}
