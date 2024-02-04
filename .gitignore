@@ -1,4 +1,5 @@
 data/*
 config_data/*
 figures/*
+*.pyc
 
