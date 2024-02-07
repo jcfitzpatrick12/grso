@@ -76,12 +76,12 @@ class Chunks:
 
     
     def find_nearest_chunk(self, requested_chunk_start_time):
-        requested_chunk_start_time = DatetimeFuncs.strptime(requested_chunk_start_time)
+        requested_chunk_start_time = DatetimeFuncs.strptime(requested_chunk_start_time, GLOBAL_CONFIG.default_time_format)
         closest_chunk = None
         min_time_diff = None
 
         for chunk in self.dict.values():
-            current_chunk_start_time = DatetimeFuncs.strptime(chunk.chunk_start_time)
+            current_chunk_start_time = DatetimeFuncs.strptime(chunk.chunk_start_time, GLOBAL_CONFIG.default_time_format)
             
             # Calculate the absolute time difference
             time_diff = abs(requested_chunk_start_time - current_chunk_start_time)
