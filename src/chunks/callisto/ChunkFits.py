@@ -40,18 +40,25 @@ class ChunkFits:
                     if request_string == "TIME":
                         return data['TIME'][0]
         pass
+
+    def print_header_info(self):
+        if self.exists():
+            # Open the FITS file
+            with fits.open(self.get_path(), mode='readonly') as hdulist:
+                 # hdul is a list-like collection of HDU (Header/Data Unit) objects
+                for hdu in hdulist:
+                    print('Header for HDU:', hdu.name)
+                    print(repr(hdu.header))
+                    print('\n\n') 
+        else:
+            print(f"Warning! No fits file for this chunk: {self.chunk_start_time}")
+
     
     #load the RadioSpectrogram from the fits file.
     def load_radio_spectrogram(self):
         if self.exists():
             # Open the FITS file
             with fits.open(self.get_path(), mode='readonly') as hdulist:
-                 # hdul is a list-like collection of HDU (Header/Data Unit) objects
-                # for hdu in hdulist:
-                #     print('Header for HDU:', hdu.name)
-                #     print(repr(hdu.header))
-                #     print('\n\n') 
-
                 # Access the primary HDU
                 primary_hdu = hdulist['PRIMARY']
                 
@@ -72,6 +79,8 @@ class ChunkFits:
             #truncate the 2D array to follow shape conventions
             Sxx = Sxx[:-1,:-1]
 
+            #make the callisto data linear, apply an arbitrary scaling factor so the floats aren't enormous
+            Sxx = 10**(Sxx/GLOBAL_CONFIG.callisto_scaling_factor)
             return RadioSpectrogram(Sxx, time_array, freqs_MHz, self.chunk_start_time, self.tag)
 
         else:
