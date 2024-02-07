@@ -1,7 +1,6 @@
 import os
 
 defined_tags = ["00", "01", "02", "03"]
-
 default_time_format = "%Y-%m-%dT%H:%M:%S"
 glasgow_callisto_time_format = "GLASGOW_%Y%m%d_%H%M%S_01"
 

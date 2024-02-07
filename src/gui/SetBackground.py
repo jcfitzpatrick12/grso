@@ -5,6 +5,8 @@ from matplotlib.figure import Figure
 import sys
 import os
 from datetime import datetime
+import numpy as np
+from src.configs import GLOBAL_CONFIG
 
 #####
 ## UPDATE TO HANDLE DEFAULT VALUE
@@ -104,7 +106,7 @@ class SetBackground:
         self.figure.clear()
         freqs_MHz, bvect, bvect_interval = self.load_background_from_memory()
         ax = self.figure.add_subplot(111)
-        ax.stairs(bvect, freqs_MHz)
+        ax.plot(freqs_MHz[:-1], bvect)
         ax.set_xlabel('Frequency [MHz]')
         
         self.canvas.draw()

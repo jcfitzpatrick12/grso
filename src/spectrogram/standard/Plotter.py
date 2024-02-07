@@ -54,8 +54,8 @@ class Plotter(Stacker):
         bvect = self.S.bvect
         Sxx = self.Sxx_in_dBb(Sxx, bvect)
 
-        vmin = -2
-        vmax = 2
+        vmin = -1
+        vmax = 1
 
         pcolor_plot = ax.pcolormesh(datetime_array, freqs_MHz, Sxx, vmin=vmin, vmax=vmax, cmap=self.cmap)
         # Format the x-axis to display time in HH:MM:SS

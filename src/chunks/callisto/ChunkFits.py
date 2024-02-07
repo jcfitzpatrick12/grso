@@ -79,8 +79,7 @@ class ChunkFits:
             #truncate the 2D array to follow shape conventions
             Sxx = Sxx[:-1,:-1]
 
-            #make the callisto data linear, apply an arbitrary scaling factor so the floats aren't enormous
-            Sxx = 10**(Sxx/GLOBAL_CONFIG.callisto_scaling_factor)
+            Sxx = np.array(Sxx, dtype = 'float')
             return RadioSpectrogram(Sxx, time_array, freqs_MHz, self.chunk_start_time, self.tag)
 
         else:
