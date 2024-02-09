@@ -37,7 +37,7 @@ class ChunkFits(ChunkExt):
                 #make sure we have a valid request string
                 if request_string in self.valid_request_strings:
                     if request_string == "TIME":
-                        return data['TIME']
+                        return data['TIME'][0]
         pass
 
     
@@ -56,7 +56,7 @@ class ChunkFits(ChunkExt):
                 data = bintable_hdu.data
                 # Extract the time and frequency arrays
                 # The column names ('TIME' and 'FREQUENCY') must match those in the FITS file
-                time_array = data['TIME']
-                freqs_MHz = data['FREQUENCY']
+                time_array = data['TIME'][0]
+                freqs_MHz = data['FREQUENCY'][0]
                 return RadioSpectrogram(Sxx, time_array, freqs_MHz, self.chunk_start_time, self.tag)
     

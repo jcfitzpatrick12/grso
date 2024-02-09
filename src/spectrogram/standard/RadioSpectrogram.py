@@ -69,10 +69,14 @@ class RadioSpectrogram(BaseSpectrogram):
         primary_hdu.header.set('OBS_ALT', '100', 'observatory altitude in meter asl')
 
 
- 
+        # Wrap arrays in an additional dimension to mimic the e-CALLISTO storage
+        time_array_wrapped = np.array([self.time_array.astype(np.float64)])
+        freqs_MHz_wrapped = np.array([self.freqs_MHz.astype(np.float64)])
+
+
         # Binary Table HDU (extension)
-        col1 = fits.Column(name='TIME', format='D', array=self.time_array.astype(np.float64))
-        col2 = fits.Column(name='FREQUENCY', format='D', array=self.freqs_MHz.astype(np.float64))
+        col1 = fits.Column(name='TIME', format='PD()', array=time_array_wrapped)
+        col2 = fits.Column(name='FREQUENCY', format='PD()', array=freqs_MHz_wrapped)
         cols = fits.ColDefs([col1, col2])
 
         bin_table_hdu = fits.BinTableHDU.from_columns(cols)
