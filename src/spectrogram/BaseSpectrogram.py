@@ -1,15 +1,9 @@
-'''
-RadioSpectrogram class which handles, plotting, averaging, compute power etc. 
-'''
-
 import numpy as np
-import pickle
 import os
-from astropy.io import fits
 
 from src.configs import GLOBAL_CONFIG
 from src.configs.tag_maps.tag_to_plotter import tag_to_plotter_dict
-from src.utils import DatetimeFuncs, ArrayFuncs
+from src.utils import DatetimeFuncs
 
 
 class BaseSpectrogram:
@@ -21,7 +15,7 @@ class BaseSpectrogram:
         self.chunk_start_time = chunk_start_time
         self.tag = tag
 
-        self.chunk_start_datetime=DatetimeFuncs.strptime(self.chunk_start_time, GLOBAL_CONFIG.default_time_format)
+        self.chunk_start_datetime = DatetimeFuncs.strptime(self.chunk_start_time, GLOBAL_CONFIG.default_time_format)
         self.datetime_array = self.build_datetime_array()
         self.datetime64_array = np.array(self.datetime_array,dtype="datetime64[ns]")
         self.data_dir=DatetimeFuncs.build_data_dir_from_chunk_start_time(GLOBAL_CONFIG.path_to_data, self.chunk_start_time)   
@@ -34,6 +28,7 @@ class BaseSpectrogram:
                 self.set_bvect(None)
         else:
             self.set_bvect(bvect)
+
 
     def set_bvect_from_memory(self):
         try:
