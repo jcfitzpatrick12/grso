@@ -1,4 +1,5 @@
 import numpy as np
+
 from src.utils import DatetimeFuncs, ArrayFuncs
 from src.configs import GLOBAL_CONFIG
 from src.configs.tag_maps.tag_to_radio_spectrogram import tag_to_radio_spectrogram_dict
@@ -12,7 +13,7 @@ def frequency_chop(S, start_freq_MHz, end_freq_MHz):
     if startIndex>endIndex:
         startIndex, endIndex = endIndex, startIndex
         
-    chopped_Sxx=S.Sxx[startIndex:endIndex, :]
+    chopped_Sxx=S.Sxx[startIndex:endIndex+1, :]
     chopped_freqs_MHz = S.freqs_MHz[startIndex:endIndex+1]
 
     if S.bvect is None:
@@ -37,13 +38,12 @@ def time_chop(S, start_str, end_str):
         raise SystemError("Start and end indices are equal! Cannot chop.")
 
     #chop the spectrogram and time values accordinglys
-    chopped_Sxx=S.Sxx[:,startIndex:endIndex]
+    chopped_Sxx=S.Sxx[:,startIndex:endIndex+1]
     chopped_timeArray = S.time_array[startIndex:endIndex+1]
     #translate the chopped_timeArray to again start at zero.
     chopped_timeArray-=chopped_timeArray[0]
     #extract the new chunk_start_time
     chopped_chunk_start_time = DatetimeFuncs.to_string(S.datetime_array[startIndex])
-    #return the chopped S
 
     RadioSpectrogram = tag_to_radio_spectrogram_dict[S.tag]
     return RadioSpectrogram(chopped_Sxx,chopped_timeArray,S.freqs_MHz, chopped_chunk_start_time, S.tag, bvect = S.bvect)
@@ -80,9 +80,9 @@ def time_average(S, average_over_int):
         average_Sxx[:,i] = np.mean(S.Sxx[:,N*i:N*i+N],axis=1)
         time_array_decimated.append(S.time_array[i*N])
     
-    #add the final bin edge for the decimated time array
-    dt = time_array_decimated[-2]-time_array_decimated[-3]
-    time_array_decimated.append(time_array_decimated[-1]+dt)
+    # #add the final bin edge for the decimated time array
+    # dt = time_array_decimated[-2]-time_array_decimated[-3]
+    # time_array_decimated.append(time_array_decimated[-1]+dt)
 
     #if there is a non-zero remainder, just cut the final entry
     if remainder:
@@ -125,9 +125,9 @@ def frequency_average(S, average_over_int):
             average_Sxx[i,:] = np.mean(S.Sxx[N*i:N*i+N,:],axis=0)
             frequency_array_decimated.append(S.freqs_MHz[i*N])
         
-        #add the final bin edge for the decimated time array
-        dfreq = frequency_array_decimated[-2]-frequency_array_decimated[-3]
-        frequency_array_decimated.append(frequency_array_decimated[-1]+dfreq)
+        # #add the final bin edge for the decimated time array
+        # dfreq = frequency_array_decimated[-2]-frequency_array_decimated[-3]
+        # frequency_array_decimated.append(frequency_array_decimated[-1]+dfreq)
 
         #if there is a non-zero remainder, just cut the final entry
         if remainder:
@@ -144,62 +144,41 @@ def frequency_average(S, average_over_int):
         return RadioSpectrogram(average_Sxx, S.time_array, frequency_array_decimated, S.chunk_start_time, S.tag, bvect = bvect)
 
 
+
 def join_spectrograms(list_of_spectrograms_to_join):
-        #find the number of spectrograms to join
-        num_to_join = len(list_of_spectrograms_to_join)
-        if num_to_join == 0:
-            raise ValueError("No spectrograms to join!")
-        # Padding columns: one less than the number of spectrograms
-        num_zero_cols = num_to_join - 1
-        #initialise an array to hold the time dimension 
-        num_time_bin_edges = []
-        #create a list to hold the datetime64 array for each spectrogram
-        #for each Spectrogram, in those to join.
-        for i, S in enumerate(list_of_spectrograms_to_join):
-            #if i==0, extract
-            # -the chunk_start_time
-            # -the number of frequency bin edges
-            # these are identical for all S in to_join, so we may take them from any
-            # take from the first for convenience
-            if i == 0:
-                new_chunk_start_time = S.chunk_start_time
-                num_freq_bin_edges = len(S.freqs_MHz)
-            
-            #keep track of the number of time_bin_edges in each spectrogram.
-            num_time_bin_edges.append(len(S.time_array))
+    # Check if the list is empty
+    if not list_of_spectrograms_to_join:
+        raise ValueError("No spectrograms to join!")
 
-        #the total number of columns is the sum of:
-        # the total number of bin edges
-        # minus the number of spectrograms to join [since time dim of Sxx is the number of bin edges minus one, so each S in to_join accumulates another minus one]
-        num_cols = num_zero_cols + sum(num_time_bin_edges)-num_to_join
-        
-        #prepping arrays to hold the joined spectrogram
-        joined_Sxx = np.zeros((num_freq_bin_edges-1,num_cols))
+    # Initialize variables
+    total_time_samples = 0
+    num_freq_samples = len(list_of_spectrograms_to_join[0].freqs_MHz)
+    new_chunk_start_time = list_of_spectrograms_to_join[0].chunk_start_time
 
-        #now for each spectrogram, place in the data with zeros padding between them
-        for i,S in enumerate(list_of_spectrograms_to_join):
-            if i==0:
-                #if we are at the first spectrogram, we want to start from the 0th index, so set disp=0
-                displace_index = 0
-                #on the first iteration, create a joined_time array which we will concatenate hereafter
-                running_concatenated_datetime_array = S.datetime64_array
-            #otherwise, we displace the start index by the sum of the previous number of samples
-            else:
-                displace_index = sum(num_time_bin_edges[:i])-i
-                #concatenate the datetimearray
-                running_concatenated_datetime_array = np.concatenate([running_concatenated_datetime_array,S.datetime64_array])
-            #the start index is the sum of the number of zero columns prior to the ith spectrogram [i]
-            #and the displacement, disp, defined as the sum of time samples in spectrograms prior to the ith spectrogram.
-            start_ind = i+(displace_index)
-            #the end index is naturally the start index, plus the number of time samples in the ith spectrogram
-            end_ind = start_ind + (num_time_bin_edges[i]-1)
+    # Determine the total number of time samples across all spectrograms
+    time_arrays = [S.time_array for S in list_of_spectrograms_to_join]
+    total_time_samples = sum(map(len, time_arrays))
 
-            joined_Sxx[:,start_ind:end_ind]=S.Sxx
-        
+    # num_spectrograms_to_join = len(list_of_spectrograms_to_join)
+    # Since we're dealing with bin centres, no need for padding zeros between spectrograms
+    joined_Sxx = np.zeros((num_freq_samples, total_time_samples))
+    joined_datetime_array = np.concatenate([S.datetime64_array for S in list_of_spectrograms_to_join])
 
-        joined_datetime_array = running_concatenated_datetime_array
-        #convert the joined_datetimeArray into an array of seconds since t=0, so that we can construct the spectrogram object
-        joined_time_array = DatetimeFuncs.datetime64_array_to_seconds(joined_datetime_array)
-        
-        RadioSpectrogram = tag_to_radio_spectrogram_dict[S.tag]
-        return RadioSpectrogram(joined_Sxx, joined_time_array, S.freqs_MHz, new_chunk_start_time, S.tag)
+    # Fill in the joined spectrogram array
+    start_index = 0
+    for S in list_of_spectrograms_to_join:
+        end_index = start_index + len(S.time_array)
+
+        #for clean plotting only [ensures whitespace at the joins]
+        S.Sxx[:,0] = 0
+        S.Sxx[:,-1] = 0
+
+        joined_Sxx[:, start_index:end_index] = S.Sxx
+        start_index = end_index
+
+    # Convert datetime array to seconds since the first chunk's start time
+    joined_time_array = DatetimeFuncs.datetime64_array_to_seconds(joined_datetime_array)
+
+    # Create and return the new RadioSpectrogram object
+    RadioSpectrogram = tag_to_radio_spectrogram_dict[list_of_spectrograms_to_join[0].tag]
+    return RadioSpectrogram(joined_Sxx, joined_time_array, list_of_spectrograms_to_join[0].freqs_MHz, new_chunk_start_time, list_of_spectrograms_to_join[0].tag)

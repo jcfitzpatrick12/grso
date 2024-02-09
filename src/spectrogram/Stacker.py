@@ -1,22 +1,11 @@
-import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-from matplotlib.colors import LogNorm
-from math import floor
+
+from src.spectrogram.BasePlotter import BasePlotter
  
 
-class Stacker:  
+class Stacker(BasePlotter):  
     def __init__(self, S):
-        self.S = S
-        self.fsize_head=20
-        self.fsize=15
-        self.cmap = "viridis"
-        self.seconds_interval = floor(self.S.time_array[-1]/4)
-    
-        
-    def get_plot_func(self, plot_type):
-        return self.plot_type_dict[plot_type]
-
+        super().__init__(S)
     
     def stack_plots(self, fig, plot_types):
             
@@ -56,7 +45,7 @@ class Stacker:
             plt.tight_layout()
 
             # Show the stacked plot
-            #plt.show()
+            # plt.show()
 
         
 

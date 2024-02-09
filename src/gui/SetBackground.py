@@ -1,16 +1,8 @@
 import tkinter as tk
-from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import sys
-import os
-from datetime import datetime
 
-#####
-## UPDATE TO HANDLE DEFAULT VALUE
-#####
-
-# Assuming the existence of these functions based on your imports
 from src.spectrogram.Bvect import save_bvect, load_bvect
 
 class SetBackground:
@@ -104,7 +96,7 @@ class SetBackground:
         self.figure.clear()
         freqs_MHz, bvect, bvect_interval = self.load_background_from_memory()
         ax = self.figure.add_subplot(111)
-        ax.stairs(bvect, freqs_MHz)
+        ax.plot(freqs_MHz, bvect)
         ax.set_xlabel('Frequency [MHz]')
         
         self.canvas.draw()

@@ -3,16 +3,11 @@ Chunks deals with all the files in Pdata
 '''
 
 import os
-import numpy as np
-from datetime import timedelta
-import time
 from collections import OrderedDict
 
 from src.configs import GLOBAL_CONFIG
 from src.configs.tag_maps.tag_to_chunk import tag_to_chunk_dict
-
 from src.utils import DatetimeFuncs, DirFuncs
-
 from src.spectrogram import SpectrogramFactory
 
 
@@ -76,12 +71,12 @@ class Chunks:
 
     
     def find_nearest_chunk(self, requested_chunk_start_time):
-        requested_chunk_start_time = DatetimeFuncs.strptime(requested_chunk_start_time)
+        requested_chunk_start_time = DatetimeFuncs.strptime(requested_chunk_start_time, GLOBAL_CONFIG.default_time_format)
         closest_chunk = None
         min_time_diff = None
 
         for chunk in self.dict.values():
-            current_chunk_start_time = DatetimeFuncs.strptime(chunk.chunk_start_time)
+            current_chunk_start_time = DatetimeFuncs.strptime(chunk.chunk_start_time, GLOBAL_CONFIG.default_time_format)
             
             # Calculate the absolute time difference
             time_diff = abs(requested_chunk_start_time - current_chunk_start_time)

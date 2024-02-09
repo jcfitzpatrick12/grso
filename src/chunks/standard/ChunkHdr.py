@@ -2,26 +2,16 @@ import pmt
 from gnuradio.blocks import parse_file_metadata
 import os
 
-from src.utils import DatetimeFuncs
-from src.configs import GLOBAL_CONFIG
-
+from src.chunks.ChunkExt import ChunkExt
 
 '''
 The header file contains all the header data associated with the bin file.
 '''
 
-class ChunkHdr:
+class ChunkHdr(ChunkExt):
     def __init__(self,chunk_start_time, tag):
-        self.chunk_start_time=chunk_start_time
-        self.tag = tag
-        self.data_dir=DatetimeFuncs.build_data_dir_from_chunk_start_time(GLOBAL_CONFIG.path_to_data, self.chunk_start_time)
-
-    #find the path to data
-    def get_path(self):
-        return os.path.join(self.data_dir,f"{self.chunk_start_time}_{self.tag}.hdr")
-    
-    def exists(self):
-        return os.path.exists(self.get_path())
+        # there is no file extension for binary files
+        super().__init__(chunk_start_time, tag, ".hdr")
     
     def parse_header(self):
         #open the header file
@@ -42,10 +32,7 @@ class ChunkHdr:
             if len(extra_str) != 0:
                 extra = pmt.deserialize_str(extra_str)
                 extra_info = parse_file_metadata.parse_extra_dict(extra, header_info, False)
-
-                '''
-                for each element in extra info, append to header_info dict
-                '''
+                
                 for key,value in extra_info.items():
                     header_dict[key]=value
 

@@ -1,5 +1,6 @@
-from src.configs import GLOBAL_CONFIG
 from datetime import datetime
+
+from src.configs import GLOBAL_CONFIG
 
 class ChunkBase:
     #constructor for SingleFileHandler

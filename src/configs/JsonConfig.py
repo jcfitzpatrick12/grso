@@ -5,6 +5,8 @@ def save_config(config_type, tag, config_dict):
     #### ---- ####
     #    tbd     #
     #### ---- ####
+
+    # for use in some GUI page
     pass
 
 
