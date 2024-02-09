@@ -1,7 +1,8 @@
-from src.chunks.Chunks import Chunks
 import os
-from src.configs import GLOBAL_CONFIG
 import numpy as np
+
+from src.chunks.Chunks import Chunks
+from src.configs import GLOBAL_CONFIG
 
 def save_bvect(tag, start_background, end_background):
     chunks = Chunks(tag)

@@ -1,8 +1,8 @@
 from datetime import datetime
 from datetime import timedelta
-from src.configs import GLOBAL_CONFIG
 import os
 
+from src.configs import GLOBAL_CONFIG
 
 def build_data_dir_today():
     # Get the current date

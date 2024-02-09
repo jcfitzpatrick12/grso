@@ -1,12 +1,12 @@
 '''
 script will convert the binary and header data to fits files in data folder
 '''
+import sys
+
 from src.chunks.Chunks import Chunks
 from src.spectrogram import SpectrogramFactory
 from src.configs import GLOBAL_CONFIG
 from src.configs.JsonConfig import load_config
-
-import sys
 
 def main(tag):
     config_dict = load_config("batch", tag)
