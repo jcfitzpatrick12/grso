@@ -3,7 +3,6 @@ chunkFile class deals with all files of the form %Y-%m-%dT%H:%M:%S[.EXT]
 '''
 
 import numpy as np
-from datetime import datetime
 import scipy.signal as signal
 from scipy.signal import spectrogram
 import matplotlib.pyplot as plt
@@ -33,10 +32,6 @@ class Chunk(ChunkBase):
         self.fits = ChunkFits(chunk_start_time, self.tag)
 
 
-    '''
-    build the original RadioSpectrogram object from the bin and header files [no compression]
-    '''
-
     def build_radio_spectrogram(self):
         #check that the binary and header files both exist for the chunk.
         if self.bin.exists() and self.hdr.exists():
@@ -60,23 +55,13 @@ class Chunk(ChunkBase):
             freqs = np.fft.fftshift(freqs)
             # Adjust the frequency axis for the center frequency translation
             freqs += center_freq
+            freqs_MHz = freqs*10**-6
 
-
-            #pad frequency and time arrays
-            freqsMHz = np.empty((len(freqs)+1))
-            #place in the original data
-            freqsMHz[:-1]=freqs*10**-6
-            dfreqMHz = freqsMHz[-2]-freqsMHz[-3]
-            freqsMHz[-1]=freqsMHz[-2]+dfreqMHz
-            
-            extended_time_array = np.empty(len(time_array)+1,dtype='float64')
-            extended_time_array[:-1]=time_array
-            dt = time_array[-2]-time_array[-3]
-            extended_time_array[-1] = time_array[-1]+dt
-            
-            return RadioSpectrogram(Sxx, extended_time_array, freqsMHz, self.chunk_start_time, self.tag)
-        
+            Sxx = Sxx.astype(np.float64)
+            time_array = time_array.astype(np.float64)
+            freqs_MHz = freqs_MHz.astype(np.float64)
+            return RadioSpectrogram(Sxx, time_array, freqs_MHz, self.chunk_start_time, self.tag)
         else:
-            raise SystemError("Files missing! We have that .bin exists {} and .hdr exists {}".format(self.bin.exists(),self.hdr.exists()))
+            raise SystemError(f"Files missing! We have that .bin exists is {self.bin.exists()} and .hdr exists is {self.hdr.exists()}")
 
 

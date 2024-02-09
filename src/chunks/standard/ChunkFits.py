@@ -1,71 +1,62 @@
-import numpy as np
-import os
 from astropy.io import fits
 
-from src.utils import DatetimeFuncs
-from src.configs import GLOBAL_CONFIG
+from src.chunks.ChunkExt import ChunkExt
 from src.spectrogram.standard.RadioSpectrogram import RadioSpectrogram
 
-class ChunkFits:
+class ChunkFits(ChunkExt):
     def __init__(self,chunk_start_time, tag):
-        self.chunk_start_time=chunk_start_time
-        self.tag = tag
-        self.data_dir=DatetimeFuncs.build_data_dir_from_chunk_start_time(GLOBAL_CONFIG.path_to_data, self.chunk_start_time)
-        self.valid_request_strings = ['Sxx','CFREQ','PSTIME','ISCOMPR','TIME','FREQ']
+        super().__init__(chunk_start_time, tag, ".fits")
+        self.valid_request_strings = ["TIME"]
 
-    #find the path to data
-    def get_path(self):
-        return os.path.join(self.data_dir,f"{self.chunk_start_time}_{self.tag}.fits")
-    
-    #find out if the path exists
-    def exists(self):
-        return os.path.exists(self.get_path())
 
-    #function which returns requested information about a Chunk.
+    def print_header_info(self):
+        if self.exists():
+            # Open the FITS file
+            with fits.open(self.get_path(), mode='readonly') as hdulist:
+                 # hdul is a list-like collection of HDU (Header/Data Unit) objects
+                for hdu in hdulist:
+                    print('Header for HDU:', hdu.name)
+                    print(repr(hdu.header))
+                    print('\n\n') 
+        else:
+            print(f"Warning! No fits file for this chunk: {self.chunk_start_time}")
+
+
+        #function which returns requested information about a Chunk.
     def return_info(self,request_string):
         if self.exists():
             with fits.open(self.get_path(), mode='readonly') as hdulist:
-                # Extract the primary HDU data (Sxx spectrogram)
-                primary_hdu = hdulist[0]
+                # Access the primary HDU
+                primary_hdu = hdulist['PRIMARY']
+                # Access the data part of the primary HDU
                 Sxx = primary_hdu.data
+                # The index of the BINTABLE varies; commonly, it's the first extension, hence hdul[1]
+                bintable_hdu = hdulist[1]
+                # Access the data within the BINTABLE
+                data = bintable_hdu.data
                 #make sure we have a valid request string
                 if request_string in self.valid_request_strings:
                     if request_string == "TIME":
-                        return(hdulist[1].data[request_string])
-                    elif request_string == "Sxx":
-                        return(primary_hdu.data)
-                    elif request_string in ["CFREQ", "PSTIME", "ISCOMPR"]:
-                        return primary_hdu.header[request_string]
-                    elif request_string=="FREQ":
-                        return(hdulist[2].data[request_string])
-                    else:
-                        raise SystemError("Error in the code! We shouldn't make it to here if the previous if statement caught an invalid input.")
-                #if it is not valid, throw an error.
-                else:
-                    raise SystemError('Please enter a valid RequestString. {} is not one of {}'.format(request_string,self.valid_request_strings))
+                        return data['TIME']
+        pass
 
-
-        else:
-            raise SystemError('No file found!!')
     
     #load the RadioSpectrogram from the fits file.
     def load_radio_spectrogram(self):
         if self.exists():
-                # Open the FITS file
+            # Open the FITS file
             with fits.open(self.get_path(), mode='readonly') as hdulist:
-                # Extract the primary HDU data (Sxx spectrogram)
-                primary_hdu = hdulist[0]
-                Sxx = primary_hdu.data
-              
-                chunk_start_time = primary_hdu.header['PSTIME']
-
-                # Assuming timeArray and freqsMHz are stored in a binary table in the second HDU
-                time_array = hdulist[1].data['TIME']
-                freqs_MHz = hdulist[2].data['FREQ']
-
-
-                    # Create a new instance of RadioSpectrogram
-            return RadioSpectrogram(Sxx, time_array, freqs_MHz, chunk_start_time, self.tag)
-
-        else:
-            raise SystemError('No file found!!')
+                # Access the primary HDU
+                primary_hdu = hdulist['PRIMARY']
+                # Access the data part of the primary HDU
+                Sxx = primary_hdu.data          
+                # The index of the BINTABLE varies; commonly, it's the first extension, hence hdul[1]
+                bintable_hdu = hdulist[1]
+                # Access the data within the BINTABLE
+                data = bintable_hdu.data
+                # Extract the time and frequency arrays
+                # The column names ('TIME' and 'FREQUENCY') must match those in the FITS file
+                time_array = data['TIME']
+                freqs_MHz = data['FREQUENCY']
+                return RadioSpectrogram(Sxx, time_array, freqs_MHz, self.chunk_start_time, self.tag)
+    
