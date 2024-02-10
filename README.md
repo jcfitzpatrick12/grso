@@ -25,9 +25,10 @@ Section will be written once finalised.
 Contributions to `grso` are welcome. If you have suggestions or improvements, please open an issue or submit a pull request on the GitHub repository.
 
 ## Improvements to Come
-- Support for Raspberry Pi.
-- Front-end.
+- GUI front-end.
 - Streaming and frequency sweeping observation modes.
+- Plug-in-and-play observation scripts for RSPDuo.
+- Support for Raspberry Pi.
 
 ## License
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT) - see the [LICENSE](LICENSE).
