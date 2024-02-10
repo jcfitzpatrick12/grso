@@ -5,7 +5,7 @@ from matplotlib.colors import LogNorm
 from math import floor
 
 
-class BasePlotter:
+class Plotter:
     def __init__(self, S):
         self.S = S
         self.plot_type_dict = {
@@ -21,8 +21,8 @@ class BasePlotter:
         self.cmap = 'viridis'
 
         # values must be specified in standard and callisto plotters
-        self.v_min = None
-        self.v_max = None
+        self.v_min = -1
+        self.v_max = 1
        
 
     def get_plot_func(self, plot_type):

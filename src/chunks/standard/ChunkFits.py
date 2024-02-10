@@ -1,7 +1,7 @@
 from astropy.io import fits
 
 from src.chunks.ChunkExt import ChunkExt
-from src.spectrogram.standard.RadioSpectrogram import RadioSpectrogram
+from src.spectrogram.RadioSpectrogram import RadioSpectrogram
 
 class ChunkFits(ChunkExt):
     def __init__(self,chunk_start_time, tag):

@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 
-from src.spectrogram.BasePlotter import BasePlotter
+from src.spectrogram.Plotter import Plotter
  
 
-class Stacker(BasePlotter):  
+class Stacker(Plotter):  
     def __init__(self, S):
         super().__init__(S)
     

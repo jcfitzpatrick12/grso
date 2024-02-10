@@ -12,7 +12,7 @@ from src.chunks.ChunkBase import ChunkBase
 from src.chunks.standard.ChunkBin import ChunkBin
 from src.chunks.standard.ChunkHdr import ChunkHdr
 from src.chunks.standard.ChunkFits import ChunkFits
-from src.spectrogram.standard.RadioSpectrogram import RadioSpectrogram
+from src.spectrogram.RadioSpectrogram import RadioSpectrogram
 from src.configs import GLOBAL_CONFIG
 import pmt
 

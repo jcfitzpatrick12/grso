@@ -2,7 +2,7 @@ import numpy as np
 from astropy.io import fits
 
 from src.chunks.ChunkExt import ChunkExt
-from src.spectrogram.callisto.RadioSpectrogram import RadioSpectrogram
+from src.spectrogram.RadioSpectrogram import RadioSpectrogram
 
 
 class ChunkFits(ChunkExt):
