@@ -2,11 +2,11 @@ import numpy as np
 import os
 
 from src.configs import GLOBAL_CONFIG
-from src.configs.tag_maps.tag_to_plotter import tag_to_plotter_dict
 from src.utils import DatetimeFuncs
+from src.spectrogram.Stacker import Stacker
+from src.spectrogram.Fits import Fits
 
-
-class BaseSpectrogram:
+class RadioSpectrogram:
     def __init__(self, Sxx, time_array, freqs_MHz, chunk_start_time, tag, **kwargs):
         self.Sxx = Sxx
         #displace so that the first element of the time array is always at 0 seconds
@@ -18,7 +18,7 @@ class BaseSpectrogram:
         self.chunk_start_datetime = DatetimeFuncs.strptime(self.chunk_start_time, GLOBAL_CONFIG.default_time_format)
         self.datetime_array = self.build_datetime_array()
         self.datetime64_array = np.array(self.datetime_array,dtype="datetime64[ns]")
-        self.data_dir=DatetimeFuncs.build_data_dir_from_chunk_start_time(GLOBAL_CONFIG.path_to_data, self.chunk_start_time)   
+        self.data_dir=DatetimeFuncs.build_data_dir_from_chunk_start_time(GLOBAL_CONFIG.path_to_data, self.chunk_start_time) 
 
         bvect = kwargs.get("bvect", None)
         if bvect is None:
@@ -50,8 +50,7 @@ class BaseSpectrogram:
     
 
     def stack_plots(self, fig, plot_types):
-        plotter = tag_to_plotter_dict[self.tag]
-        plotter(self).stack_plots(fig, plot_types)
+        Stacker(self).stack_plots(fig, plot_types)
 
 
     def integrated_power(self,):
@@ -70,3 +69,8 @@ class BaseSpectrogram:
 
     def total_time_average(self,):
         return np.nanmean(self.Sxx,-1)
+    
+
+    def save_to_fits(self):
+        fits = Fits()
+        fits.save_spectrogram(self, self.get_path())

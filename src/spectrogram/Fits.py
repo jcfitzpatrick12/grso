@@ -2,17 +2,26 @@ import numpy as np
 from astropy.io import fits
 from datetime import datetime
 
-from src.spectrogram.BaseSpectrogram import BaseSpectrogram
 
-class RadioSpectrogram(BaseSpectrogram):
-    def __init__(self, Sxx, time_array, freqs_MHz, chunk_start_time, tag, **kwargs):
-        super().__init__(Sxx, time_array, freqs_MHz, chunk_start_time, tag, **kwargs)
+class Fits:
+    def __init__(self):
+        self.S = None
 
+
+    def set_spectrogram(self, S):
+        self.S = S
+
+
+    def get_spectrogram(self):
+        return self.S
+    
 
     # Function to create a FITS file with the specified structure
-    def save_to_fits(self,):
+    def save_spectrogram(self, S, path):
+        self.set_spectrogram(S)
+        S = self.get_spectrogram()
         # Primary HDU with data
-        primary_data = self.Sxx.astype(dtype=np.float64) 
+        primary_data = S.Sxx.astype(dtype=np.float64) 
         primary_hdu = fits.PrimaryHDU(primary_data)
 
         primary_hdu.header.set('SIMPLE', True, 'file does conform to FITS standard')
@@ -36,7 +45,7 @@ class RadioSpectrogram(BaseSpectrogram):
         primary_hdu.header.set('DATE', self.get_DATE(), 'time of observation')
         primary_hdu.header.set('CONTENT', f'{self.get_DATE()} power spectral density, grso (GLASGOW)', 'title of image')
         primary_hdu.header.set('ORIGIN', 'UK', 'organization name')
-        primary_hdu.header.set('TELESCOP', f'SDRplay RSP1A, tag: {self.tag}', 'type of instrument')
+        primary_hdu.header.set('TELESCOP', f'SDRplay RSP1A, tag: {S.tag}', 'type of instrument')
         primary_hdu.header.set('INSTRUME', 'grso (GLASGOW)', 'name of the spectrometer') # Corrected keyword INSTRUMEN to INSTRUME
         primary_hdu.header.set('OBJECT', 'Sun', 'object description')
 
@@ -63,16 +72,15 @@ class RadioSpectrogram(BaseSpectrogram):
         primary_hdu.header.set('CDELT2', self.get_CDELT2(), 'step between first and second element in axis')
 
         primary_hdu.header.set('OBS_LAT', '55.78088', 'observatory latitude in degree')
-        primary_hdu.header.set('OBS_LAC', 'N', 'observatory latitude code {N,S}')
+        primary_hdu.header.set('OBS_LAC', 'N', 'observatory latitude code {N,self.S}')
         primary_hdu.header.set('OBS_LON', '4.31770', 'observatory longitude in degree')
         primary_hdu.header.set('OBS_LOC', 'W', 'observatory longitude code {E,W}')
         primary_hdu.header.set('OBS_ALT', '100', 'observatory altitude in meter asl')
 
 
         # Wrap arrays in an additional dimension to mimic the e-CALLISTO storage
-        time_array_wrapped = np.array([self.time_array.astype(np.float64)])
-        freqs_MHz_wrapped = np.array([self.freqs_MHz.astype(np.float64)])
-
+        time_array_wrapped = np.array([self.S.time_array.astype(np.float64)])
+        freqs_MHz_wrapped = np.array([self.S.freqs_MHz.astype(np.float64)])
 
         # Binary Table HDU (extension)
         col1 = fits.Column(name='TIME', format='PD()', array=time_array_wrapped)
@@ -95,44 +103,53 @@ class RadioSpectrogram(BaseSpectrogram):
 
         # Create HDU list and write to file
         hdul = fits.HDUList([primary_hdu, bin_table_hdu])
-        hdul.writeto(self.get_path(), overwrite=True)
+        hdul.writeto(path, overwrite=True)
 
 
     def get_NAXIS1(self):
+        S = self.get_spectrogram()
         # Assuming self.Sxx is a 2D numpy array with shape (rows, columns)
-        return self.Sxx.shape[1]
+        return S.Sxx.shape[1]
 
     def get_NAXIS2(self):
+        S = self.get_spectrogram()
         # Assuming self.Sxx is a 2D numpy array with shape (rows, columns)
-        return self.Sxx.shape[0]
+        return S.Sxx.shape[0]
     
 
     def get_DATE(self):
-        return self.datetime_array[0].strftime("%Y-%m-%d")
+        S = self.get_spectrogram()
+        return S.datetime_array[0].strftime("%Y-%m-%d")
 
 
     def get_DATE_OBS(self):
-        return self.datetime_array[0].strftime("%Y-%m-%d")
+        S = self.get_spectrogram()
+        return S.datetime_array[0].strftime("%Y-%m-%d")
     
     
     def get_TIME_OBS(self):
-        return self.datetime_array[0].strftime("%H:%M:%S.%f")
+        S = self.get_spectrogram()
+        return S.datetime_array[0].strftime("%H:%M:%S.%f")
     
     
     def get_DATE_END(self):
-        return self.datetime_array[-1].strftime("%Y-%m-%d")
+        S = self.get_spectrogram()
+        return S.datetime_array[-1].strftime("%Y-%m-%d")
     
 
     def get_TIME_END(self):
-        return self.datetime_array[-1].strftime("%H:%M:%S.%f")
+        S = self.get_spectrogram()
+        return S.datetime_array[-1].strftime("%H:%M:%S.%f")
     
 
     def get_DATA_MIN(self):
-        return np.nanmin(self.Sxx)
+        S = self.get_spectrogram()
+        return np.nanmin(S.Sxx)
     
 
     def get_DATA_MAX(self):
-        return np.nanmax(self.Sxx)
+        S = self.get_spectrogram()
+        return np.nanmax(S.Sxx)
     
 
     def get_CRVAL1(self):
@@ -142,39 +159,17 @@ class RadioSpectrogram(BaseSpectrogram):
     
     
     def get_CDELT1(self):
-        return (self.datetime_array[1] - self.datetime_array[0]).total_seconds()
+        S = self.get_spectrogram()
+        return (S.datetime_array[1] - S.datetime_array[0]).total_seconds()
     
 
     def get_CDELT2(self):
-        return self.freqs_MHz[1] - self.freqs_MHz[0]
+        S = self.get_spectrogram()
+        return S.freqs_MHz[1] - S.freqs_MHz[0]
     
     
     def get_bintable_NAXIS1(self):
+        S = self.get_spectrogram()
         # Assuming time_array and freqs_MHz are 1D numpy arrays and the only two columns in the binary table
         # Calculate the width in bytes of a single row in the table
-        return (len(self.time_array) + len(self.freqs_MHz)) * 8
-
-    # def save_to_fits(self):
-    #     # Create a Primary HDU object with the Sxx data
-    #     primary_hdu = fits.PrimaryHDU(self.Sxx)
-
-    #     # Create a Header Data Unit (HDU) list and add the primary HDU
-    #     hdulist = fits.HDUList([primary_hdu])
-
-    #     primary_hdu.header['PSTIME'] = self.chunk_start_time
-
-    #     col_time = fits.Column(name='TIME', array=self.time_array, format='D')
-    #     col_freq = fits.Column(name='FREQ', array=self.freqs_MHz, format='D')
-
-    #     tb_hdu_time = fits.BinTableHDU.from_columns([col_time])
-    #     tb_hdu_freq = fits.BinTableHDU.from_columns([col_freq])
-
-    #     hdulist.append(tb_hdu_time)
-    #     hdulist.append(tb_hdu_freq)
-
-    #     #name the path according to the chunk_start_time
-    #     fpath = os.path.join(self.get_path())
-    #     # Write the FITS file
-    #     hdulist.writeto(fpath, overwrite=True)
-    #     p
-    # s
+        return (len(S.time_array) + len(S.freqs_MHz)) * 8

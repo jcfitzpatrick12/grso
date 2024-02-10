@@ -10,7 +10,7 @@ from datetime import datetime
 from src.chunks.Chunks import Chunks
 from src.spectrogram import SpectrogramFactory
 from src.configs import GLOBAL_CONFIG
-from src.configs.tag_maps import tag_to_plot_types
+from src.spectrogram.Plotter import Plotter
 
 class LookBetween:
     def __init__(self, master, default_tag):
@@ -72,6 +72,7 @@ class LookBetween:
             'avg_over_int_time': 1,
             'avg_over_int_freq': 1
         }
+        self.plot_types = Plotter(default_S).plot_type_dict.keys()
 
     def get_field_titles_dict(self):
         
@@ -104,10 +105,8 @@ class LookBetween:
             self.plot_type_frame = tk.LabelFrame(self.master, text="Plot Types:")
             self.plot_type_frame.grid(row=7, column=0, columnspan=3)
 
-        # Draw new checkboxes
-        plot_types = tag_to_plot_types.tag_to_plot_types_dict[self.tag]
-        self.plot_type_vars = {plot_type: tk.BooleanVar() for plot_type in plot_types}
-        for plot_type in plot_types:
+        self.plot_type_vars = {plot_type: tk.BooleanVar() for plot_type in self.plot_types}
+        for plot_type in self.plot_types:
             check = tk.Checkbutton(self.plot_type_frame, text=plot_type, variable=self.plot_type_vars[plot_type])
             check.pack(side=tk.LEFT)
 
