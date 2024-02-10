@@ -12,8 +12,8 @@ This project is tested to be compatible with the following operating systems:
 It may also work on other Linux distributions and other Ubuntu versions. However, full compatibility is not guaranteed for operating systems other than the ones listed above.
 
 ## Features
-- Agnostic to the front-end antenna system. Current scripts are written for the SDRplay RSP1A, but the scripts may be generalised to any SDRs in the RSP series.
-- ...
+- Plug-in-and-play observations. 
+- Agnostic to the front-end antenna system. Current scripts are written for the SDRplay RSP1A. Support for RSPDuo in progress.
 
 ## Installation
 - Please ensure that you have installed [```grso-docker```](https://github.com/jcfitzpatrick12/grso-docker.git). Follow the instructions on this repository
