@@ -97,7 +97,7 @@ class Chunks:
             file_name, ext = os.path.splitext(file)
             chunk_start_time, tag = file_name.split("_", 1)
             # If the file is not a compressed-spectrogram, delete
-            if ext!=".fits":
+            if ext!=".fits" and tag == self.tag:
                 file_dir = DatetimeFuncs.build_data_dir_from_chunk_start_time(GLOBAL_CONFIG.path_to_data, chunk_start_time)
                 file_path = os.path.join(file_dir, file)
                 os.remove(file_path)
