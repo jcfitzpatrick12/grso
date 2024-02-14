@@ -1,6 +1,6 @@
 {
-    "center_freq": 50.95e6,
-    "samp_rate": 1e6,
+    "center_freq": 49e6,
+    "samp_rate": 2e6,
     "IF_gain": -25,
     "RF_gain": 0,
     "average_over_int": 100
