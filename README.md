@@ -27,7 +27,7 @@ Contributions to `grso` are welcome. If you have suggestions or improvements, pl
 ## Improvements to Come
 - GUI front-end.
 - Streaming and frequency sweeping observation modes.
-- Plug-in-and-play observation scripts for RSPDuo.
+- Simultaneous data collection from two antenna systems with RSPDuo.
 - Support for Raspberry Pi.
 
 ## License
