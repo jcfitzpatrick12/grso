@@ -17,12 +17,12 @@ class Plotter:
         
         self.fsize_head=20
         self.fsize=15
-        self.seconds_interval = floor(self.S.time_array[-1]/4)
+        self.seconds_interval = floor(self.S.time_array[-1]/5)
         self.cmap = 'viridis'
 
         # values must be specified in standard and callisto plotters
         self.v_min = -1
-        self.v_max = 1
+        self.v_max = 5
        
 
     def get_plot_func(self, plot_type):
@@ -39,6 +39,7 @@ class Plotter:
         ax.plot(datetime_array, power)
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
         ax.xaxis.set_major_locator(mdates.SecondLocator(interval=self.seconds_interval))
+        ax.set_ylim(np.min(power[power>0]), np.max(power[power>0]))
         ax.tick_params(axis='x', labelsize=self.fsize)
         ax.tick_params(axis='y', labelsize=self.fsize)
         ax.set_ylabel('Normalised Power', size=self.fsize_head)
