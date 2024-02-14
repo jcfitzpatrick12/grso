@@ -1,0 +1,181 @@
+options:
+  parameters:
+    author: ''
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: rsp_duo_test
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: Not titled yet
+    window_size: (1000,1000)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 8]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: center_freq_0
+  id: variable
+  parameters:
+    comment: ''
+    value: 95.8e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [320, 4.0]
+    rotation: 0
+    state: enabled
+- name: center_freq_1
+  id: variable
+  parameters:
+    comment: ''
+    value: 396e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [448, 20.0]
+    rotation: 0
+    state: enabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '32000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [176, 12.0]
+    rotation: 0
+    state: enabled
+- name: blocks_file_meta_sink_0
+  id: blocks_file_meta_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    detached: 'False'
+    extra_dict: pmt.make_dict()
+    file: /home
+    max_seg_size: '1000000'
+    rel_rate: '1'
+    samp_rate: samp_rate
+    type: complex
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [648, 148.0]
+    rotation: 0
+    state: true
+- name: blocks_file_meta_sink_1
+  id: blocks_file_meta_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    detached: 'False'
+    extra_dict: pmt.make_dict()
+    file: /home
+    max_seg_size: '1000000'
+    rel_rate: '1'
+    samp_rate: samp_rate
+    type: complex
+    unbuffered: 'False'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [640, 364.0]
+    rotation: 0
+    state: true
+- name: import_0
+  id: import
+  parameters:
+    alias: ''
+    comment: ''
+    imports: import pmt
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [568, 12.0]
+    rotation: 0
+    state: true
+- name: sdrplay3_rspduo_0
+  id: sdrplay3_rspduo
+  parameters:
+    AGC: 'False'
+    AGC0: 'False'
+    AGC1: 'False'
+    affinity: ''
+    agc_set_point: '-30'
+    alias: ''
+    am_notch_filter: 'False'
+    antenna: Tuner 1 50 ohm
+    antenna_both: Both Tuners
+    bandwidth: 300e3
+    biasT: 'False'
+    center_freq: '0'
+    center_freq0: center_freq_0
+    center_freq1: center_freq_1
+    comment: ''
+    dab_notch_filter: 'False'
+    dc_offset_mode: 'False'
+    debug_mode: 'False'
+    freq_corr: '0'
+    if_gRdB: '40'
+    if_gRdB0: '59'
+    if_gRdB1: '40'
+    iq_balance_mode: 'False'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    output_type: fc32
+    rf_gR: '0'
+    rf_gR0: '0'
+    rf_gR1: '0'
+    rf_notch_filter: 'False'
+    rsp_selector: ''
+    rspduo_mode: Dual Tuner (independent RX)
+    sample_rate: samp_rate
+    sample_rate_non_single_tuner: 500e3
+    sample_sequence_gaps_check: 'False'
+    show_gain_changes: 'False'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [128, 212.0]
+    rotation: 0
+    state: true
+
+connections:
+- [sdrplay3_rspduo_0, '0', blocks_file_meta_sink_0, '0']
+- [sdrplay3_rspduo_0, '1', blocks_file_meta_sink_1, '0']
+
+metadata:
+  file_format: 1
