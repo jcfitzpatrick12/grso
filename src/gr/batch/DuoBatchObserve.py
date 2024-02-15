@@ -32,11 +32,11 @@ from gnuradio import eng_notation
 from gnuradio import gr, blocks
 from gnuradio import sdrplay3
 import pmt
+from datetime import datetime
 
+from src.utils import Tags, PMTFuncs, DirFuncs
 from src.configs import GLOBAL_CONFIG
-from src.configs.JsonConfig import load_config
-from src.gr.batch.MetaDict import MetaDict
-from src.gr.batch import TimeStamper  
+from src.configs.JsonConfig import load_config 
 
 
 
@@ -44,7 +44,7 @@ from gnuradio import qtgui
 
 class DuoBatchObserve(gr.top_block, Qt.QWidget):
 
-    def __init__(self, tags):
+    def __init__(self, tag_1, tag_2):
         gr.top_block.__init__(self, "Not titled yet", catch_exceptions=True)
         Qt.QWidget.__init__(self)
         self.setWindowTitle("Collecting data.")
@@ -79,29 +79,25 @@ class DuoBatchObserve(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
 
-        config_dict_0 = load_config("batch", tags[0])
-        config_dict_1 = load_config("batch", tags[1])
-
-        self.samp_rate_0 = config_dict_0['samp_rate']
+        config_dict_1 = load_config("batch", tag_1)
         self.samp_rate_1 = config_dict_1['samp_rate']
-
-        if self.samp_rate_0 != self.samp_rate_1:
-            raise ValueError(f"Sample rates must be equal. samp_rate_0: {samp_rate_0}, samp_rate_1: {samp_rate_1}")
-
-        self.samp_rate = self.samp_rate_0
-
-        self.IF_gain_0 = config_dict_0 ['IF_gain']
         self.IF_gain_1 = config_dict_1['IF_gain']
-    
-
-        self.RF_gain_0 = config_dict_0['RF_gain']
         self.RF_gain_1 = config_dict_1['RF_gain']
-
-
-        self.center_freq_0 = config_dict_0['center_freq']
         self.center_freq_1 = config_dict_1['center_freq']
 
-        self.chunk_start_time = TimeStamper.return_time_now_as_string()
+        config_dict_2 = load_config("batch", tag_2)
+        self.samp_rate_2 = config_dict_2['samp_rate']
+        self.IF_gain_2 = config_dict_2['IF_gain']
+        self.RF_gain_2 = config_dict_2['RF_gain']
+        self.center_freq_2 = config_dict_2['center_freq']
+
+        if self.samp_rate_1 != self.samp_rate_2:
+            raise ValueError(f"Sample rates must be equal. samp_rate_0: {samp_rate_0}, samp_rate_1: {samp_rate_1}")
+
+        self.samp_rate = self.samp_rate_1
+
+
+        self.chunk_start_time = datetime.now().strftime(GLOBAL_CONFIG.default_time_format)
 
         ##################################################
         # Blocks
@@ -116,12 +112,12 @@ class DuoBatchObserve(gr.top_block, Qt.QWidget):
             ),
         )
         self.sdrplay3_rspduo_0.set_sample_rate(self.samp_rate)
-        self.sdrplay3_rspduo_0.set_center_freq(self.center_freq_0, self.center_freq_1)
+        self.sdrplay3_rspduo_0.set_center_freq(self.center_freq_1, self.center_freq_2)
         self.sdrplay3_rspduo_0.set_bandwidth(self.samp_rate)
         self.sdrplay3_rspduo_0.set_antenna("Both Tuners")
         self.sdrplay3_rspduo_0.set_gain_modes(False, False)
-        self.sdrplay3_rspduo_0.set_gain(self.IF_gain_0, self.IF_gain_1, 'IF')
-        self.sdrplay3_rspduo_0.set_gain(self.RF_gain_0, self.RF_gain_1, 'RF')
+        self.sdrplay3_rspduo_0.set_gain(self.IF_gain_1, self.IF_gain_2, 'IF')
+        self.sdrplay3_rspduo_0.set_gain(self.RF_gain_1, self.RF_gain_2, 'RF')
         self.sdrplay3_rspduo_0.set_freq_corr(0)
         self.sdrplay3_rspduo_0.set_dc_offset_mode(False)
         self.sdrplay3_rspduo_0.set_iq_balance_mode(False)
@@ -135,26 +131,23 @@ class DuoBatchObserve(gr.top_block, Qt.QWidget):
         self.sdrplay3_rspduo_0.set_show_gain_changes(False)
 
 
-        temp_file_path_0 = TimeStamper.return_temp_file_path(self.chunk_start_time, tags[0])
-        temp_file_path_1 = TimeStamper.return_temp_file_path(self.chunk_start_time, tags[1])
-        
-        md_0 = MetaDict()
-        meta_dict_0 = md_0.get_dict(self.samp_rate,self.center_freq_0,self.chunk_start_time)
-        self.blocks_file_meta_sink_0 = blocks.file_meta_sink(gr.sizeof_gr_complex*1, temp_file_path_0, self.samp_rate, 1, blocks.GR_FILE_FLOAT, True, 1000000, meta_dict_0, True)
-        self.blocks_file_meta_sink_0.set_unbuffered(False)
-
-        md_1 = MetaDict()
-        meta_dict_1 = md_0.get_dict(self.samp_rate,self.center_freq_1,self.chunk_start_time)
-        self.blocks_file_meta_sink_1 = blocks.file_meta_sink(gr.sizeof_gr_complex*1, temp_file_path_1, self.samp_rate, 1, blocks.GR_FILE_FLOAT, True, 1000000, meta_dict_1, True)
+        temp_file_path_1 = DirFuncs.return_temp_file_path(self.chunk_start_time, tag_1)
+        pmt_dict_1 = PMTFuncs.get_dict(samp_rate = int(self.samp_rate), center_freq = float(self.center_freq_1), chunk_start_time = self.chunk_start_time)
+        self.blocks_file_meta_sink_1 = blocks.file_meta_sink(gr.sizeof_gr_complex*1, temp_file_path_1, self.samp_rate, 1, blocks.GR_FILE_FLOAT, True, 1000000, pmt_dict_1, True)
         self.blocks_file_meta_sink_1.set_unbuffered(False)
+
+        temp_file_path_2 = DirFuncs.return_temp_file_path(self.chunk_start_time, tag_2)
+        pmt_dict_2 = PMTFuncs.get_dict(samp_rate = int(self.samp_rate), center_freq = float(self.center_freq_2), chunk_start_time = self.chunk_start_time)
+        self.blocks_file_meta_sink_2 = blocks.file_meta_sink(gr.sizeof_gr_complex*1, temp_file_path_2, self.samp_rate, 1, blocks.GR_FILE_FLOAT, True, 1000000, pmt_dict_2, True)
+        self.blocks_file_meta_sink_2.set_unbuffered(False)
 
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.sdrplay3_rspduo_0, 0), (self.blocks_file_meta_sink_0, 0))
-        self.connect((self.sdrplay3_rspduo_0, 1), (self.blocks_file_meta_sink_1, 0))
+        self.connect((self.sdrplay3_rspduo_0, 0), (self.blocks_file_meta_sink_1, 0))
+        self.connect((self.sdrplay3_rspduo_0, 1), (self.blocks_file_meta_sink_2, 0))
 
 
     def closeEvent(self, event):
@@ -168,26 +161,14 @@ class DuoBatchObserve(gr.top_block, Qt.QWidget):
 
 
 
-def main(tags, top_block_cls=DuoBatchObserve, options=None):
-
-    '''
-    # Parsing command line arguments
-    if len(sys.argv) != 4:
-        print("Make sure you're passing in the right number of arguments! We need center_freq, samp_rate and IF_gain.")
-        sys.exit(1)
-
-    center_freq = float(sys.argv[1])
-    samp_rate = float(sys.argv[2])
-    IF_gain = float(sys.argv[3])
-   
-    '''
+def main(tag_1, tag_2, top_block_cls=DuoBatchObserve, options=None):
 
     if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
-    tb = top_block_cls(tags)
+    tb = top_block_cls(tag_1, tag_2)
 
     tb.start()
 
@@ -208,16 +189,7 @@ def main(tags, top_block_cls=DuoBatchObserve, options=None):
 
     qapp.exec_()
 
-if __name__ == '__main__':
-    try:
-        tags_int = sys.argv[1:]
-    except:
-        raise ValueError("Please specify the tag by passing in through the command line.")
-
-    tags = []
-    for tag in tags_int:
-        if tag not in GLOBAL_CONFIG.defined_tags:
-            raise ValueError(f"Please specify a valid tag. Received {tag}, need one of {GLOBAL_CONFIG.defined_tags}")
-        tags.append(str(tag))
-    
-    main(tags)
+if __name__ == '__main__': 
+    tag_1, tag_2 = Tags.get_tags_from_args()
+    #tag_1 will apply the parameters in config_dict to Tuner 1 of the the RSPDuo, similarly for tag_2
+    main(tag_1, tag_2)
