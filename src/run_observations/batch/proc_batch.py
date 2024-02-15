@@ -1,7 +1,7 @@
 '''
 script will convert the binary and header data to fits files in data folder
 '''
-import sys
+from src.utils import Tags
 
 from src.chunks.Chunks import Chunks
 from src.spectrogram import SpectrogramFactory
@@ -21,17 +21,10 @@ def main(tag):
                 S = SpectrogramFactory.time_average(S, average_over_int)
                 S.save_to_fits()
             except Exception as e:
-                print(f"Couldn't make spectrogram for this Chunk! {e}")
+                print(f"Couldn't make spectrogram for this Chunk! Received the following error: \n{e}")
 
     my_chunks.remove_non_fits_files_from_data()
 
 if __name__ == '__main__':
-    try:
-        tag = str(sys.argv[1])
-    except:
-        raise ValueError("Please specify the tag by passing in through the command line.")
-    
-    if tag not in GLOBAL_CONFIG.defined_tags:
-        raise ValueError(f"Please specify a valid tag. Received {tag}, need one of {GLOBAL_CONFIG.defined_tags}")
-
+    tag = Tags.get_tag_from_args(disable_reserved_tags = True)
     main(tag)
