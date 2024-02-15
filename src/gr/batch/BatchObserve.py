@@ -34,11 +34,11 @@ from gnuradio import gr, blocks
 from gnuradio import sdrplay3
 from gnuradio import qtgui
 import pmt
+from datetime import datetime
 
+from src.utils import Tags, PMTFuncs, DirFuncs
 from src.configs import GLOBAL_CONFIG
 from src.configs.JsonConfig import load_config
-from src.gr.batch.MetaDict import MetaDict
-from src.gr.batch import TimeStamper 
 
 class BatchObserve(gr.top_block, Qt.QWidget):
     def __init__(self, tag):
@@ -73,7 +73,7 @@ class BatchObserve(gr.top_block, Qt.QWidget):
             pass
 
         ##################################################
-        # Variables
+        # Loading variables from the config dict specified by tag
         ##################################################
 
         config_dict = load_config("batch", tag)
@@ -81,11 +81,12 @@ class BatchObserve(gr.top_block, Qt.QWidget):
         self.IF_gain = config_dict['IF_gain']
         self.RF_gain = config_dict['RF_gain']
         self.center_freq = config_dict['center_freq']
-        self.chunk_start_time = TimeStamper.return_time_now_as_string()
+        self.chunk_start_time = datetime.now().strftime(GLOBAL_CONFIG.default_time_format)
 
         ##################################################
         # Blocks
         ##################################################
+
         self.sdrplay3_rsp1a_0 = sdrplay3.rsp1a(
             '',
             stream_args=sdrplay3.stream_args(
@@ -111,12 +112,10 @@ class BatchObserve(gr.top_block, Qt.QWidget):
         self.sdrplay3_rsp1a_0.set_show_gain_changes(False)
         self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, self.samp_rate,True)
 
-        temp_file_path = TimeStamper.return_temp_file_path(self.chunk_start_time, tag)
-        
-        md = MetaDict()
-        meta_dict = md.get_dict(self.samp_rate,self.center_freq,self.chunk_start_time)
+        temp_file_path = DirFuncs.return_temp_file_path(self.chunk_start_time, tag)
+        pmt_dict = PMTFuncs.get_dict(samp_rate = int(self.samp_rate), center_freq = float(self.center_freq), chunk_start_time = self.chunk_start_time)
 
-        self.blocks_file_meta_sink_0_0 = blocks.file_meta_sink(gr.sizeof_gr_complex*1, temp_file_path, self.samp_rate, 1, blocks.GR_FILE_FLOAT, True, 1000000, meta_dict, True)
+        self.blocks_file_meta_sink_0_0 = blocks.file_meta_sink(gr.sizeof_gr_complex*1, temp_file_path, self.samp_rate, 1, blocks.GR_FILE_FLOAT, True, 1000000, pmt_dict, True)
         self.blocks_file_meta_sink_0_0.set_unbuffered(False)
 
 
@@ -138,18 +137,6 @@ class BatchObserve(gr.top_block, Qt.QWidget):
 
 
 def main(tag, top_block_cls=BatchObserve, options=None):
-
-    '''
-    # Parsing command line arguments
-    if len(sys.argv) != 4:
-        print("Make sure you're passing in the right number of arguments! We need center_freq, samp_rate and IF_gain.")
-        sys.exit(1)
-
-    center_freq = float(sys.argv[1])
-    samp_rate = float(sys.argv[2])
-    IF_gain = float(sys.argv[3])
-   
-    '''
 
     if StrictVersion("4.5.0") <= StrictVersion(Qt.qVersion()) < StrictVersion("5.0.0"):
         style = gr.prefs().get_string('qtgui', 'style', 'raster')
@@ -178,12 +165,7 @@ def main(tag, top_block_cls=BatchObserve, options=None):
     qapp.exec_()
 
 if __name__ == '__main__':
-    try:
-        tag = str(sys.argv[1])
-    except:
-        raise ValueError("Please specify the tag by passing in through the command line.")
-    
-    if tag not in GLOBAL_CONFIG.defined_tags:
-        raise ValueError(f"Please specify a valid tag. Received {tag}, need one of {GLOBAL_CONFIG.defined_tags}")
+
+    tag = Tags.get_tag_from_args(disable_reserved_tags = True)
 
     main(tag)

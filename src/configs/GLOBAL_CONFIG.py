@@ -1,6 +1,10 @@
 import os
 
-defined_tags = ["00", "01", "02", "03"]
+
+homebrew_tags = ["00", "02", "03"]
+reserved_tags = ["01"]
+defined_tags = homebrew_tags + reserved_tags
+
 default_time_format = "%Y-%m-%dT%H:%M:%S"
 glasgow_callisto_time_format = "GLASGOW_%Y%m%d_%H%M%S_01"
 

@@ -106,6 +106,12 @@ class SetBackground:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    default_tag = sys.argv[1] if len(sys.argv) > 1 else "00"
+
+    try:
+        tag = Tags.get_tag_from_args()
+    except:
+        print("Using default tag 00")
+        tag = "00"
+        
     app = SetBackground(root, default_tag)
     root.mainloop()

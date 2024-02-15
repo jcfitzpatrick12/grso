@@ -2,8 +2,8 @@
 
 
 #run the code saving data for sleepy_time seconds, max_iter times
-max_iter=$1
-sleepy_time=$2
+iterate_for=$1
+sleep_for=$2
 tag=$3
 
 cd "$GRSOPARENTPATH"
@@ -16,37 +16,30 @@ date_dir=$(date +"%Y/%m/%d")
 data_dir="data/$date_dir"
 bash src/shell_utils/create_dir.sh $data_dir
 
-
 temp_path="${GRSOPARENTPATH}/temp_data_${tag}"
 data_path="$GRSOPARENTPATH/$data_dir"
 
-
-for (( i=1; i<=max_iter; i=i+1 ))
+for (( i=1; i<=iterate_for; i=i+1 ))
 do
   # Inform the user of which iteration we are on
-  echo "Running iteration $i"
-  
+  echo "Collecting for chunk: $i"
   # Start the Python script as a background process, then kill it after sleepy_time seconds
-  python3 src/gr/batch/BatchObserve.py $tag &
-
+  python3 src/gr/batch/BatchObserve.py --tag $tag &
   #capture the processing id of the script
   pid=$!
-
   #sleep for the determined amount of seconds
-  sleep ${sleepy_time}s
-
+  sleep ${sleep_for}s
   #kill the observation
   kill $pid
-
   # Move all files from the source to the destination directory
   mv "$temp_path"/* "$data_path"/
 
   #run the postprocessing as a background script if we have another observational cycle to run
-  if (( $i < $max_iter )); then 
-    python3 src/run_observations/batch/proc_batch.py $tag &
+  if (( $i < max_iter )); then 
+    python3 src/run_observations/batch/proc_batch.py --tag $tag &
   else
   #otherwise, just run as a foreground process so that the script can end gracefully
-    python3 src/run_observations/batch/proc_batch.py $tag
+    python3 src/run_observations/batch/proc_batch.py --tag $tag
   fi
 
   #give the script time to stop, so the SDR isnt busy when the new script starts

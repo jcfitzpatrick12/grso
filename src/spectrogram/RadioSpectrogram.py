@@ -2,7 +2,6 @@ import numpy as np
 import os
 
 from src.configs import GLOBAL_CONFIG
-from src.configs.tag_maps.tag_to_instrument_type import tag_to_instrument_type
 from src.utils import DatetimeFuncs
 from src.spectrogram.Stacker import Stacker
 from src.spectrogram.Fits import Fits
@@ -73,10 +72,10 @@ class RadioSpectrogram:
     
 
     def save_to_fits(self):
-        instrument_type = tag_to_instrument_type[self.tag]
-        if not instrument_type == "homebrew":
-            print(f"Cannot modify e-Callisto fits files. File unchanged: {self.get_path}")
+        if self.tag in GLOBAL_CONFIG.reserved_tags:
+            print(f"Warning! Cannot modify fits for the reserved tag: {tag}. File remains unchanged: {self.get_path}")
             return 
         else:
             fits = Fits()
             fits.save_spectrogram(self, self.get_path())
+            print(f"Fits file created at {self.get_path()}")

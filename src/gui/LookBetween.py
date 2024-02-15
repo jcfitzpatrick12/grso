@@ -11,6 +11,7 @@ from src.chunks.Chunks import Chunks
 from src.spectrogram import SpectrogramFactory
 from src.configs import GLOBAL_CONFIG
 from src.spectrogram.Plotter import Plotter
+from src.utils import Tags
 
 class LookBetween:
     def __init__(self, master, default_tag):
@@ -157,6 +158,12 @@ class LookBetween:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    default_tag = sys.argv[1] if len(sys.argv) > 1 else "00"
-    app = LookBetween(root, default_tag)
+
+    try:
+        tag = Tags.get_tag_from_args()
+    except:
+        print("Using default tag 00")
+        tag = "00"
+
+    app = LookBetween(root, tag)
     root.mainloop()
