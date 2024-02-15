@@ -59,6 +59,10 @@ class Plotter:
         freqs_MHz = self.S.freqs_MHz
         Sxx = self.S.Sxx
         bvect = self.S.bvect
+
+        if not bvect:
+            print("No background vector specified, cannot plot spectrogram in units dBb.")
+            return
         Sxx = self.Sxx_in_dBb(Sxx, bvect)
 
         vmin = self.v_min
