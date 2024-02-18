@@ -78,4 +78,4 @@ class RadioSpectrogram:
         else:
             fits = Fits()
             fits.save_spectrogram(self, self.get_path())
-            print(f"Fits file created at {self.get_path()}")
+            print(f".fits file created at {self.get_path()}")
