@@ -4,6 +4,7 @@ from matplotlib.figure import Figure
 import sys
 
 from src.spectrogram.Bvect import save_bvect, load_bvect
+from src.utils import Tags
 
 class SetBackground:
     def __init__(self, master, default_tag):
@@ -113,5 +114,5 @@ if __name__ == "__main__":
         print("Using default tag 00")
         tag = "00"
         
-    app = SetBackground(root, default_tag)
+    app = SetBackground(root, tag)
     root.mainloop()
