@@ -22,7 +22,7 @@ class Plotter:
 
         # values must be specified in standard and callisto plotters
         self.v_min = -1
-        self.v_max = 5
+        self.v_max = 3
        
 
     def get_plot_func(self, plot_type):
@@ -36,7 +36,7 @@ class Plotter:
     def integrated_power(self, ax, cax):
         datetime_array = self.S.datetime_array
         power = self.S.integrated_power()
-        ax.plot(datetime_array, power)
+        ax.step(datetime_array, power, where='mid')
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
         ax.xaxis.set_major_locator(mdates.SecondLocator(interval=self.seconds_interval))
         ax.set_ylim(np.min(power[power>0]), np.max(power[power>0]))
@@ -60,9 +60,10 @@ class Plotter:
         Sxx = self.S.Sxx
         bvect = self.S.bvect
 
-        if not bvect:
+        if bvect is None:
             print("No background vector specified, cannot plot spectrogram in units dBb.")
             return
+
         Sxx = self.Sxx_in_dBb(Sxx, bvect)
 
         vmin = self.v_min
