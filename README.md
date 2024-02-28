@@ -29,7 +29,7 @@ Contributions to `grso` are welcome. If you have suggestions or improvements, pl
 
 ## Improvements to Come
 - Streaming and frequency sweeping observation modes.
-- More sophisticated front-end
+- More sophisticated front-end.
 - Support for Raspberry Pi.
 
 ## License
