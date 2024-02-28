@@ -13,6 +13,9 @@ It may also work on other Linux distributions and other Ubuntu versions. However
 
 ## Features
 - Native support for RSP1A and RSPDuo.
+- Batch collection of dynamic spectra.
+- Option for simultaneous data collection from two antenna systems.
+- GUI interface for data visualisation (now basic, in active development)
 - ...
 
 ## Installation
@@ -25,9 +28,8 @@ Section will be written once finalised.
 Contributions to `grso` are welcome. If you have suggestions or improvements, please open an issue or submit a pull request on the GitHub repository.
 
 ## Improvements to Come
-- GUI front-end.
 - Streaming and frequency sweeping observation modes.
-- Simultaneous data collection from two antenna systems with RSPDuo.
+- More sophisticated front-end
 - Support for Raspberry Pi.
 
 ## License
