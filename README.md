@@ -12,7 +12,7 @@ This project is tested to be compatible with the following operating systems:
 It may also work on other Linux distributions and other Ubuntu versions. However, full compatibility is not guaranteed for operating systems other than the ones listed above.
 
 ## Features
-- Agnostic to the front-end antenna system. Current scripts are written for the SDRplay RSP1A. Support for RSPDuo in progress.
+- Native support for RSP1A and RSPDuo.
 - ...
 
 ## Installation
